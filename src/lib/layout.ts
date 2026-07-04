@@ -98,7 +98,7 @@ ${jsonLd.map((j) => `<script type="application/ld+json">${JSON.stringify(j)}</sc
       ${NAV.map(
         (n) => `<div class="relative group">
         <a href="${n.href}" class="px-3.5 py-2 rounded-full text-[14px] font-semibold text-ink/70 hover:text-ink hover:bg-ink/5 transition">${n.label}</a>
-        ${n.children ? `<div class="absolute left-1/2 -translate-x-1/2 top-full pt-3 hidden group-hover:block"><div class="glass-drop rounded-2xl p-2 w-[420px] grid grid-cols-2 gap-0.5">${n.children.map((ch) => `<a href="${ch.href}" class="px-4 py-2.5 rounded-xl text-[13.5px] font-medium text-ink/70 hover:bg-ink hover:text-white transition">${ch.label}</a>`).join('')}</div></div>` : ''}
+        ${n.children ? `<div class="absolute left-1/2 -translate-x-1/2 top-full pt-3 hidden group-hover:block"><div class="glass-drop rounded-2xl p-2 w-[420px] grid grid-cols-2 gap-0.5" data-tilt data-tilt-max="5">${n.children.map((ch) => `<a href="${ch.href}" class="px-4 py-2.5 rounded-xl text-[13.5px] font-medium text-ink/70 hover:bg-ink hover:text-white transition">${ch.label}</a>`).join('')}</div></div>` : ''}
       </div>`
       ).join('')}
     </nav>
@@ -127,7 +127,7 @@ ${jsonLd.map((j) => `<script type="application/ld+json">${JSON.stringify(j)}</sc
       </a>`).join('')}
     </nav>
     <div class="mt-8 flex flex-wrap gap-2">
-      ${TREATMENTS.slice(0, 6).map((t) => `<a href="/treatments/${t.slug}" class="px-4 py-2 rounded-full border border-white/20 text-white/70 text-sm">${t.name}</a>`).join('')}
+      ${TREATMENTS.slice(0, 6).map((t) => `<a href="/treatments/${t.slug}" data-tilt data-tilt-max="14" class="px-4 py-2 rounded-full border border-white/20 text-white/70 text-sm">${t.name}</a>`).join('')}
     </div>
     <div class="mt-auto pt-10 flex gap-3 text-sm">
       ${userName ? `<span class="text-gold-400 py-3">${esc(userName)}님</span><a href="/logout" class="text-white/60 py-3">로그아웃</a>` : `<a href="/login" class="text-white/60 py-3">로그인</a><a href="/signup" class="text-white/60 py-3">회원가입</a>`}
@@ -193,7 +193,6 @@ ${jsonLd.map((j) => `<script type="application/ld+json">${JSON.stringify(j)}</sc
   </div>
 </footer>
 <script src="/static/app.js" defer></script>
-${meta.path === '/' ? '<script type="module" src="/static/hero3d.js"></script>' : ''}
 </body>
 </html>`
 }
@@ -204,13 +203,6 @@ export function pageHero(kicker: string, title: string, sub?: string): string {
 <section class="page-hero relative bg-ink text-white pt-36 pb-16 sm:pt-44 sm:pb-24 px-5 overflow-hidden">
   <div class="absolute -top-32 -left-32 w-[480px] h-[480px] rounded-full bg-navy-600/25 blur-[130px]" aria-hidden="true"></div>
   <div class="absolute bottom-0 right-0 w-[380px] h-[380px] rounded-full bg-gold-500/10 blur-[110px]" aria-hidden="true"></div>
-  <!-- 3D 플로팅 데코 -->
-  <div class="hidden md:block absolute right-[8%] top-[30%] w-20 h-20 float-3d" style="perspective:600px" aria-hidden="true">
-    <div class="w-full h-full rounded-2xl border-2 border-gold-500/50 bg-gold-500/10 backdrop-blur-sm" style="transform:rotateX(55deg) rotateZ(45deg);box-shadow:0 30px 50px -12px rgba(201,162,39,.3)"></div>
-  </div>
-  <div class="hidden md:block absolute right-[20%] bottom-[18%] w-10 h-10 float-3d" style="animation-delay:-3s" aria-hidden="true">
-    <div class="w-full h-full rounded-full border-2 border-white/20" style="transform:rotateX(65deg);box-shadow:inset 0 0 24px rgba(221,184,94,.35)"></div>
-  </div>
   <div class="max-w-6xl mx-auto relative">
     <p class="reveal text-gold-400 text-xs font-bold tracking-[0.35em] uppercase">${kicker}</p>
     <h1 class="reveal mt-4 text-4xl sm:text-6xl font-extrabold tracking-tightest leading-[1.08]">${title}</h1>

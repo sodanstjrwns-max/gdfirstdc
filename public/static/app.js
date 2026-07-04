@@ -83,9 +83,9 @@ document.addEventListener('DOMContentLoaded', () => {
           const r = card.getBoundingClientRect()
           const px = (e.clientX - r.left) / r.width
           const py = (e.clientY - r.top) / r.height
-          const max = parseFloat(card.dataset.tiltMax || 9)
-          card.style.transform = `perspective(900px) rotateX(${(0.5 - py) * max}deg) rotateY(${(px - 0.5) * max}deg) translateY(-4px) scale(1.015)`
-          glare.style.background = `radial-gradient(circle at ${px * 100}% ${py * 100}%, rgba(255,255,255,.22), transparent 55%)`
+          const max = parseFloat(card.dataset.tiltMax || 10)
+          card.style.transform = `perspective(850px) rotateX(${(0.5 - py) * max}deg) rotateY(${(px - 0.5) * max}deg) translateY(-6px) scale(1.02)`
+          glare.style.background = `radial-gradient(circle at ${px * 100}% ${py * 100}%, rgba(255,255,255,.3), transparent 58%)`
           glare.style.opacity = '1'
         })
       })

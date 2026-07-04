@@ -120,7 +120,7 @@ content.get('/cases/:id', async (c) => {
   ${r.description ? `<div class="prose-clinic mt-4"><h2>치료 이야기</h2>${r.description.split('\n').filter(Boolean).map((p) => `<p>${esc(p)}</p>`).join('')}</div>` : ''}
   <p class="mt-10 text-[11.5px] text-ink/35 bg-white border border-ink/8 rounded-2xl p-5 leading-relaxed"><i class="fas fa-circle-info mr-1.5"></i>본 치료사례는 환자 동의 하에 게시되었으며, 치료 결과는 개인에 따라 다를 수 있습니다.</p>
   ${t ? `
-  <div class="mt-6 rounded-3xl bg-ink text-white p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 relative overflow-hidden">
+  <div class="mt-6 rounded-3xl bg-ink text-white p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 relative overflow-hidden" data-tilt data-tilt-max="5">
     <div class="absolute -bottom-14 -right-10 w-48 h-48 rounded-full bg-gold-500/15 blur-[70px]" aria-hidden="true"></div>
     <div class="relative"><p class="text-lg font-extrabold tracking-tight">${t.name}, 더 알아보시겠어요?</p><p class="mt-1 text-[13px] text-white/45">${t.tagline}</p></div>
     <a href="/treatments/${t.slug}" class="btn-3d relative shrink-0 px-6 py-3.5 rounded-full bg-gold-500 text-ink text-sm font-extrabold hover:bg-gold-400 transition">진료 안내 <i class="fas fa-arrow-right ml-1 text-xs"></i></a>
@@ -189,7 +189,7 @@ content.get('/blog/:slug', async (c) => {
 <article class="max-w-3xl mx-auto px-5 py-12 blog-content">
   ${r.thumbnail_key ? `<img src="${imgUrl(r.thumbnail_key)}" alt="${esc(r.title)}" class="w-full rounded-3xl mb-10">` : ''}
   ${r.content_html}
-  <footer class="mt-12 rounded-3xl bg-ink text-white p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 not-prose relative overflow-hidden">
+  <footer class="mt-12 rounded-3xl bg-ink text-white p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 not-prose relative overflow-hidden" data-tilt data-tilt-max="5">
     <div class="absolute -bottom-14 -right-10 w-48 h-48 rounded-full bg-gold-500/15 blur-[70px]" aria-hidden="true"></div>
     <p class="relative text-lg font-extrabold tracking-tight">궁금한 점이 있으신가요?</p>
     <a href="tel:032-563-2872" class="btn-3d relative shrink-0 px-6 py-3.5 rounded-full bg-gold-500 text-ink text-sm font-extrabold hover:bg-gold-400 transition"><i class="fas fa-phone mr-2"></i>032-563-2872</a>

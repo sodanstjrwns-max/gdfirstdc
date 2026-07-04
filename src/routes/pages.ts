@@ -31,9 +31,6 @@ pages.get('/', (c) => {
   <div class="absolute bottom-[-30%] left-[-15%] w-[50vw] h-[50vw] max-w-[600px] max-h-[600px] rounded-full bg-gold-500/12 blur-[130px]" aria-hidden="true"></div>
   <div class="absolute inset-0 opacity-[0.05]" style="background-image:linear-gradient(rgba(255,255,255,.6) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.6) 1px,transparent 1px);background-size:72px 72px" aria-hidden="true"></div>
 
-  <!-- 3D 치아 씨 (Three.js) -->
-  <div id="hero-3d" class="hidden md:block absolute top-0 right-0 w-[52%] lg:w-[46%] h-full z-[1]" aria-hidden="true"></div>
-
   <div class="relative max-w-6xl mx-auto px-5 w-full pt-40 pb-16 sm:pb-20">
     <div class="flex items-center gap-3 mb-8">
       <span class="flex h-2.5 w-2.5 relative"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-gold-400 opacity-60"></span><span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-gold-400"></span></span>
@@ -91,7 +88,7 @@ pages.get('/', (c) => {
     ${core.map((t, i) => `
     <a href="/treatments/${t.slug}" class="bento reveal-scale group relative block rounded-3xl overflow-hidden ${i === 0 ? 'bg-ink text-white lg:row-span-1' : 'bg-white border border-ink/8'} p-8 min-h-[340px] flex flex-col">
       <span class="idx-num${i === 0 ? '-light' : ''} absolute top-6 right-7 text-7xl font-extrabold select-none" aria-hidden="true">0${i + 1}</span>
-      <span class="float-3d w-13 h-13 p-3.5 rounded-2xl ${i === 0 ? 'bg-gold-500 text-ink' : 'bg-ink text-gold-400'} inline-flex items-center justify-center text-xl w-fit shadow-lg ${i === 0 ? 'shadow-gold-500/40' : 'shadow-ink/30'}"><i class="fas ${t.icon}"></i></span>
+      <span class="w-13 h-13 p-3.5 rounded-2xl ${i === 0 ? 'bg-gold-500 text-ink' : 'bg-ink text-gold-400'} inline-flex items-center justify-center text-xl w-fit"><i class="fas ${t.icon}"></i></span>
       <h3 class="mt-6 text-2xl font-extrabold tracking-tightest">${t.name}</h3>
       <p class="${i === 0 ? 'text-gold-400' : 'text-gold-600'} text-sm font-semibold mt-1">${t.tagline}</p>
       <p class="mt-4 text-sm ${i === 0 ? 'text-white/50' : 'text-ink/50'} leading-relaxed line-clamp-3 flex-1">${esc(t.heroDesc)}</p>
@@ -102,7 +99,7 @@ pages.get('/', (c) => {
   </div>
 
   <div class="mt-4 grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2" data-stagger>
-    ${others.map((t) => `<a href="/treatments/${t.slug}" class="group rounded-2xl bg-white border border-ink/8 py-5 px-3 text-center hover:bg-ink hover:border-ink transition"><i class="fas ${t.icon} text-ink/60 group-hover:text-gold-400 transition"></i><p class="mt-2 text-[13px] font-bold text-ink/80 group-hover:text-white transition">${t.name}</p></a>`).join('')}
+    ${others.map((t) => `<a href="/treatments/${t.slug}" data-tilt data-tilt-max="12" class="group rounded-2xl bg-white border border-ink/8 py-5 px-3 text-center hover:bg-ink hover:border-ink transition"><i class="fas ${t.icon} text-ink/60 group-hover:text-gold-400 transition"></i><p class="mt-2 text-[13px] font-bold text-ink/80 group-hover:text-white transition">${t.name}</p></a>`).join('')}
   </div>
 </section>
 
@@ -206,7 +203,7 @@ ${pageHero('About Us', '광고 대신,<br><span class="font-disp italic text-shi
       <h2 class="reveal mt-3 text-3xl sm:text-5xl font-extrabold tracking-tightest">대표원장 ${DOCTOR.name}</h2>
       <p class="reveal mt-3 text-white/45">보건복지부 인증 통합치의학 전문의 · 대한치과보철학회 우수보철의사</p>
     </header>
-    <blockquote class="reveal-scale rounded-3xl bg-white/[0.06] border border-white/10 p-8 mb-10 max-w-3xl">
+    <blockquote class="reveal-scale rounded-3xl bg-white/[0.06] border border-white/10 p-8 mb-10 max-w-3xl" data-tilt data-tilt-max="6">
       <i class="fas fa-quote-left text-gold-400 text-xl"></i>
       <p class="mt-3 text-white/75 leading-[1.9] text-[15.5px]">${DOCTOR.philosophy}</p>
     </blockquote>
@@ -217,7 +214,7 @@ ${pageHero('About Us', '광고 대신,<br><span class="font-disp italic text-shi
         { title: '학회 활동', icon: 'fa-users', items: DOCTOR.memberships },
         { title: '논문 · 방송', icon: 'fa-file-alt', items: [...DOCTOR.papers, ...DOCTOR.media] },
       ].map((g) => `
-      <article class="rounded-3xl bg-white/[0.04] border border-white/10 p-7">
+      <article class="rounded-3xl bg-white/[0.04] border border-white/10 p-7" data-tilt data-tilt-max="6">
         <h3 class="font-extrabold text-white flex items-center gap-3 mb-5"><span class="w-9 h-9 rounded-xl bg-gold-500/15 text-gold-400 flex items-center justify-center text-sm"><i class="fas ${g.icon}"></i></span>${g.title}</h3>
         <ul class="space-y-2.5 text-[13.5px] text-white/55 leading-relaxed">${g.items.map((x) => `<li class="flex gap-2.5"><span class="text-gold-500/70 mt-1.5 w-1 h-1 rounded-full bg-gold-500 shrink-0"></span>${x}</li>`).join('')}</ul>
       </article>`).join('')}
@@ -283,7 +280,7 @@ pages.get('/treatments/:slug', (c) => {
         <h1 class="reveal mt-3 text-4xl sm:text-6xl font-extrabold tracking-tightest">${t.name}</h1>
         <p class="reveal mt-3 text-gold-400 font-disp italic text-lg">${esc(t.tagline)}</p>
       </div>
-      <span class="reveal-scale hidden sm:flex w-20 h-20 rounded-3xl bg-white/[0.06] border border-white/10 items-center justify-center text-3xl text-gold-400"><i class="fas ${t.icon}"></i></span>
+      <span class="reveal-scale hidden sm:flex w-20 h-20 rounded-3xl bg-white/[0.06] border border-white/10 items-center justify-center text-3xl text-gold-400" data-tilt data-tilt-max="16"><i class="fas ${t.icon}"></i></span>
     </div>
     <p class="reveal mt-7 text-white/50 leading-relaxed max-w-2xl text-[15px]">${esc(t.heroDesc)}</p>
   </div>
@@ -305,7 +302,7 @@ ${faqs.length ? `
   </header>
   <div class="space-y-2.5">
     ${faqs.map((f) => `
-    <div class="faq-item rounded-2xl bg-white border border-ink/8 overflow-hidden hover:border-ink/20">
+    <div class="faq-item rounded-2xl bg-white border border-ink/8 overflow-hidden hover:border-ink/20" data-tilt data-tilt-max="3">
       <button class="w-full flex justify-between items-center gap-4 px-6 py-4.5 py-5 text-left font-bold text-ink text-[14.5px]">
         <span>${esc(f.q)}</span>
         <span class="faq-icon w-7 h-7 rounded-full bg-ink/5 flex items-center justify-center shrink-0 transition-transform"><i class="fas fa-plus text-[11px] text-ink/60"></i></span>
@@ -316,7 +313,7 @@ ${faqs.length ? `
 </section>` : ''}
 
 <section id="treatment-cta" class="max-w-6xl mx-auto px-5 pb-20">
-  <div class="reveal-scale rounded-3xl bg-ink text-white p-9 sm:p-12 relative overflow-hidden">
+  <div class="reveal-scale rounded-3xl bg-ink text-white p-9 sm:p-12 relative overflow-hidden" data-tilt data-tilt-max="4">
     <div class="absolute -bottom-20 -right-16 w-72 h-72 rounded-full bg-gold-500/15 blur-[90px]" aria-hidden="true"></div>
     <div class="relative flex flex-col sm:flex-row sm:items-end justify-between gap-8">
       <div>
@@ -346,7 +343,7 @@ ${pageHero('Stories', '숫자가 아닌,<br><span class="font-disp italic text-s
   ${STORIES.map((s, i) => {
     const t = getTreatment(s.treatment)
     return `
-  <article id="story-${s.id}" class="reveal-scale relative rounded-3xl bg-white border border-ink/8 p-8 sm:p-10 overflow-hidden">
+  <article id="story-${s.id}" class="reveal-scale relative rounded-3xl bg-white border border-ink/8 p-8 sm:p-10 overflow-hidden" data-tilt data-tilt-max="4">
     <span class="idx-num absolute top-6 right-8 text-7xl font-extrabold select-none" aria-hidden="true">${String(i + 1).padStart(2, '0')}</span>
     ${t ? `<a href="/treatments/${t.slug}" class="inline-flex items-center gap-2 text-[11.5px] font-bold bg-ink text-gold-400 rounded-full px-3.5 py-1.5 tracking-wide"><i class="fas ${t.icon}"></i>${t.name}</a>` : ''}
     <h2 class="mt-5 text-2xl sm:text-3xl font-extrabold text-ink tracking-tightest leading-snug max-w-lg">${esc(s.title)}</h2>
@@ -371,12 +368,12 @@ ${pageHero('Location', '검단 한복판,<br><span class="font-disp italic text-
     </div>
   </div>
   <div class="lg:col-span-2 space-y-4" data-stagger>
-    <article class="rounded-3xl bg-white border border-ink/8 p-7">
+    <article class="rounded-3xl bg-white border border-ink/8 p-7" data-tilt data-tilt-max="7">
       <h2 class="font-extrabold text-ink flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-gold-500"></span>주소</h2>
       <p class="mt-3 text-[14px] text-ink/60 leading-relaxed">${CLINIC.address}</p>
       <p class="mt-1.5 text-[12px] text-ink/35">검단신도시 중심상권 · 검단퍼스트프라자 3층 303~305호</p>
     </article>
-    <article class="rounded-3xl bg-white border border-ink/8 p-7">
+    <article class="rounded-3xl bg-white border border-ink/8 p-7" data-tilt data-tilt-max="7">
       <h2 class="font-extrabold text-ink flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-gold-500"></span>주차 · 교통</h2>
       <ul class="mt-3 text-[14px] text-ink/60 space-y-2">
         <li class="flex gap-2.5"><i class="fas fa-square-parking text-ink/30 mt-0.5"></i>건물 내 주차장 이용 가능</li>
@@ -384,7 +381,7 @@ ${pageHero('Location', '검단 한복판,<br><span class="font-disp italic text-
         <li class="flex gap-2.5"><i class="fas fa-bus text-ink/30 mt-0.5"></i>검단신도시 중심상가 정류장 도보권</li>
       </ul>
     </article>
-    <article class="rounded-3xl bg-ink text-white p-7">
+    <article class="rounded-3xl bg-ink text-white p-7" data-tilt data-tilt-max="7">
       <h2 class="font-extrabold flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-gold-400"></span>진료시간</h2>
       <ul class="mt-4 space-y-2.5 text-[13.5px]">
         <li class="flex justify-between"><span class="text-white/40">월·화·수·금</span><span class="font-bold">09:30–18:30</span></li>
@@ -394,7 +391,7 @@ ${pageHero('Location', '검단 한복판,<br><span class="font-disp italic text-
       </ul>
       <p class="mt-4 text-[11px] text-white/30">* 공휴일이 있는 주 목요일은 정상진료합니다.</p>
     </article>
-    <article class="rounded-3xl bg-white border border-ink/8 p-7">
+    <article class="rounded-3xl bg-white border border-ink/8 p-7" data-tilt data-tilt-max="7">
       <h2 class="font-extrabold text-ink flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-gold-500"></span>비급여 진료비</h2>
       <p class="mt-3 text-[13.5px] text-ink/55 leading-relaxed">비급여 수가는 의료법에 따라 원내 게시되어 있으며, 내원 상담 시 정확한 견적을 안내해 드립니다.</p>
     </article>
