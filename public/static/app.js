@@ -65,6 +65,53 @@ document.addEventListener('DOMContentLoaded', () => {
     })
   })
 
+  // ===== 3D 틸트 카드 (마우스 따라 기울기 + 글레어) =====
+  const canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches
+  const noMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  if (canHover && !noMotion) {
+    document.querySelectorAll('.bento, [data-tilt]').forEach((card) => {
+      card.classList.add('tilt-3d')
+      const glare = document.createElement('span')
+      glare.className = 'tilt-glare'
+      glare.setAttribute('aria-hidden', 'true')
+      card.appendChild(glare)
+      let raf = null
+      card.addEventListener('pointermove', (e) => {
+        if (raf) return
+        raf = requestAnimationFrame(() => {
+          raf = null
+          const r = card.getBoundingClientRect()
+          const px = (e.clientX - r.left) / r.width
+          const py = (e.clientY - r.top) / r.height
+          const max = parseFloat(card.dataset.tiltMax || 9)
+          card.style.transform = `perspective(900px) rotateX(${(0.5 - py) * max}deg) rotateY(${(px - 0.5) * max}deg) translateY(-4px) scale(1.015)`
+          glare.style.background = `radial-gradient(circle at ${px * 100}% ${py * 100}%, rgba(255,255,255,.22), transparent 55%)`
+          glare.style.opacity = '1'
+        })
+      })
+      card.addEventListener('pointerleave', () => {
+        card.style.transform = ''
+        glare.style.opacity = '0'
+      })
+    })
+  }
+
+  // ===== 스크롤 패럴랙스 ([data-parallax="0.2"]) =====
+  const pxEls = document.querySelectorAll('[data-parallax]')
+  if (pxEls.length && !noMotion) {
+    const onScroll = () => {
+      const vh = window.innerHeight
+      pxEls.forEach((el) => {
+        const r = el.getBoundingClientRect()
+        if (r.bottom < 0 || r.top > vh) return
+        const speed = parseFloat(el.dataset.parallax || 0.2)
+        el.style.transform = `translateY(${(r.top + r.height / 2 - vh / 2) * -speed}px)`
+      })
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    onScroll()
+  }
+
   // ===== 비포애프터 슬라이더 =====
   document.querySelectorAll('.ba-compare').forEach((wrap) => {
     const range = wrap.querySelector('input[type=range]')

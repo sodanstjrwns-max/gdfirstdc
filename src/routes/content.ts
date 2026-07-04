@@ -123,7 +123,7 @@ content.get('/cases/:id', async (c) => {
   <div class="mt-6 rounded-3xl bg-ink text-white p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 relative overflow-hidden">
     <div class="absolute -bottom-14 -right-10 w-48 h-48 rounded-full bg-gold-500/15 blur-[70px]" aria-hidden="true"></div>
     <div class="relative"><p class="text-lg font-extrabold tracking-tight">${t.name}, 더 알아보시겠어요?</p><p class="mt-1 text-[13px] text-white/45">${t.tagline}</p></div>
-    <a href="/treatments/${t.slug}" class="relative shrink-0 px-6 py-3.5 rounded-full bg-gold-500 text-ink text-sm font-extrabold hover:bg-gold-400 transition">진료 안내 <i class="fas fa-arrow-right ml-1 text-xs"></i></a>
+    <a href="/treatments/${t.slug}" class="btn-3d relative shrink-0 px-6 py-3.5 rounded-full bg-gold-500 text-ink text-sm font-extrabold hover:bg-gold-400 transition">진료 안내 <i class="fas fa-arrow-right ml-1 text-xs"></i></a>
   </div>` : ''}
 </article>`
   return c.html(layout({ title: r.title, desc: `${r.title} — 검단퍼스트치과 치료사례. ${[t?.name, r.age_group, r.gender].filter(Boolean).join(', ')} 치료 전후 기록.`, path: `/cases/${r.id}` }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
@@ -192,7 +192,7 @@ content.get('/blog/:slug', async (c) => {
   <footer class="mt-12 rounded-3xl bg-ink text-white p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 not-prose relative overflow-hidden">
     <div class="absolute -bottom-14 -right-10 w-48 h-48 rounded-full bg-gold-500/15 blur-[70px]" aria-hidden="true"></div>
     <p class="relative text-lg font-extrabold tracking-tight">궁금한 점이 있으신가요?</p>
-    <a href="tel:032-563-2872" class="relative shrink-0 px-6 py-3.5 rounded-full bg-gold-500 text-ink text-sm font-extrabold hover:bg-gold-400 transition"><i class="fas fa-phone mr-2"></i>032-563-2872</a>
+    <a href="tel:032-563-2872" class="btn-3d relative shrink-0 px-6 py-3.5 rounded-full bg-gold-500 text-ink text-sm font-extrabold hover:bg-gold-400 transition"><i class="fas fa-phone mr-2"></i>032-563-2872</a>
   </footer>
 </article>`
   return c.html(layout({ title: r.title, desc: r.excerpt || `${r.title} — 검단퍼스트치과 건강칼럼`, path: `/blog/${r.slug}`, jsonLd: articleLd, ogImage: r.thumbnail_key ? imgUrl(r.thumbnail_key) : undefined }, body, { user: c.get('user'), admin: c.get('isAdmin') }))

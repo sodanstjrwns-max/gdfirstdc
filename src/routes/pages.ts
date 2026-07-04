@@ -31,23 +31,26 @@ pages.get('/', (c) => {
   <div class="absolute bottom-[-30%] left-[-15%] w-[50vw] h-[50vw] max-w-[600px] max-h-[600px] rounded-full bg-gold-500/12 blur-[130px]" aria-hidden="true"></div>
   <div class="absolute inset-0 opacity-[0.05]" style="background-image:linear-gradient(rgba(255,255,255,.6) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.6) 1px,transparent 1px);background-size:72px 72px" aria-hidden="true"></div>
 
+  <!-- 3D 치아 씨 (Three.js) -->
+  <div id="hero-3d" class="hidden md:block absolute top-0 right-0 w-[52%] lg:w-[46%] h-full z-[1]" aria-hidden="true"></div>
+
   <div class="relative max-w-6xl mx-auto px-5 w-full pt-40 pb-16 sm:pb-20">
     <div class="flex items-center gap-3 mb-8">
       <span class="flex h-2.5 w-2.5 relative"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-gold-400 opacity-60"></span><span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-gold-400"></span></span>
       <p class="text-white/50 text-[13px] font-semibold tracking-wide">인천 검단신도시 · 오늘 정상진료</p>
     </div>
-    <h1 class="text-[13vw] sm:text-7xl lg:text-[92px] font-extrabold tracking-tightest leading-[0.98]">
+    <h1 class="relative z-[2] text-[13vw] sm:text-7xl lg:text-[92px] font-extrabold tracking-tightest leading-[0.98]">
       <span class="hero-word"><span style="--d:.05s">치과는</span></span><br>
       <span class="hero-word"><span style="--d:.15s">정직이</span></span>
-      <span class="hero-word"><span style="--d:.25s" class="text-shine font-disp italic">실력</span></span><span class="hero-word"><span style="--d:.3s">입니다.</span></span>
+      <span class="hero-word"><span style="--d:.25s" class="text-shine text-3d font-disp italic">실력</span></span><span class="hero-word"><span style="--d:.3s">입니다.</span></span>
     </h1>
     <div class="mt-10 flex flex-col sm:flex-row sm:items-end justify-between gap-8">
       <p class="text-white/55 max-w-md leading-relaxed text-[15px]">
         상담한 원장이 치료하고, 치료한 원장이 끝까지 관리합니다.<br>
         검단에서 가장 오래된 치과의 1인 대표원장 책임진료 — <strong class="text-white">하지 않아도 될 치료는, 하지 않아도 된다고 말씀드립니다.</strong>
       </p>
-      <div class="flex flex-wrap gap-3 shrink-0">
-        <a href="tel:${CLINIC.phone}" class="group px-8 py-4 rounded-full bg-gold-500 text-ink font-extrabold hover:bg-gold-400 transition flex items-center gap-2">
+      <div class="relative z-[2] flex flex-wrap gap-3 shrink-0">
+        <a href="tel:${CLINIC.phone}" class="btn-3d group px-8 py-4 rounded-full bg-gold-500 text-ink font-extrabold hover:bg-gold-400 transition flex items-center gap-2">
           <i class="fas fa-phone"></i>${CLINIC.phone}
         </a>
         <a href="/treatments" class="px-8 py-4 rounded-full border border-white/25 font-bold hover:bg-white/10 transition">진료 보기 <i class="fas fa-arrow-right ml-1 text-sm"></i></a>
@@ -66,7 +69,7 @@ pages.get('/', (c) => {
       { n: 12, suffix: '+', label: '연수 · 고급과정 수료', sub: 'Harvard · NYU · 서울대' },
       { n: 2, suffix: '개사', label: '임플란트 임상자문위원', sub: '오스템 · 덴티스' },
     ].map((s) => `
-    <div class="bg-cream p-7 sm:p-9">
+    <div class="bg-cream p-7 sm:p-9" data-tilt data-tilt-max="6">
       <p class="stat-num text-5xl sm:text-6xl font-extrabold text-ink" data-count="${s.n}" data-suffix="${s.suffix}">0</p>
       <p class="mt-3 font-bold text-ink text-[15px]">${s.label}</p>
       <p class="mt-0.5 text-[13px] text-ink/40">${s.sub}</p>
@@ -88,7 +91,7 @@ pages.get('/', (c) => {
     ${core.map((t, i) => `
     <a href="/treatments/${t.slug}" class="bento reveal-scale group relative block rounded-3xl overflow-hidden ${i === 0 ? 'bg-ink text-white lg:row-span-1' : 'bg-white border border-ink/8'} p-8 min-h-[340px] flex flex-col">
       <span class="idx-num${i === 0 ? '-light' : ''} absolute top-6 right-7 text-7xl font-extrabold select-none" aria-hidden="true">0${i + 1}</span>
-      <span class="w-13 h-13 p-3.5 rounded-2xl ${i === 0 ? 'bg-gold-500 text-ink' : 'bg-ink text-gold-400'} inline-flex items-center justify-center text-xl w-fit"><i class="fas ${t.icon}"></i></span>
+      <span class="float-3d w-13 h-13 p-3.5 rounded-2xl ${i === 0 ? 'bg-gold-500 text-ink' : 'bg-ink text-gold-400'} inline-flex items-center justify-center text-xl w-fit shadow-lg ${i === 0 ? 'shadow-gold-500/40' : 'shadow-ink/30'}"><i class="fas ${t.icon}"></i></span>
       <h3 class="mt-6 text-2xl font-extrabold tracking-tightest">${t.name}</h3>
       <p class="${i === 0 ? 'text-gold-400' : 'text-gold-600'} text-sm font-semibold mt-1">${t.tagline}</p>
       <p class="mt-4 text-sm ${i === 0 ? 'text-white/50' : 'text-ink/50'} leading-relaxed line-clamp-3 flex-1">${esc(t.heroDesc)}</p>
@@ -118,7 +121,7 @@ pages.get('/', (c) => {
         </div>
       </div>
       <div class="reveal-scale">
-        <div class="rounded-3xl bg-white/[0.06] border border-white/10 backdrop-blur p-8">
+        <div class="rounded-3xl bg-white/[0.06] border border-white/10 backdrop-blur p-8" data-tilt data-tilt-max="7">
           <div class="flex items-center gap-4 pb-6 border-b border-white/10">
             <span class="w-14 h-14 rounded-2xl bg-gold-500 text-ink flex items-center justify-center text-xl font-black">金</span>
             <div>
@@ -156,17 +159,17 @@ pages.get('/', (c) => {
 <!-- ===== 진료시간/CTA ===== -->
 <section id="visit-info" class="max-w-6xl mx-auto px-5 pb-24">
   <div class="grid lg:grid-cols-5 gap-4">
-    <div class="reveal-scale lg:col-span-3 rounded-3xl bg-ink text-white p-8 sm:p-10 relative overflow-hidden">
+    <div class="reveal-scale lg:col-span-3 rounded-3xl bg-ink text-white p-8 sm:p-10 relative overflow-hidden" data-tilt data-tilt-max="5">
       <div class="absolute -bottom-16 -right-16 w-64 h-64 rounded-full bg-gold-500/15 blur-[80px]" aria-hidden="true"></div>
       <p class="text-gold-400 text-xs font-bold tracking-[0.3em] uppercase">Reservation</p>
       <h2 class="mt-3 text-3xl sm:text-4xl font-extrabold tracking-tightest leading-tight">다른 병원 견적,<br>들고 오셔도 됩니다.</h2>
       <p class="mt-4 text-white/50 text-[15px] leading-relaxed max-w-md">"다른 병원도 다녀오세요. 그럼 저희의 가치를 더 느끼실 수 있습니다." — 비교하고 오셔도 정직하게만 말씀드립니다.</p>
       <div class="mt-8 flex flex-wrap gap-3 relative">
-        <a href="tel:${CLINIC.phone}" class="px-7 py-4 rounded-full bg-gold-500 text-ink font-extrabold hover:bg-gold-400 transition"><i class="fas fa-phone mr-2"></i>${CLINIC.phone}</a>
+        <a href="tel:${CLINIC.phone}" class="btn-3d px-7 py-4 rounded-full bg-gold-500 text-ink font-extrabold hover:bg-gold-400 transition"><i class="fas fa-phone mr-2"></i>${CLINIC.phone}</a>
         <a href="/location" class="px-7 py-4 rounded-full border border-white/25 font-bold hover:bg-white/10 transition">오시는 길</a>
       </div>
     </div>
-    <div class="reveal-scale lg:col-span-2 rounded-3xl bg-white border border-ink/8 p-8">
+    <div class="reveal-scale lg:col-span-2 rounded-3xl bg-white border border-ink/8 p-8" data-tilt data-tilt-max="5">
       <h2 class="font-extrabold text-ink flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-gold-500"></span>진료시간</h2>
       <ul class="mt-5 space-y-3 text-[14px]">
         ${CLINIC.hours.map((h) => `<li class="flex justify-between items-baseline gap-3"><span class="text-ink/40 shrink-0">${h.day}</span><span class="tick-line flex-1 h-px self-center"></span><span class="font-bold text-ink text-right">${h.time.replace('AM 09:30 ~ PM 18:30', '09:30–18:30').replace('AM 09:30 ~ PM 14:00 (점심시간 없이 진료)', '09:30–14:00').replace('휴진 (공휴일이 있는 주는 정상진료)', '휴진*').replace('휴진', '휴진')}</span></li>`).join('')}
@@ -321,7 +324,7 @@ ${faqs.length ? `
         <p class="mt-3 text-white/50 text-[14.5px]">다른 병원 견적을 들고 오셔도 좋습니다. 꼭 필요한 치료만 말씀드립니다.</p>
       </div>
       <div class="flex flex-wrap gap-3 shrink-0">
-        <a href="tel:${CLINIC.phone}" class="px-7 py-4 rounded-full bg-gold-500 text-ink font-extrabold hover:bg-gold-400 transition"><i class="fas fa-phone mr-2"></i>${CLINIC.phone}</a>
+        <a href="tel:${CLINIC.phone}" class="btn-3d px-7 py-4 rounded-full bg-gold-500 text-ink font-extrabold hover:bg-gold-400 transition"><i class="fas fa-phone mr-2"></i>${CLINIC.phone}</a>
         <a href="/location" class="px-7 py-4 rounded-full border border-white/25 font-bold hover:bg-white/10 transition">오시는 길</a>
       </div>
     </div>

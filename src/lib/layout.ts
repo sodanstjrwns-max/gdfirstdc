@@ -151,7 +151,7 @@ ${jsonLd.map((j) => `<script type="application/ld+json">${JSON.stringify(j)}</sc
         <p class="mt-3 text-3xl sm:text-5xl font-extrabold text-white tracking-tightest leading-[1.15]">정직한 진료,<br>그거면 됩니다.</p>
       </div>
       <div class="flex flex-wrap gap-3">
-        <a href="tel:${CLINIC.phone}" class="px-7 py-4 rounded-full bg-gold-500 text-ink font-extrabold hover:bg-gold-400 transition"><i class="fas fa-phone mr-2"></i>${CLINIC.phone}</a>
+        <a href="tel:${CLINIC.phone}" class="btn-3d px-7 py-4 rounded-full bg-gold-500 text-ink font-extrabold hover:bg-gold-400 transition"><i class="fas fa-phone mr-2"></i>${CLINIC.phone}</a>
         <a href="/location" class="px-7 py-4 rounded-full border border-white/25 text-white font-bold hover:bg-white/10 transition">오시는 길</a>
       </div>
     </div>
@@ -193,6 +193,7 @@ ${jsonLd.map((j) => `<script type="application/ld+json">${JSON.stringify(j)}</sc
   </div>
 </footer>
 <script src="/static/app.js" defer></script>
+${meta.path === '/' ? '<script type="module" src="/static/hero3d.js"></script>' : ''}
 </body>
 </html>`
 }
@@ -203,6 +204,13 @@ export function pageHero(kicker: string, title: string, sub?: string): string {
 <section class="page-hero relative bg-ink text-white pt-36 pb-16 sm:pt-44 sm:pb-24 px-5 overflow-hidden">
   <div class="absolute -top-32 -left-32 w-[480px] h-[480px] rounded-full bg-navy-600/25 blur-[130px]" aria-hidden="true"></div>
   <div class="absolute bottom-0 right-0 w-[380px] h-[380px] rounded-full bg-gold-500/10 blur-[110px]" aria-hidden="true"></div>
+  <!-- 3D 플로팅 데코 -->
+  <div class="hidden md:block absolute right-[8%] top-[30%] w-20 h-20 float-3d" style="perspective:600px" aria-hidden="true">
+    <div class="w-full h-full rounded-2xl border-2 border-gold-500/50 bg-gold-500/10 backdrop-blur-sm" style="transform:rotateX(55deg) rotateZ(45deg);box-shadow:0 30px 50px -12px rgba(201,162,39,.3)"></div>
+  </div>
+  <div class="hidden md:block absolute right-[20%] bottom-[18%] w-10 h-10 float-3d" style="animation-delay:-3s" aria-hidden="true">
+    <div class="w-full h-full rounded-full border-2 border-white/20" style="transform:rotateX(65deg);box-shadow:inset 0 0 24px rgba(221,184,94,.35)"></div>
+  </div>
   <div class="max-w-6xl mx-auto relative">
     <p class="reveal text-gold-400 text-xs font-bold tracking-[0.35em] uppercase">${kicker}</p>
     <h1 class="reveal mt-4 text-4xl sm:text-6xl font-extrabold tracking-tightest leading-[1.08]">${title}</h1>

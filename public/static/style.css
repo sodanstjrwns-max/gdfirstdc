@@ -41,6 +41,31 @@ html { scroll-behavior: smooth; }
 .bento { transition: transform .5s cubic-bezier(.16,1,.3,1), box-shadow .5s; }
 .bento:hover { transform: translateY(-6px); box-shadow: 0 32px 64px -24px rgba(10,22,40,.25); }
 
+/* ===== 3D 틸트 카드 ===== */
+.tilt-3d { transform-style: preserve-3d; will-change: transform; transition: transform .35s cubic-bezier(.16,1,.3,1), box-shadow .5s; position: relative; }
+.tilt-3d:hover { box-shadow: 0 40px 80px -28px rgba(10,22,40,.35); }
+.tilt-glare { position: absolute; inset: 0; border-radius: inherit; pointer-events: none; opacity: 0; transition: opacity .4s; z-index: 5; mix-blend-mode: overlay; }
+.tilt-3d > *:not(.tilt-glare) { transform: translateZ(24px); }
+
+/* ===== 3D 버튼 ===== */
+.btn-3d { position: relative; transform-style: preserve-3d; transition: transform .25s cubic-bezier(.16,1,.3,1), box-shadow .25s; box-shadow: 0 6px 0 -2px rgba(169,135,31,.9), 0 14px 28px -10px rgba(201,162,39,.5); }
+.btn-3d:hover { transform: translateY(-3px); box-shadow: 0 9px 0 -2px rgba(169,135,31,.9), 0 22px 36px -10px rgba(201,162,39,.6); }
+.btn-3d:active { transform: translateY(2px); box-shadow: 0 3px 0 -2px rgba(169,135,31,.9), 0 8px 16px -8px rgba(201,162,39,.5); }
+.btn-3d-dark { box-shadow: 0 6px 0 -2px rgba(0,0,0,.55), 0 14px 28px -10px rgba(10,22,40,.5); }
+.btn-3d-dark:hover { box-shadow: 0 9px 0 -2px rgba(0,0,0,.55), 0 22px 36px -10px rgba(10,22,40,.6); }
+.btn-3d-dark:active { box-shadow: 0 3px 0 -2px rgba(0,0,0,.55), 0 8px 16px -8px rgba(10,22,40,.5); }
+
+/* ===== 히어로 3D 캔버스 ===== */
+#hero-3d { position: absolute; pointer-events: none; }
+#hero-3d canvas { pointer-events: none; }
+
+/* ===== 3D 텍스트 (레이어드 섀도) ===== */
+.text-3d { text-shadow: 0 1px 0 rgba(201,162,39,.45), 0 2px 0 rgba(201,162,39,.35), 0 3px 0 rgba(201,162,39,.25), 0 5px 0 rgba(201,162,39,.14), 0 12px 24px rgba(0,0,0,.45); }
+
+/* ===== 플로팅 3D 오브젝트 ===== */
+@keyframes float3d { 0%,100% { transform: translateY(0) rotateX(0) rotateY(0); } 33% { transform: translateY(-14px) rotateX(6deg) rotateY(-8deg); } 66% { transform: translateY(-5px) rotateX(-5deg) rotateY(9deg); } }
+.float-3d { animation: float3d 7s ease-in-out infinite; transform-style: preserve-3d; }
+
 /* 티켓형 카드 라인 */
 .tick-line { background-image: linear-gradient(to right, rgba(10,22,40,.25) 45%, transparent 45%); background-size: 10px 1px; background-repeat: repeat-x; }
 
@@ -81,5 +106,7 @@ html { scroll-behavior: smooth; }
   .reveal, .reveal-scale, [data-stagger] > * { opacity: 1 !important; transform: none !important; transition: none !important; }
   .marquee-track { animation: none; }
   .hero-word > span { transform: none; animation: none; }
+  .float-3d { animation: none; }
+  #hero-3d { display: none; }
 }
 @media print { #site-header, #site-footer, #floating-call, .grain-overlay { display: none !important; } }
