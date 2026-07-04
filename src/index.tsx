@@ -67,11 +67,12 @@ app.notFound((c) =>
   c.html(
     layout(
       { title: '페이지를 찾을 수 없습니다', desc: '요청하신 페이지를 찾을 수 없습니다.', path: '/404', noindex: true },
-      `<section class="min-h-[55vh] flex flex-col items-center justify-center text-center px-4">
-        <p class="text-7xl font-extrabold text-navy-100">404</p>
-        <h1 class="mt-3 text-2xl font-extrabold text-navy-900">페이지를 찾을 수 없습니다</h1>
-        <p class="mt-2 text-slate-500">주소가 변경되었거나 삭제된 페이지입니다.</p>
-        <a href="/" class="mt-6 px-6 py-3 rounded-full bg-navy-800 text-white font-bold text-sm hover:bg-navy-700"><i class="fas fa-home mr-1"></i>홈으로</a>
+      `<section class="relative min-h-screen flex flex-col items-center justify-center text-center px-4 pt-32 pb-20 bg-cream overflow-hidden">
+        <div class="absolute -top-24 -right-24 w-[420px] h-[420px] rounded-full bg-gold-400/10 blur-3xl pointer-events-none"></div>
+        <p class="idx-num text-[clamp(7rem,22vw,16rem)] leading-none font-black select-none">404</p>
+        <h1 class="mt-2 text-3xl md:text-4xl font-black text-ink">길을 <span class="font-disp italic font-medium text-shine">잃으셨네요</span></h1>
+        <p class="mt-4 text-ink-mute">주소가 변경되었거나 삭제된 페이지입니다.<br class="md:hidden"> 치아 건강처럼, 다시 제자리로 돌아가면 됩니다.</p>
+        <a href="/" class="group mt-8 inline-flex items-center gap-2 px-8 py-4 rounded-full bg-ink hover:bg-ink-soft text-white font-bold text-sm transition">홈으로 돌아가기 <i class="fas fa-arrow-right text-gold-400 text-xs group-hover:translate-x-1 transition-transform"></i></a>
       </section>`,
       { user: c.get('user'), admin: c.get('isAdmin') }
     ),

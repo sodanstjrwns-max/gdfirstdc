@@ -1,25 +1,85 @@
-/* 검단퍼스트치과 커스텀 스타일 */
+/* ============ 검단퍼스트치과 — 2026 트렌디 리뉴얼 ============ */
 html { scroll-behavior: smooth; }
+::selection { background: #c9a227; color: #0a1628; }
 
-.fade-in { opacity: 0; transform: translateY(18px); transition: opacity .6s ease, transform .6s ease; }
-.fade-in-visible { opacity: 1; transform: translateY(0); }
+/* 필름 그레인 */
+.grain-overlay { position: fixed; inset: 0; z-index: 100; pointer-events: none; opacity: .035; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E"); }
 
-.prose-clinic h2 { font-size: 1.35rem; font-weight: 800; color: #12365a; margin-top: 2.2rem; margin-bottom: .8rem; padding-left: .75rem; border-left: 4px solid #c9a227; }
-.prose-clinic p { line-height: 1.85; margin-bottom: 1rem; color: #334155; }
-.prose-clinic ul { margin: .75rem 0 1.25rem; }
-.prose-clinic li { position: relative; padding-left: 1.4rem; margin-bottom: .5rem; line-height: 1.7; color: #334155; }
-.prose-clinic li::before { content: '\2713'; position: absolute; left: 0; color: #c9a227; font-weight: 700; }
+/* 글래스 네비 */
+.glass-nav { background: rgba(250,247,240,.72); backdrop-filter: blur(20px) saturate(1.6); -webkit-backdrop-filter: blur(20px) saturate(1.6); border: 1px solid rgba(10,22,40,.08); box-shadow: 0 8px 32px rgba(10,22,40,.08); }
+.glass-drop { background: rgba(250,247,240,.92); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid rgba(10,22,40,.08); box-shadow: 0 24px 64px rgba(10,22,40,.16); }
+#site-header.nav-hidden { transform: translateY(-120%); }
 
-.blog-content h2 { font-size: 1.3rem; font-weight: 800; color: #12365a; margin: 1.8rem 0 .7rem; }
-.blog-content h3 { font-size: 1.1rem; font-weight: 700; color: #173f66; margin: 1.4rem 0 .5rem; }
-.blog-content p { line-height: 1.85; margin-bottom: 1rem; }
-.blog-content img { border-radius: .75rem; margin: 1rem 0; max-width: 100%; }
+/* 스크롤 리빌 */
+.reveal { opacity: 0; transform: translateY(28px); transition: opacity .8s cubic-bezier(.16,1,.3,1), transform .8s cubic-bezier(.16,1,.3,1); }
+.reveal.in { opacity: 1; transform: none; }
+.reveal-scale { opacity: 0; transform: scale(.94); transition: opacity .8s cubic-bezier(.16,1,.3,1), transform .8s cubic-bezier(.16,1,.3,1); }
+.reveal-scale.in { opacity: 1; transform: none; }
+[data-stagger] > * { opacity: 0; transform: translateY(24px); transition: opacity .7s cubic-bezier(.16,1,.3,1), transform .7s cubic-bezier(.16,1,.3,1); }
+[data-stagger].in > * { opacity: 1; transform: none; }
+
+/* 모바일 메뉴 링크 등장 */
+#mobile-menu.open .mobile-link { animation: slideUp .5s cubic-bezier(.16,1,.3,1) both; animation-delay: var(--d, 0s); }
+@keyframes slideUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
+
+/* 마퀴 */
+.marquee { display: flex; overflow: hidden; user-select: none; gap: 0; }
+.marquee-track { display: flex; flex-shrink: 0; align-items: center; gap: 0; min-width: 100%; animation: marquee 32s linear infinite; }
+@keyframes marquee { to { transform: translateX(-100%); } }
+
+/* 히어로 거대 타이포 */
+.hero-word { display: inline-block; overflow: hidden; vertical-align: bottom; }
+.hero-word > span { display: inline-block; transform: translateY(110%); animation: heroUp 1s cubic-bezier(.16,1,.3,1) forwards; animation-delay: var(--d, 0s); }
+@keyframes heroUp { to { transform: none; } }
+
+/* 그라데이션 텍스트 */
+.text-shine { background: linear-gradient(100deg, #ecd591 10%, #c9a227 45%, #ecd591 80%); background-size: 200% auto; -webkit-background-clip: text; background-clip: text; color: transparent; animation: shine 5s linear infinite; }
+@keyframes shine { to { background-position: 200% center; } }
+
+/* 벤토 카드 호버 */
+.bento { transition: transform .5s cubic-bezier(.16,1,.3,1), box-shadow .5s; }
+.bento:hover { transform: translateY(-6px); box-shadow: 0 32px 64px -24px rgba(10,22,40,.25); }
+
+/* 티켓형 카드 라인 */
+.tick-line { background-image: linear-gradient(to right, rgba(10,22,40,.25) 45%, transparent 45%); background-size: 10px 1px; background-repeat: repeat-x; }
+
+/* 큰 인덱스 넘버 */
+.idx-num { font-variant-numeric: tabular-nums; -webkit-text-stroke: 1.5px rgba(10,22,40,.18); color: transparent; }
+.idx-num-light { font-variant-numeric: tabular-nums; -webkit-text-stroke: 1.5px rgba(255,255,255,.25); color: transparent; }
+
+/* 본문 프로즈 */
+.prose-clinic h2 { font-size: 1.45rem; font-weight: 800; color: #0a1628; margin-top: 3rem; margin-bottom: 1rem; letter-spacing: -.03em; }
+.prose-clinic h2::before { content: ''; display: block; width: 44px; height: 3px; background: #c9a227; margin-bottom: .9rem; border-radius: 2px; }
+.prose-clinic p { line-height: 1.9; margin-bottom: 1.1rem; color: #3d4a5c; font-size: 15.5px; }
+.prose-clinic ul { margin: 1rem 0 1.5rem; display: grid; gap: .6rem; }
+.prose-clinic li { position: relative; padding: .9rem 1.1rem .9rem 2.6rem; background: #fff; border: 1px solid rgba(10,22,40,.07); border-radius: 14px; line-height: 1.65; color: #3d4a5c; font-size: 14.5px; }
+.prose-clinic li::before { content: '\2713'; position: absolute; left: 1rem; top: .9rem; color: #c9a227; font-weight: 800; }
+
+.blog-content h2 { font-size: 1.4rem; font-weight: 800; color: #0a1628; margin: 2rem 0 .8rem; letter-spacing: -.02em; }
+.blog-content h3 { font-size: 1.15rem; font-weight: 700; color: #12365a; margin: 1.5rem 0 .5rem; }
+.blog-content p { line-height: 1.9; margin-bottom: 1rem; color: #3d4a5c; }
+.blog-content img { border-radius: 1rem; margin: 1.2rem 0; max-width: 100%; }
 .blog-content ul, .blog-content ol { padding-left: 1.4rem; margin-bottom: 1rem; }
-.blog-content li { margin-bottom: .4rem; line-height: 1.7; list-style: disc; }
+.blog-content li { margin-bottom: .45rem; line-height: 1.75; list-style: disc; color: #3d4a5c; }
 
+/* 비포애프터 슬라이더 */
 .ba-compare { position: relative; user-select: none; }
 .ba-compare .ba-after { clip-path: inset(0 0 0 50%); }
-.ba-compare .ba-divider { position: absolute; top: 0; bottom: 0; left: 50%; width: 3px; background: #c9a227; pointer-events: none; }
+.ba-compare .ba-divider { position: absolute; top: 0; bottom: 0; left: 50%; width: 2px; background: #fff; box-shadow: 0 0 0 1px rgba(10,22,40,.2); pointer-events: none; }
+.ba-compare .ba-divider::after { content: '\2194'; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 40px; height: 40px; background: #0a1628; color: #ddb85e; border-radius: 999px; display: flex; align-items: center; justify-content: center; font-size: 15px; }
 .ba-compare input[type=range] { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: ew-resize; }
 
-@media print { #site-header, #site-footer, #floating-call { display: none !important; } }
+/* FAQ */
+.faq-item { transition: background .3s; }
+.faq-answer { overflow: hidden; }
+
+/* 카운트업 숫자 */
+.stat-num { font-variant-numeric: tabular-nums; letter-spacing: -.04em; }
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal, .reveal-scale, [data-stagger] > * { opacity: 1 !important; transform: none !important; transition: none !important; }
+  .marquee-track { animation: none; }
+  .hero-word > span { transform: none; animation: none; }
+}
+@media print { #site-header, #site-footer, #floating-call, .grain-overlay { display: none !important; } }

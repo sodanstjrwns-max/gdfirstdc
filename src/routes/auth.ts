@@ -7,14 +7,22 @@ import type { AppEnv } from '../types'
 
 const auth = new Hono<AppEnv>()
 
-const inputCls = 'w-full rounded-xl border border-slate-300 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-navy-600'
+const inputCls = 'w-full rounded-2xl border border-ink/10 bg-white px-5 py-3.5 text-sm text-ink placeholder:text-ink-mute/50 focus:outline-none focus:border-gold-500 focus:ring-2 focus:ring-gold-400/30 transition'
+const labelCls = 'block text-[11px] font-bold tracking-[0.15em] uppercase text-ink-mute mb-2'
 
-function authShell(title: string, inner: string): string {
+function authShell(kicker: string, title: string, accent: string, inner: string): string {
   return `
-<section class="min-h-[70vh] flex items-center justify-center bg-navy-50 py-14 px-4">
-  <div class="w-full max-w-md rounded-2xl bg-white border border-slate-200 shadow-xl p-8">
-    <h1 class="text-2xl font-extrabold text-navy-900 text-center">${title}</h1>
-    ${inner}
+<section class="relative min-h-screen flex items-center justify-center bg-cream px-4 pt-32 pb-20 overflow-hidden">
+  <div class="absolute -top-32 -right-32 w-[480px] h-[480px] rounded-full bg-gold-400/10 blur-3xl pointer-events-none"></div>
+  <div class="absolute -bottom-40 -left-32 w-[420px] h-[420px] rounded-full bg-ink/5 blur-3xl pointer-events-none"></div>
+  <div class="relative w-full max-w-md">
+    <div class="text-center mb-8 reveal in">
+      <div class="text-[11px] font-bold tracking-[0.3em] uppercase text-gold-600 mb-3">${kicker}</div>
+      <h1 class="text-4xl md:text-5xl font-black text-ink leading-tight">${title} <span class="font-disp italic font-medium text-shine">${accent}</span></h1>
+    </div>
+    <div class="rounded-3xl bg-white border border-ink/10 shadow-[0_24px_60px_-20px_rgba(10,22,40,0.18)] p-8 md:p-10">
+      ${inner}
+    </div>
   </div>
 </section>`
 }
@@ -22,20 +30,22 @@ function authShell(title: string, inner: string): string {
 // ===== 회원가입 =====
 auth.get('/signup', (c) => {
   const err = c.req.query('error')
-  const body = authShell('회원가입', `
-    <p class="text-center text-sm text-slate-500 mt-2">검단퍼스트치과 홈페이지 회원이 되어주세요.</p>
-    ${err ? `<p class="mt-4 rounded-lg bg-red-50 text-red-600 text-sm px-4 py-3"><i class="fas fa-circle-exclamation mr-1"></i>${esc(err)}</p>` : ''}
-    <form id="signup-form" method="POST" action="/signup" class="mt-6 space-y-4">
-      <div><label class="block text-sm font-bold text-slate-700 mb-1" for="name">이름</label><input id="name" name="name" required maxlength="30" class="${inputCls}" placeholder="홍길동"></div>
-      <div><label class="block text-sm font-bold text-slate-700 mb-1" for="email">이메일</label><input id="email" name="email" type="email" required maxlength="100" class="${inputCls}" placeholder="example@email.com"></div>
-      <div><label class="block text-sm font-bold text-slate-700 mb-1" for="phone">휴대전화</label><input id="phone" name="phone" type="tel" required maxlength="20" pattern="[0-9\\-]+" class="${inputCls}" placeholder="010-0000-0000"></div>
-      <div><label class="block text-sm font-bold text-slate-700 mb-1" for="password">비밀번호</label><input id="password" name="password" type="password" required minlength="8" maxlength="72" class="${inputCls}" placeholder="8자 이상"></div>
-      <div><label class="block text-sm font-bold text-slate-700 mb-1" for="password2">비밀번호 확인</label><input id="password2" name="password2" type="password" required minlength="8" maxlength="72" class="${inputCls}"></div>
-      <label class="flex items-start gap-2 text-sm text-slate-600"><input type="checkbox" name="privacy_agree" value="1" required class="mt-1"><span><strong>[필수]</strong> 개인정보 수집·이용에 동의합니다. (이름·이메일·휴대전화 / 회원관리 목적 / 탈퇴 시 파기)</span></label>
-      <label class="flex items-start gap-2 text-sm text-slate-600"><input type="checkbox" name="marketing_agree" value="1" class="mt-1"><span>[선택] 병원 소식·이벤트 안내 수신에 동의합니다.</span></label>
-      <button type="submit" class="w-full py-3.5 rounded-xl bg-navy-800 hover:bg-navy-700 text-white font-bold">가입하기</button>
+  const body = authShell('Join Us', '처음', '뵙겠습니다', `
+    <p class="text-center text-sm text-ink-mute">검단퍼스트치과 홈페이지 회원이 되어주세요.</p>
+    ${err ? `<p class="mt-5 rounded-2xl bg-red-50 border border-red-100 text-red-600 text-sm px-5 py-3.5"><i class="fas fa-circle-exclamation mr-1.5"></i>${esc(err)}</p>` : ''}
+    <form id="signup-form" method="POST" action="/signup" class="mt-7 space-y-5">
+      <div><label class="${labelCls}" for="name">이름 · Name</label><input id="name" name="name" required maxlength="30" class="${inputCls}" placeholder="홍길동"></div>
+      <div><label class="${labelCls}" for="email">이메일 · Email</label><input id="email" name="email" type="email" required maxlength="100" class="${inputCls}" placeholder="example@email.com"></div>
+      <div><label class="${labelCls}" for="phone">휴대전화 · Phone</label><input id="phone" name="phone" type="tel" required maxlength="20" pattern="[0-9\\-]+" class="${inputCls}" placeholder="010-0000-0000"></div>
+      <div><label class="${labelCls}" for="password">비밀번호 · Password</label><input id="password" name="password" type="password" required minlength="8" maxlength="72" class="${inputCls}" placeholder="8자 이상"></div>
+      <div><label class="${labelCls}" for="password2">비밀번호 확인</label><input id="password2" name="password2" type="password" required minlength="8" maxlength="72" class="${inputCls}"></div>
+      <div class="space-y-3 pt-1">
+        <label class="flex items-start gap-3 text-[13px] leading-relaxed text-ink-mute rounded-2xl bg-cream px-4 py-3.5 cursor-pointer"><input type="checkbox" name="privacy_agree" value="1" required class="mt-0.5 accent-gold-500 w-4 h-4"><span><strong class="text-ink">[필수]</strong> 개인정보 수집·이용에 동의합니다. (이름·이메일·휴대전화 / 회원관리 목적 / 탈퇴 시 파기)</span></label>
+        <label class="flex items-start gap-3 text-[13px] leading-relaxed text-ink-mute rounded-2xl bg-cream px-4 py-3.5 cursor-pointer"><input type="checkbox" name="marketing_agree" value="1" class="mt-0.5 accent-gold-500 w-4 h-4"><span>[선택] 병원 소식·이벤트 안내 수신에 동의합니다.</span></label>
+      </div>
+      <button type="submit" class="group w-full py-4 rounded-full bg-ink hover:bg-ink-soft text-white font-bold text-sm tracking-wide transition flex items-center justify-center gap-2">가입하기 <i class="fas fa-arrow-right text-gold-400 text-xs group-hover:translate-x-1 transition-transform"></i></button>
     </form>
-    <p class="mt-5 text-center text-sm text-slate-500">이미 회원이신가요? <a href="/login" class="text-navy-700 font-bold hover:underline">로그인</a></p>`)
+    <p class="mt-6 text-center text-sm text-ink-mute">이미 회원이신가요? <a href="/login" class="text-ink font-bold border-b border-gold-500 hover:text-gold-600 transition">로그인</a></p>`)
   return c.html(layout({ title: '회원가입', desc: '검단퍼스트치과 회원가입', path: '/signup', noindex: true }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
 })
 
@@ -73,15 +83,15 @@ auth.post('/signup', async (c) => {
 auth.get('/login', (c) => {
   const err = c.req.query('error')
   const next = c.req.query('next') || '/'
-  const body = authShell('로그인', `
-    ${err ? `<p class="mt-4 rounded-lg bg-red-50 text-red-600 text-sm px-4 py-3"><i class="fas fa-circle-exclamation mr-1"></i>${esc(err)}</p>` : ''}
-    <form id="login-form" method="POST" action="/login" class="mt-6 space-y-4">
+  const body = authShell('Welcome Back', '다시', '반갑습니다', `
+    ${err ? `<p class="rounded-2xl bg-red-50 border border-red-100 text-red-600 text-sm px-5 py-3.5 mb-5"><i class="fas fa-circle-exclamation mr-1.5"></i>${esc(err)}</p>` : ''}
+    <form id="login-form" method="POST" action="/login" class="space-y-5">
       <input type="hidden" name="next" value="${esc(next)}">
-      <div><label class="block text-sm font-bold text-slate-700 mb-1" for="email">이메일</label><input id="email" name="email" type="email" required class="${inputCls}" placeholder="example@email.com"></div>
-      <div><label class="block text-sm font-bold text-slate-700 mb-1" for="password">비밀번호</label><input id="password" name="password" type="password" required class="${inputCls}"></div>
-      <button type="submit" class="w-full py-3.5 rounded-xl bg-navy-800 hover:bg-navy-700 text-white font-bold">로그인</button>
+      <div><label class="${labelCls}" for="email">이메일 · Email</label><input id="email" name="email" type="email" required class="${inputCls}" placeholder="example@email.com"></div>
+      <div><label class="${labelCls}" for="password">비밀번호 · Password</label><input id="password" name="password" type="password" required class="${inputCls}"></div>
+      <button type="submit" class="group w-full py-4 rounded-full bg-ink hover:bg-ink-soft text-white font-bold text-sm tracking-wide transition flex items-center justify-center gap-2">로그인 <i class="fas fa-arrow-right text-gold-400 text-xs group-hover:translate-x-1 transition-transform"></i></button>
     </form>
-    <p class="mt-5 text-center text-sm text-slate-500">아직 회원이 아니신가요? <a href="/signup" class="text-navy-700 font-bold hover:underline">회원가입</a></p>`)
+    <p class="mt-6 text-center text-sm text-ink-mute">아직 회원이 아니신가요? <a href="/signup" class="text-ink font-bold border-b border-gold-500 hover:text-gold-600 transition">회원가입</a></p>`)
   return c.html(layout({ title: '로그인', desc: '검단퍼스트치과 로그인', path: '/login', noindex: true }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
 })
 

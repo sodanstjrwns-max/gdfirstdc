@@ -18,10 +18,10 @@ const NAV = [
   { href: '/about', label: '병원소개' },
   { href: '/treatments', label: '진료과목', children: TREATMENTS.map((t) => ({ href: `/treatments/${t.slug}`, label: t.name })) },
   { href: '/cases', label: '치료사례' },
-  { href: '/stories', label: '치료스토리' },
-  { href: '/blog', label: '건강칼럼' },
-  { href: '/notice', label: '공지사항' },
-  { href: '/location', label: '내원안내' },
+  { href: '/stories', label: '스토리' },
+  { href: '/blog', label: '칼럼' },
+  { href: '/notice', label: '공지' },
+  { href: '/location', label: '오시는길' },
 ]
 
 export function clinicJsonLd(): object {
@@ -71,95 +71,142 @@ ${meta.noindex ? '<meta name="robots" content="noindex,nofollow">' : '<meta name
 <meta property="og:locale" content="ko_KR">
 ${meta.ogImage ? `<meta property="og:image" content="${meta.ogImage}">` : ''}
 <meta name="twitter:card" content="summary">
+<meta name="theme-color" content="#0a1628">
 <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
 <script src="https://cdn.tailwindcss.com"></script>
-<script>tailwind.config={theme:{extend:{colors:{navy:{50:'#f0f5fa',100:'#dbe7f2',600:'#1d5486',700:'#173f66',800:'#12365a',900:'#0d2843'},gold:{400:'#d4b254',500:'#c9a227',600:'#a9871f'}},fontFamily:{sans:['Pretendard','-apple-system','BlinkMacSystemFont','system-ui','Roboto','sans-serif']}}}}</script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<script>tailwind.config={theme:{extend:{colors:{ink:{DEFAULT:'#0a1628',soft:'#0f1f38',mute:'#16294a'},navy:{50:'#f2f6fb',100:'#dfeaf5',200:'#bcd3ea',400:'#5b8ec2',600:'#1d5486',700:'#173f66',800:'#12365a',900:'#0d2843'},gold:{300:'#ecd591',400:'#ddb85e',500:'#c9a227',600:'#a9871f'},cream:'#faf7f0'},fontFamily:{sans:['Pretendard','-apple-system','system-ui','sans-serif'],disp:['"Nanum Myeongjo"','Pretendard','serif']},letterSpacing:{tightest:'-0.04em'}}}}</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&display=swap">
 <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
 <link href="/static/style.css" rel="stylesheet">
 ${jsonLd.map((j) => `<script type="application/ld+json">${JSON.stringify(j)}</script>`).join('\n')}
 </head>
-<body class="bg-white text-slate-800 antialiased">
-<!-- 상단 유틸바 -->
-<div class="bg-navy-900 text-white text-xs sm:text-sm">
-  <div class="max-w-6xl mx-auto px-4 py-1.5 flex justify-between items-center">
-    <p><i class="fas fa-phone mr-1 text-gold-400"></i> ${CLINIC.phone} <span class="hidden sm:inline text-slate-300 ml-2">평일 09:30~18:30 · 토 09:30~14:00 · 목/일 휴진</span></p>
-    <nav id="util-nav" class="flex gap-3 items-center">
-      ${userName
-        ? `<span class="text-gold-400"><i class="fas fa-user mr-1"></i>${esc(userName)}님</span><a href="/logout" class="hover:text-gold-400">로그아웃</a>`
-        : `<a href="/login" class="hover:text-gold-400">로그인</a><a href="/signup" class="hover:text-gold-400">회원가입</a>`}
-      ${opts?.admin ? '<a href="/admin" class="text-gold-400 font-bold">관리자</a>' : ''}
-    </nav>
-  </div>
-</div>
-<!-- 헤더 -->
-<header id="site-header" class="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-slate-200 shadow-sm">
-  <div class="max-w-6xl mx-auto px-4 flex items-center justify-between h-16">
-    <a href="/" id="logo" class="flex items-center gap-2">
-      <span class="w-9 h-9 rounded-lg bg-navy-800 text-gold-400 flex items-center justify-center"><i class="fas fa-tooth"></i></span>
-      <span class="leading-tight">
-        <strong class="block text-navy-800 text-lg tracking-tight">검단퍼스트치과</strong>
-        <span class="block text-[10px] text-slate-500 -mt-0.5 tracking-widest uppercase">Geomdan First Dental</span>
+<body class="bg-cream text-ink antialiased overflow-x-hidden">
+<div class="grain-overlay" aria-hidden="true"></div>
+
+<!-- 글래스 플로팅 네비 -->
+<header id="site-header" class="fixed top-0 inset-x-0 z-50 px-3 pt-3 transition-transform duration-300">
+  <div class="max-w-6xl mx-auto glass-nav rounded-2xl px-4 sm:px-6 flex items-center justify-between h-16">
+    <a href="/" id="logo" class="flex items-center gap-2.5 shrink-0">
+      <span class="w-9 h-9 rounded-xl bg-ink text-gold-400 flex items-center justify-center text-sm font-black">GF</span>
+      <span class="leading-none">
+        <strong class="block text-ink text-[17px] font-extrabold tracking-tightest">검단퍼스트치과</strong>
+        <span class="block text-[9px] text-ink/40 mt-1 tracking-[0.22em] uppercase font-semibold">First &amp; Honest</span>
       </span>
     </a>
-    <nav id="main-nav" class="hidden lg:flex items-center gap-1">
+    <nav id="main-nav" class="hidden lg:flex items-center gap-0.5">
       ${NAV.map(
         (n) => `<div class="relative group">
-        <a href="${n.href}" class="px-3 py-2 rounded-md text-[15px] font-medium text-slate-700 hover:text-navy-700 hover:bg-navy-50">${n.label}${n.children ? ' <i class="fas fa-chevron-down text-[10px] ml-0.5"></i>' : ''}</a>
-        ${n.children ? `<div class="absolute left-0 top-full pt-1 hidden group-hover:block"><div class="bg-white border border-slate-200 rounded-xl shadow-xl py-2 w-44">${n.children.map((ch) => `<a href="${ch.href}" class="block px-4 py-2 text-sm text-slate-600 hover:bg-navy-50 hover:text-navy-700">${ch.label}</a>`).join('')}</div></div>` : ''}
+        <a href="${n.href}" class="px-3.5 py-2 rounded-full text-[14px] font-semibold text-ink/70 hover:text-ink hover:bg-ink/5 transition">${n.label}</a>
+        ${n.children ? `<div class="absolute left-1/2 -translate-x-1/2 top-full pt-3 hidden group-hover:block"><div class="glass-drop rounded-2xl p-2 w-[420px] grid grid-cols-2 gap-0.5">${n.children.map((ch) => `<a href="${ch.href}" class="px-4 py-2.5 rounded-xl text-[13.5px] font-medium text-ink/70 hover:bg-ink hover:text-white transition">${ch.label}</a>`).join('')}</div></div>` : ''}
       </div>`
       ).join('')}
-      <a href="/location" class="ml-2 px-4 py-2 rounded-full bg-gold-500 hover:bg-gold-600 text-white text-sm font-bold"><i class="fas fa-calendar-check mr-1"></i>진료예약 안내</a>
     </nav>
-    <button id="mobile-menu-btn" class="lg:hidden w-10 h-10 flex items-center justify-center text-navy-800 text-xl" aria-label="메뉴 열기"><i class="fas fa-bars"></i></button>
+    <div class="flex items-center gap-2">
+      <a href="tel:${CLINIC.phone}" class="hidden md:inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-ink text-white text-sm font-bold hover:bg-navy-800 transition group">
+        <span class="w-1.5 h-1.5 rounded-full bg-gold-400 group-hover:animate-ping"></span>${CLINIC.phone}
+      </a>
+      ${opts?.admin ? '<a href="/admin" class="hidden md:inline-flex px-3 py-2.5 rounded-full text-xs font-bold text-gold-600 hover:bg-gold-500/10">ADMIN</a>' : ''}
+      <button id="mobile-menu-btn" class="lg:hidden w-10 h-10 rounded-xl bg-ink/5 flex items-center justify-center text-ink" aria-label="메뉴 열기"><i class="fas fa-bars-staggered"></i></button>
+    </div>
   </div>
-  <nav id="mobile-menu" class="hidden lg:hidden border-t border-slate-100 bg-white max-h-[70vh] overflow-y-auto">
-    ${NAV.map(
-      (n) => `<a href="${n.href}" class="block px-5 py-3 font-medium text-slate-700 border-b border-slate-50">${n.label}</a>
-      ${n.children ? n.children.map((ch) => `<a href="${ch.href}" class="block pl-9 pr-5 py-2 text-sm text-slate-500 border-b border-slate-50">· ${ch.label}</a>`).join('') : ''}`
-    ).join('')}
-  </nav>
 </header>
+
+<!-- 모바일 풀스크린 메뉴 -->
+<div id="mobile-menu" class="fixed inset-0 z-[60] hidden">
+  <div class="absolute inset-0 bg-ink/98 backdrop-blur-xl"></div>
+  <div class="relative h-full flex flex-col p-6 overflow-y-auto">
+    <div class="flex justify-between items-center">
+      <span class="text-white font-extrabold text-lg">검단퍼스트치과</span>
+      <button id="mobile-menu-close" class="w-11 h-11 rounded-full bg-white/10 text-white flex items-center justify-center" aria-label="메뉴 닫기"><i class="fas fa-xmark text-xl"></i></button>
+    </div>
+    <nav class="mt-10 space-y-1">
+      ${NAV.map((n, i) => `<a href="${n.href}" class="mobile-link flex items-baseline gap-3 py-3 border-b border-white/10" style="--d:${i * 0.05}s">
+        <span class="text-gold-400 text-xs font-mono">0${i + 1}</span>
+        <span class="text-white text-3xl font-extrabold tracking-tightest">${n.label}</span>
+      </a>`).join('')}
+    </nav>
+    <div class="mt-8 flex flex-wrap gap-2">
+      ${TREATMENTS.slice(0, 6).map((t) => `<a href="/treatments/${t.slug}" class="px-4 py-2 rounded-full border border-white/20 text-white/70 text-sm">${t.name}</a>`).join('')}
+    </div>
+    <div class="mt-auto pt-10 flex gap-3 text-sm">
+      ${userName ? `<span class="text-gold-400 py-3">${esc(userName)}님</span><a href="/logout" class="text-white/60 py-3">로그아웃</a>` : `<a href="/login" class="text-white/60 py-3">로그인</a><a href="/signup" class="text-white/60 py-3">회원가입</a>`}
+      <a href="tel:${CLINIC.phone}" class="ml-auto px-6 py-3 rounded-full bg-gold-500 text-ink font-bold"><i class="fas fa-phone mr-2"></i>전화하기</a>
+    </div>
+  </div>
+</div>
 
 <main id="main-content">${body}</main>
 
-<!-- 플로팅 전화버튼 -->
-<a href="tel:${CLINIC.phone}" id="floating-call" class="fixed bottom-5 right-5 z-40 w-14 h-14 rounded-full bg-gold-500 text-white flex items-center justify-center text-xl shadow-lg hover:bg-gold-600 lg:hidden" aria-label="전화걸기"><i class="fas fa-phone"></i></a>
+<!-- 플로팅 CTA (모바일) -->
+<a href="tel:${CLINIC.phone}" id="floating-call" class="fixed bottom-5 right-5 z-40 md:hidden w-14 h-14 rounded-2xl bg-ink text-gold-400 flex items-center justify-center text-xl shadow-2xl shadow-ink/40" aria-label="전화걸기"><i class="fas fa-phone"></i></a>
 
 <!-- 푸터 -->
-<footer id="site-footer" class="bg-navy-900 text-slate-300 mt-20">
-  <div class="max-w-6xl mx-auto px-4 py-12 grid gap-8 md:grid-cols-3">
-    <section>
-      <h3 class="text-white font-bold text-lg mb-3"><i class="fas fa-tooth text-gold-400 mr-2"></i>${CLINIC.name}</h3>
-      <p class="text-sm leading-relaxed">${CLINIC.address}<br>대표자: ${CLINIC.doctor} · 사업자등록번호: ${CLINIC.bizNo}<br>TEL: ${CLINIC.phone} · EMAIL: ${CLINIC.email}</p>
-      <div class="mt-3 flex gap-2">
-        <a href="${CLINIC.blog}" target="_blank" rel="noopener" class="w-9 h-9 rounded-full bg-navy-700 hover:bg-gold-500 flex items-center justify-center" aria-label="네이버 블로그"><i class="fas fa-blog"></i></a>
-        <a href="tel:${CLINIC.phone}" class="w-9 h-9 rounded-full bg-navy-700 hover:bg-gold-500 flex items-center justify-center" aria-label="전화"><i class="fas fa-phone"></i></a>
+<footer id="site-footer" class="relative bg-ink text-white/60 mt-24 overflow-hidden">
+  <div class="absolute -top-20 -right-20 w-96 h-96 rounded-full bg-navy-600/20 blur-[120px]" aria-hidden="true"></div>
+  <div class="max-w-6xl mx-auto px-5 pt-16 pb-8 relative">
+    <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-8 pb-12 border-b border-white/10">
+      <div>
+        <p class="text-gold-400 text-xs font-bold tracking-[0.3em] uppercase">Geomdan First Dental Clinic</p>
+        <p class="mt-3 text-3xl sm:text-5xl font-extrabold text-white tracking-tightest leading-[1.15]">정직한 진료,<br>그거면 됩니다.</p>
       </div>
-    </section>
-    <section>
-      <h3 class="text-white font-bold mb-3">진료시간</h3>
-      <ul class="text-sm space-y-1">
-        ${CLINIC.hours.map((h) => `<li class="flex justify-between max-w-xs"><span class="text-slate-400">${h.day}</span><span>${h.time}</span></li>`).join('')}
-        <li class="flex justify-between max-w-xs"><span class="text-slate-400">점심시간</span><span>${CLINIC.lunch}</span></li>
-      </ul>
-    </section>
-    <section>
-      <h3 class="text-white font-bold mb-3">바로가기</h3>
-      <ul class="text-sm grid grid-cols-2 gap-1">
-        ${NAV.map((n) => `<li><a href="${n.href}" class="hover:text-gold-400">${n.label}</a></li>`).join('')}
-        <li><a href="/treatments/implant" class="hover:text-gold-400">임플란트</a></li>
-        <li><a href="/treatments/luminate" class="hover:text-gold-400">루미네이트</a></li>
-        <li><a href="/treatments/tmj" class="hover:text-gold-400">턱관절치료</a></li>
-      </ul>
-    </section>
-  </div>
-  <div class="border-t border-navy-700 py-4 text-center text-xs text-slate-500">
-    <p>본 홈페이지의 치료 전후 사진 및 치료 사례는 환자 동의 하에 게시되었으며, 개인에 따라 결과가 다를 수 있습니다.</p>
-    <p class="mt-1">© ${new Date().getFullYear()} ${CLINIC.name}. All rights reserved.</p>
+      <div class="flex flex-wrap gap-3">
+        <a href="tel:${CLINIC.phone}" class="px-7 py-4 rounded-full bg-gold-500 text-ink font-extrabold hover:bg-gold-400 transition"><i class="fas fa-phone mr-2"></i>${CLINIC.phone}</a>
+        <a href="/location" class="px-7 py-4 rounded-full border border-white/25 text-white font-bold hover:bg-white/10 transition">오시는 길</a>
+      </div>
+    </div>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 py-10 text-[13.5px]">
+      <section>
+        <h3 class="text-white/90 font-bold mb-3 text-xs tracking-[0.2em] uppercase">Clinic</h3>
+        <p class="leading-relaxed">${CLINIC.address}</p>
+        <p class="mt-2">대표자 ${CLINIC.doctor} · 사업자 ${CLINIC.bizNo}<br>${CLINIC.email}</p>
+      </section>
+      <section>
+        <h3 class="text-white/90 font-bold mb-3 text-xs tracking-[0.2em] uppercase">Hours</h3>
+        <ul class="space-y-1">
+          <li class="flex justify-between max-w-[240px]"><span class="text-white/35">월·화·수·금</span><span>09:30–18:30</span></li>
+          <li class="flex justify-between max-w-[240px]"><span class="text-white/35">토요일</span><span>09:30–14:00</span></li>
+          <li class="flex justify-between max-w-[240px]"><span class="text-white/35">목·일·공휴일</span><span>휴진</span></li>
+          <li class="flex justify-between max-w-[240px]"><span class="text-white/35">점심</span><span>13:00–14:00</span></li>
+        </ul>
+        <p class="mt-2 text-[11px] text-white/30">* 공휴일이 있는 주 목요일은 정상진료</p>
+      </section>
+      <section>
+        <h3 class="text-white/90 font-bold mb-3 text-xs tracking-[0.2em] uppercase">Treatments</h3>
+        <ul class="grid grid-cols-2 gap-1">
+          ${TREATMENTS.map((t) => `<li><a href="/treatments/${t.slug}" class="hover:text-gold-400 transition">${t.name}</a></li>`).join('')}
+        </ul>
+      </section>
+      <section>
+        <h3 class="text-white/90 font-bold mb-3 text-xs tracking-[0.2em] uppercase">Menu</h3>
+        <ul class="space-y-1">
+          ${NAV.map((n) => `<li><a href="${n.href}" class="hover:text-gold-400 transition">${n.label}</a></li>`).join('')}
+          <li><a href="${CLINIC.blog}" target="_blank" rel="noopener" class="hover:text-gold-400 transition">네이버 블로그 <i class="fas fa-arrow-up-right-from-square text-[9px]"></i></a></li>
+          ${userName ? `<li class="text-gold-400/80">${esc(userName)}님 · <a href="/logout" class="hover:text-gold-400">로그아웃</a></li>` : `<li><a href="/login" class="hover:text-gold-400 transition">로그인</a> · <a href="/signup" class="hover:text-gold-400 transition">회원가입</a></li>`}
+        </ul>
+      </section>
+    </div>
+    <div class="pt-6 border-t border-white/10 flex flex-col sm:flex-row justify-between gap-2 text-[11px] text-white/30">
+      <p>치료 전후 사진은 환자 동의 하에 게시되었으며, 결과는 개인에 따라 다를 수 있습니다.</p>
+      <p>© ${new Date().getFullYear()} ${CLINIC.name}</p>
+    </div>
   </div>
 </footer>
 <script src="/static/app.js" defer></script>
 </body>
 </html>`
+}
+
+// ===== 공통 서브페이지 히어로 =====
+export function pageHero(kicker: string, title: string, sub?: string): string {
+  return `
+<section class="page-hero relative bg-ink text-white pt-36 pb-16 sm:pt-44 sm:pb-24 px-5 overflow-hidden">
+  <div class="absolute -top-32 -left-32 w-[480px] h-[480px] rounded-full bg-navy-600/25 blur-[130px]" aria-hidden="true"></div>
+  <div class="absolute bottom-0 right-0 w-[380px] h-[380px] rounded-full bg-gold-500/10 blur-[110px]" aria-hidden="true"></div>
+  <div class="max-w-6xl mx-auto relative">
+    <p class="reveal text-gold-400 text-xs font-bold tracking-[0.35em] uppercase">${kicker}</p>
+    <h1 class="reveal mt-4 text-4xl sm:text-6xl font-extrabold tracking-tightest leading-[1.08]">${title}</h1>
+    ${sub ? `<p class="reveal mt-6 text-white/50 max-w-xl text-[15px] sm:text-base leading-relaxed">${sub}</p>` : ''}
+  </div>
+</section>`
 }
