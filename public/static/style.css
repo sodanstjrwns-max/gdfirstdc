@@ -1,1 +1,25 @@
-h1 { font-family: Arial, Helvetica, sans-serif; }
+/* 검단퍼스트치과 커스텀 스타일 */
+html { scroll-behavior: smooth; }
+
+.fade-in { opacity: 0; transform: translateY(18px); transition: opacity .6s ease, transform .6s ease; }
+.fade-in-visible { opacity: 1; transform: translateY(0); }
+
+.prose-clinic h2 { font-size: 1.35rem; font-weight: 800; color: #12365a; margin-top: 2.2rem; margin-bottom: .8rem; padding-left: .75rem; border-left: 4px solid #c9a227; }
+.prose-clinic p { line-height: 1.85; margin-bottom: 1rem; color: #334155; }
+.prose-clinic ul { margin: .75rem 0 1.25rem; }
+.prose-clinic li { position: relative; padding-left: 1.4rem; margin-bottom: .5rem; line-height: 1.7; color: #334155; }
+.prose-clinic li::before { content: '\2713'; position: absolute; left: 0; color: #c9a227; font-weight: 700; }
+
+.blog-content h2 { font-size: 1.3rem; font-weight: 800; color: #12365a; margin: 1.8rem 0 .7rem; }
+.blog-content h3 { font-size: 1.1rem; font-weight: 700; color: #173f66; margin: 1.4rem 0 .5rem; }
+.blog-content p { line-height: 1.85; margin-bottom: 1rem; }
+.blog-content img { border-radius: .75rem; margin: 1rem 0; max-width: 100%; }
+.blog-content ul, .blog-content ol { padding-left: 1.4rem; margin-bottom: 1rem; }
+.blog-content li { margin-bottom: .4rem; line-height: 1.7; list-style: disc; }
+
+.ba-compare { position: relative; user-select: none; }
+.ba-compare .ba-after { clip-path: inset(0 0 0 50%); }
+.ba-compare .ba-divider { position: absolute; top: 0; bottom: 0; left: 50%; width: 3px; background: #c9a227; pointer-events: none; }
+.ba-compare input[type=range] { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: ew-resize; }
+
+@media print { #site-header, #site-footer, #floating-call { display: none !important; } }
