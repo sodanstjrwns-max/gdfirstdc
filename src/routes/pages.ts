@@ -27,6 +27,7 @@ pages.get('/', (c) => {
   const body = `
 <!-- ===== 히어로 ===== -->
 <section id="hero-section" class="relative min-h-[92vh] bg-ink text-white flex flex-col justify-end overflow-hidden">
+  <div class="aurora" aria-hidden="true"></div>
   <div class="absolute top-[-20%] right-[-10%] w-[60vw] h-[60vw] max-w-[760px] max-h-[760px] rounded-full bg-navy-600/30 blur-[140px]" aria-hidden="true"></div>
   <div class="absolute bottom-[-30%] left-[-15%] w-[50vw] h-[50vw] max-w-[600px] max-h-[600px] rounded-full bg-gold-500/12 blur-[130px]" aria-hidden="true"></div>
   <div class="absolute inset-0 opacity-[0.05]" style="background-image:linear-gradient(rgba(255,255,255,.6) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.6) 1px,transparent 1px);background-size:72px 72px" aria-hidden="true"></div>
@@ -37,9 +38,9 @@ pages.get('/', (c) => {
       <p class="text-white/50 text-[13px] font-semibold tracking-wide">인천 검단신도시 · 오늘 정상진료</p>
     </div>
     <h1 class="relative z-[2] text-[13vw] sm:text-7xl lg:text-[92px] font-extrabold tracking-tightest leading-[0.98]">
-      <span class="hero-word"><span style="--d:.05s">치과는</span></span><br>
-      <span class="hero-word"><span style="--d:.15s">정직이</span></span>
-      <span class="hero-word"><span style="--d:.25s" class="text-shine text-3d font-disp italic">실력</span></span><span class="hero-word"><span style="--d:.3s">입니다.</span></span>
+      <span data-split data-split-delay="0.55">치과는</span><br>
+      <span data-split data-split-delay="0.72">정직이</span>
+      <span class="hero-word"><span style="--d:.95s" class="text-shine text-3d font-disp italic">실력</span></span><span data-split data-split-delay="1.05">입니다.</span>
     </h1>
     <div class="mt-10 flex flex-col sm:flex-row sm:items-end justify-between gap-8">
       <p class="text-white/55 max-w-md leading-relaxed text-[15px]">
@@ -54,6 +55,7 @@ pages.get('/', (c) => {
       </div>
     </div>
   </div>
+  <div class="absolute right-6 bottom-24 hidden lg:block z-[2]" aria-hidden="true"><div class="scroll-hint"><span>Scroll</span><span class="scroll-line"></span></div></div>
   ${marquee()}
 </section>
 

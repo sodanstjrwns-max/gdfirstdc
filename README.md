@@ -54,4 +54,5 @@ pm2 start ecosystem.config.cjs                           # 개발 서버 (port 3
 
 ## Tech Stack
 - Hono + TypeScript + Cloudflare Pages (D1 + R2) + TailwindCSS(CDN) + FontAwesome
-- **Last Updated**: 2026-07-04
+- **디자인 v3 (2026 SUPER)**: View Transitions 페이지 전환, 커튼 인트로, 스크롤 프로그레스 바, 커스텀 lerp 커서, 오로라 히어로, per-char 스플릿 타이포, 스포트라이트 보더 카드, 마그네틱 버튼, 3D 틸트+글레어
+- **Last Updated**: 2026-07-05

@@ -83,6 +83,10 @@ ${jsonLd.map((j) => `<script type="application/ld+json">${JSON.stringify(j)}</sc
 </head>
 <body class="bg-cream text-ink antialiased overflow-x-hidden">
 <div class="grain-overlay" aria-hidden="true"></div>
+${meta.path === '/' ? '<div id="curtain" aria-hidden="true"><span class="curtain-logo">Geomdan First</span></div>' : ''}
+<div id="scroll-progress" aria-hidden="true"></div>
+<div id="cursor-ring" aria-hidden="true"></div>
+<div id="cursor-dot" aria-hidden="true"></div>
 
 <!-- 글래스 플로팅 네비 -->
 <header id="site-header" class="fixed top-0 inset-x-0 z-50 px-3 pt-3 transition-transform duration-300">
