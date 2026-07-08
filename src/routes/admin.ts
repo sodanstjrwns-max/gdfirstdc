@@ -50,7 +50,7 @@ admin.get('/admin/login', (c) => {
     <h1 class="text-xl font-extrabold text-navy-900 text-center"><i class="fas fa-lock text-gold-600 mr-2"></i>관리자 로그인</h1>
     ${err ? `<p class="mt-4 rounded-lg bg-red-50 text-red-600 text-sm px-4 py-3">${esc(err)}</p>` : ''}
     <form method="POST" action="/admin/login" class="mt-6 space-y-4">
-      <input name="password" type="password" required class="${inputCls}" placeholder="관리자 비밀번호">
+      <input name="password" type="password" required autocomplete="current-password" class="${inputCls}" placeholder="관리자 비밀번호">
       <button type="submit" class="w-full py-3 rounded-xl bg-navy-800 hover:bg-navy-700 text-white font-bold">로그인</button>
     </form>
   </div>
@@ -72,7 +72,7 @@ admin.post('/admin/login', async (c) => {
     return c.redirect(`/admin/login?error=${encodeURIComponent('비밀번호가 올바르지 않습니다.')}`)
   }
   const token = await createSession({ admin: true, name: '관리자' }, c.env.SESSION_SECRET)
-  setCookie(c, 'admin_session', token, { httpOnly: true, sameSite: 'Lax', path: '/', maxAge: 60 * 60 * 8 })
+  setCookie(c, 'admin_session', token, { httpOnly: true, sameSite: 'Lax', path: '/', maxAge: 60 * 60 * 8, secure: new URL(c.req.url).protocol === 'https:' })
   return c.redirect('/admin')
 })
 

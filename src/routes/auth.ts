@@ -37,8 +37,8 @@ auth.get('/signup', (c) => {
       <div><label class="${labelCls}" for="name">이름 · Name</label><input id="name" name="name" required maxlength="30" class="${inputCls}" placeholder="홍길동"></div>
       <div><label class="${labelCls}" for="email">이메일 · Email</label><input id="email" name="email" type="email" required maxlength="100" class="${inputCls}" placeholder="example@email.com"></div>
       <div><label class="${labelCls}" for="phone">휴대전화 · Phone</label><input id="phone" name="phone" type="tel" required maxlength="20" pattern="[0-9\\-]+" class="${inputCls}" placeholder="010-0000-0000"></div>
-      <div><label class="${labelCls}" for="password">비밀번호 · Password</label><input id="password" name="password" type="password" required minlength="8" maxlength="72" class="${inputCls}" placeholder="8자 이상"></div>
-      <div><label class="${labelCls}" for="password2">비밀번호 확인</label><input id="password2" name="password2" type="password" required minlength="8" maxlength="72" class="${inputCls}"></div>
+      <div><label class="${labelCls}" for="password">비밀번호 · Password</label><input id="password" name="password" type="password" required minlength="8" maxlength="72" autocomplete="new-password" class="${inputCls}" placeholder="8자 이상"></div>
+      <div><label class="${labelCls}" for="password2">비밀번호 확인</label><input id="password2" name="password2" type="password" required minlength="8" maxlength="72" autocomplete="new-password" class="${inputCls}"></div>
       <div class="space-y-3 pt-1">
         <label class="flex items-start gap-3 text-[13px] leading-relaxed text-ink-mute rounded-2xl bg-cream px-4 py-3.5 cursor-pointer"><input type="checkbox" name="privacy_agree" value="1" required class="mt-0.5 accent-gold-500 w-4 h-4"><span><strong class="text-ink">[필수]</strong> 개인정보 수집·이용에 동의합니다. (이름·이메일·휴대전화 / 회원관리 목적 / 탈퇴 시 파기)</span></label>
         <label class="flex items-start gap-3 text-[13px] leading-relaxed text-ink-mute rounded-2xl bg-cream px-4 py-3.5 cursor-pointer"><input type="checkbox" name="marketing_agree" value="1" class="mt-0.5 accent-gold-500 w-4 h-4"><span>[선택] 병원 소식·이벤트 안내 수신에 동의합니다.</span></label>
@@ -75,7 +75,7 @@ auth.post('/signup', async (c) => {
   ).bind(email, phone, name, hash, 1, marketing ? 1 : 0).run()
 
   const token = await createSession({ uid: res.meta.last_row_id, name }, c.env.SESSION_SECRET)
-  setCookie(c, 'session', token, { httpOnly: true, sameSite: 'Lax', path: '/', maxAge: 60 * 60 * 24 * 7 })
+  setCookie(c, 'session', token, { httpOnly: true, sameSite: 'Lax', path: '/', maxAge: 60 * 60 * 24 * 7, secure: new URL(c.req.url).protocol === 'https:' })
   return c.redirect('/?welcome=1')
 })
 
@@ -88,7 +88,7 @@ auth.get('/login', (c) => {
     <form id="login-form" method="POST" action="/login" class="space-y-5">
       <input type="hidden" name="next" value="${esc(next)}">
       <div><label class="${labelCls}" for="email">이메일 · Email</label><input id="email" name="email" type="email" required class="${inputCls}" placeholder="example@email.com"></div>
-      <div><label class="${labelCls}" for="password">비밀번호 · Password</label><input id="password" name="password" type="password" required class="${inputCls}"></div>
+      <div><label class="${labelCls}" for="password">비밀번호 · Password</label><input id="password" name="password" type="password" required autocomplete="current-password" class="${inputCls}"></div>
       <button type="submit" class="group w-full py-4 rounded-full bg-ink hover:bg-ink-soft text-white font-bold text-sm tracking-wide transition flex items-center justify-center gap-2">로그인 <i class="fas fa-arrow-right text-gold-400 text-xs group-hover:translate-x-1 transition-transform"></i></button>
     </form>
     <p class="mt-6 text-center text-sm text-ink-mute">아직 회원이 아니신가요? <a href="/signup" class="text-ink font-bold border-b border-gold-500 hover:text-gold-600 transition">회원가입</a></p>`)
@@ -107,7 +107,7 @@ auth.post('/login', async (c) => {
     return c.redirect(`/login?error=${encodeURIComponent('이메일 또는 비밀번호가 올바르지 않습니다.')}&next=${encodeURIComponent(safeNext)}`)
   }
   const token = await createSession({ uid: user.id, name: user.name }, c.env.SESSION_SECRET)
-  setCookie(c, 'session', token, { httpOnly: true, sameSite: 'Lax', path: '/', maxAge: 60 * 60 * 24 * 7 })
+  setCookie(c, 'session', token, { httpOnly: true, sameSite: 'Lax', path: '/', maxAge: 60 * 60 * 24 * 7, secure: new URL(c.req.url).protocol === 'https:' })
   return c.redirect(safeNext)
 })
 

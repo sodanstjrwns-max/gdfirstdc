@@ -1,5 +1,6 @@
 import { Hono } from 'hono'
 import { getCookie } from 'hono/cookie'
+import { secureHeaders } from 'hono/secure-headers'
 import { layout } from './lib/layout'
 import { readSession } from './lib/auth'
 import { CLINIC } from './data/clinic'
@@ -12,6 +13,16 @@ import admin from './routes/admin'
 import type { AppEnv } from './types'
 
 const app = new Hono<AppEnv>()
+
+// ===== 보안 헤더 =====
+app.use('*', secureHeaders({
+  xFrameOptions: 'SAMEORIGIN',
+  xContentTypeOptions: 'nosniff',
+  referrerPolicy: 'strict-origin-when-cross-origin',
+  strictTransportSecurity: 'max-age=31536000; includeSubDomains',
+  crossOriginEmbedderPolicy: false, // CDN 리소스(tailwind, fontawesome 등) 허용
+  contentSecurityPolicy: undefined, // CDN 스크립트/인라인 스타일 사용으로 CSP 미적용
+}))
 
 // ===== 세션 미들웨어 =====
 app.use('*', async (c, next) => {
