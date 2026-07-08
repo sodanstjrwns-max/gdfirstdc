@@ -122,7 +122,7 @@ app.notFound((c) =>
       `<section class="relative min-h-screen flex flex-col items-center justify-center text-center px-4 pt-32 pb-20 bg-cream overflow-hidden">
         <div class="absolute -top-24 -right-24 w-[420px] h-[420px] rounded-full bg-gold-400/10 blur-3xl pointer-events-none"></div>
         <p class="idx-num text-[clamp(7rem,22vw,16rem)] leading-none font-black select-none">404</p>
-        <h1 class="mt-2 text-3xl md:text-4xl font-black text-ink">길을 <span class="font-disp italic font-medium text-shine">잃으셨네요</span></h1>
+        <h1 class="mt-2 text-3xl md:text-4xl font-black text-ink">길을 <span class="font-disp font-medium text-shine">잃으셨네요</span></h1>
         <p class="mt-4 text-ink-mute">주소가 변경되었거나 삭제된 페이지입니다.<br class="md:hidden"> 치아 건강처럼, 다시 제자리로 돌아가면 됩니다.</p>
         <a href="/" class="group mt-8 inline-flex items-center gap-2 px-8 py-4 rounded-full bg-ink hover:bg-ink-soft text-white font-bold text-sm transition">홈으로 돌아가기 <i class="fas fa-arrow-right text-gold-400 text-xs group-hover:translate-x-1 transition-transform"></i></a>
       </section>`,

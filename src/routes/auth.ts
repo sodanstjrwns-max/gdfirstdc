@@ -18,7 +18,7 @@ function authShell(kicker: string, title: string, accent: string, inner: string)
   <div class="relative w-full max-w-md">
     <div class="text-center mb-8 reveal in">
       <div class="text-[11px] font-bold tracking-[0.3em] uppercase text-gold-600 mb-3">${kicker}</div>
-      <h1 class="text-4xl md:text-5xl font-black text-ink leading-tight">${title} <span class="font-disp italic font-medium text-shine">${accent}</span></h1>
+      <h1 class="text-4xl md:text-5xl font-black text-ink leading-tight">${title} <span class="font-disp font-medium text-shine">${accent}</span></h1>
     </div>
     <div class="rounded-3xl bg-white border border-ink/10 shadow-[0_24px_60px_-20px_rgba(10,22,40,0.18)] p-8 md:p-10" data-tilt data-tilt-max="4">
       ${inner}

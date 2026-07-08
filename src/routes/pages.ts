@@ -42,7 +42,7 @@ pages.get('/', (c) => {
     <h1 class="relative z-[2] text-[13vw] sm:text-7xl lg:text-[92px] font-extrabold tracking-tightest leading-[0.98]">
       <span data-split data-split-delay="0.55">치과는</span><br>
       <span data-split data-split-delay="0.72">정직이</span>
-      <span class="hero-word"><span style="--d:.95s" class="text-shine text-3d font-disp italic">실력</span></span><span data-split data-split-delay="1.05">입니다.</span>
+      <span class="hero-word"><span style="--d:.95s" class="text-shine text-3d font-disp">실력</span></span><span data-split data-split-delay="1.05">입니다.</span>
     </h1>
     <div class="mt-10 flex flex-col sm:flex-row sm:items-end justify-between gap-8">
       <p class="text-white/55 max-w-md leading-relaxed text-[15px]">
@@ -114,7 +114,7 @@ pages.get('/', (c) => {
     <div class="grid lg:grid-cols-[1.1fr_1fr] gap-12 items-center">
       <div>
         <p class="reveal text-gold-400 text-xs font-bold tracking-[0.3em] uppercase">The Doctor</p>
-        <h2 class="reveal mt-3 text-3xl sm:text-5xl font-extrabold tracking-tightest leading-[1.15]">아버지의 임플란트를<br><span class="font-disp italic text-shine">아들이 직접</span> 심었습니다.</h2>
+        <h2 class="reveal mt-3 text-3xl sm:text-5xl font-extrabold tracking-tightest leading-[1.15]">아버지의 임플란트를<br><span class="font-disp text-shine">아들이 직접</span> 심었습니다.</h2>
         <p class="reveal mt-6 text-white/50 leading-relaxed max-w-lg text-[15px]">상악 9개, 하악 7개. 판교에서 검단까지 오가며 견딘 5개월 — "아빠가 고기를 너무 잘 드셔서 좋댄다"는 어머니의 전화 한 통. 김희수 원장은 모든 환자의 임플란트를 이 마음으로 심습니다.</p>
         <div class="reveal mt-8 flex flex-wrap gap-3">
           <a href="/about" class="px-7 py-3.5 rounded-full bg-white text-ink font-extrabold text-sm hover:bg-gold-400 transition">원장 이력 보기</a>
@@ -232,7 +232,7 @@ pages.get('/', (c) => {
 // ============ 병원소개 ============
 pages.get('/about', (c) => {
   const body = `
-${pageHero('About Us', '광고 대신,<br><span class="font-disp italic text-shine">진단</span>으로 승부합니다.', '검단신도시에서 가장 오래된 치과, 그 이름의 무게를 압니다.')}
+${pageHero('About Us', '광고 대신,<br><span class="font-disp text-shine">진단</span>으로 승부합니다.', '검단신도시에서 가장 오래된 치과, 그 이름의 무게를 압니다.')}
 
 <section id="philosophy" class="max-w-6xl mx-auto px-5 py-20">
   <div class="grid lg:grid-cols-2 gap-10 items-start">
@@ -324,7 +324,7 @@ ${pageHero('About Us', '광고 대신,<br><span class="font-disp italic text-shi
 // ============ 진료과목 목록 ============
 pages.get('/treatments', (c) => {
   const body = `
-${pageHero('Treatments', '필요한 치료만,<br><span class="font-disp italic text-shine">정직하게.</span>', '10개 진료과목 — 무엇이 필요한지, 무엇이 필요 없는지부터 말씀드립니다.')}
+${pageHero('Treatments', '필요한 치료만,<br><span class="font-disp text-shine">정직하게.</span>', '10개 진료과목 — 무엇이 필요한지, 무엇이 필요 없는지부터 말씀드립니다.')}
 <section class="max-w-6xl mx-auto px-5 py-16">
   <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4" data-stagger>
     ${TREATMENTS.map((t, i) => `
@@ -365,7 +365,7 @@ pages.get('/treatments/:slug', (c) => {
       <div>
         <p class="reveal text-gold-400 text-xs font-bold tracking-[0.35em] uppercase">${esc(t.nameEn)}</p>
         <h1 class="reveal mt-3 text-4xl sm:text-6xl font-extrabold tracking-tightest">${t.name}</h1>
-        <p class="reveal mt-3 text-gold-400 font-disp italic text-lg">${esc(t.tagline)}</p>
+        <p class="reveal mt-3 text-gold-400 font-disp text-lg">${esc(t.tagline)}</p>
       </div>
       <span class="reveal-scale hidden sm:flex w-20 h-20 rounded-3xl bg-white/[0.06] border border-white/10 items-center justify-center text-3xl text-gold-400" data-tilt data-tilt-max="16"><i class="fas ${t.icon}"></i></span>
     </div>
@@ -425,7 +425,7 @@ ${faqs.length ? `
 // ============ 치료스토리 ============
 pages.get('/stories', (c) => {
   const body = `
-${pageHero('Stories', '숫자가 아닌,<br><span class="font-disp italic text-shine">사람</span>의 이야기.', '치료 케이스 뒤에는 언제나 한 사람의 삶이 있습니다.')}
+${pageHero('Stories', '숫자가 아닌,<br><span class="font-disp text-shine">사람</span>의 이야기.', '치료 케이스 뒤에는 언제나 한 사람의 삶이 있습니다.')}
 <section class="max-w-3xl mx-auto px-5 py-16 space-y-8">
   ${STORIES.map((s, i) => {
     const t = getTreatment(s.treatment)
@@ -444,7 +444,7 @@ ${pageHero('Stories', '숫자가 아닌,<br><span class="font-disp italic text-s
 // ============ 내원안내 / 오시는길 ============
 pages.get('/location', (c) => {
   const body = `
-${pageHero('Location', '검단 한복판,<br><span class="font-disp italic text-shine">3층</span>입니다.', CLINIC.addressShort)}
+${pageHero('Location', '검단 한복판,<br><span class="font-disp text-shine">3층</span>입니다.', CLINIC.addressShort)}
 <section class="max-w-6xl mx-auto px-5 py-14 grid lg:grid-cols-5 gap-4">
   <div id="map-section" class="reveal-scale lg:col-span-3 rounded-3xl overflow-hidden border border-ink/8 bg-white">
     <iframe title="검단퍼스트치과 지도" src="https://www.openstreetmap.org/export/embed.html?bbox=${CLINIC.lng - 0.008}%2C${CLINIC.lat - 0.005}%2C${CLINIC.lng + 0.008}%2C${CLINIC.lat + 0.005}&layer=mapnik&marker=${CLINIC.lat}%2C${CLINIC.lng}" class="w-full h-[380px] border-0"></iframe>
@@ -492,7 +492,7 @@ pages.get('/faq', (c) => {
   const groups = TREATMENTS.filter((t) => FAQS[t.slug]?.length)
   const allFaqs = groups.flatMap((t) => FAQS[t.slug])
   const body = `
-${pageHero('FAQ', '궁금한 건,<br><span class="font-disp italic text-shine">전부</span> 물어보세요.', `진료과목별로 환자분들이 가장 많이 묻는 질문 ${allFaqs.length}개를 모두 정리했습니다. 여기 없는 질문은 ${CLINIC.phone}로 편하게 전화 주세요.`)}
+${pageHero('FAQ', '궁금한 건,<br><span class="font-disp text-shine">전부</span> 물어보세요.', `진료과목별로 환자분들이 가장 많이 묻는 질문 ${allFaqs.length}개를 모두 정리했습니다. 여기 없는 질문은 ${CLINIC.phone}로 편하게 전화 주세요.`)}
 <section id="faq-page" class="max-w-4xl mx-auto px-5 py-14">
   <nav class="flex flex-wrap gap-2 mb-10" aria-label="FAQ 카테고리">
     ${groups.map((t) => `<a href="#faq-${t.slug}" class="px-4 py-2 rounded-full bg-white border border-ink/10 text-[13px] font-semibold text-ink/60 hover:bg-ink hover:text-white transition"><i class="fas ${t.icon} mr-1.5 text-gold-600"></i>${t.name}</a>`).join('')}
@@ -559,7 +559,7 @@ function regionFaqs(r: SeoRegion): { q: string; a: string }[] {
 // /region 인덱스 허브
 pages.get('/region', (c) => {
   const body = `
-${pageHero('Service Areas', '어디에 사시든,<br><span class="font-disp italic text-shine">가까운 정직함.</span>', `검단퍼스트치과는 인천 서구·계양·김포 생활권 전역에서 찾아주시는 치과입니다. 우리 동네에서 오시는 길을 확인해 보세요.`)}
+${pageHero('Service Areas', '어디에 사시든,<br><span class="font-disp text-shine">가까운 정직함.</span>', `검단퍼스트치과는 인천 서구·계양·김포 생활권 전역에서 찾아주시는 치과입니다. 우리 동네에서 오시는 길을 확인해 보세요.`)}
 <section id="region-index" class="max-w-6xl mx-auto px-5 py-16">
   ${REGION_GROUPS.map((g) => {
     const list = SEO_REGIONS.filter((r) => r.group === g)
@@ -613,7 +613,7 @@ pages.get('/region/:slug', (c) => {
   const others = SEO_REGIONS.filter((x) => x.slug !== r.slug && x.group !== r.group).slice(0, 6)
 
   const body = `
-${pageHero('Local', `${r.name} 치과,<br><span class="font-disp italic text-shine">가까운 정직함.</span>`, `${esc(r.desc)} <span class="text-gold-400 font-bold">— ${r.name}에서 ${r.distance}</span>`)}
+${pageHero('Local', `${r.name} 치과,<br><span class="font-disp text-shine">가까운 정직함.</span>`, `${esc(r.desc)} <span class="text-gold-400 font-bold">— ${r.name}에서 ${r.distance}</span>`)}
 
 <!-- 요약 답변 박스 (AEO: 답변엔진 인용 최적화) -->
 <section id="region-answer" class="max-w-6xl mx-auto px-5 -mt-8 relative z-10">

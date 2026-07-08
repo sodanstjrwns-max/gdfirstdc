@@ -64,7 +64,7 @@ content.get('/cases', async (c) => {
   const pages = Math.max(1, Math.ceil(total / per))
 
   const body = `
-${pageHero('Before &amp; After', '결과로<br><span class="font-disp italic text-shine">증명</span>합니다.', '환자 동의 하에 게시된 실제 치료 전후 기록입니다.')}
+${pageHero('Before &amp; After', '결과로<br><span class="font-disp text-shine">증명</span>합니다.', '환자 동의 하에 게시된 실제 치료 전후 기록입니다.')}
 <section class="max-w-6xl mx-auto px-5 py-12">
   <nav id="case-filter" class="flex gap-2 overflow-x-auto pb-3 -mx-5 px-5 mb-8 scrollbar-none">
     <a href="/cases" class="shrink-0 px-5 py-2.5 rounded-full text-[13.5px] font-bold transition ${!cat ? 'bg-ink text-white' : 'bg-white border border-ink/10 text-ink/60 hover:border-ink'}">전체</a>
@@ -138,7 +138,7 @@ content.get('/blog', async (c) => {
   const pages = Math.max(1, Math.ceil(total / per))
 
   const body = `
-${pageHero('Column', '원장이 직접 쓰는<br><span class="font-disp italic text-shine">치아 이야기.</span>', '광고 글이 아닌, 진짜 도움이 되는 정보만 씁니다.')}
+${pageHero('Column', '원장이 직접 쓰는<br><span class="font-disp text-shine">치아 이야기.</span>', '광고 글이 아닌, 진짜 도움이 되는 정보만 씁니다.')}
 <section class="max-w-4xl mx-auto px-5 py-12">
   ${rows.length === 0 ? `<div class="text-center py-24"><span class="inline-flex w-16 h-16 rounded-3xl bg-ink/5 items-center justify-center text-2xl text-ink/25 mb-4"><i class="fas fa-pen-nib"></i></span><p class="text-ink/40 font-medium">등록된 칼럼이 없습니다.</p></div>` : `
   <div class="space-y-3" data-stagger>
@@ -207,7 +207,7 @@ content.get('/notice', async (c) => {
   const pages = Math.max(1, Math.ceil(total / per))
 
   const body = `
-${pageHero('Notice', '병원 소식을<br><span class="font-disp italic text-shine">전해드립니다.</span>')}
+${pageHero('Notice', '병원 소식을<br><span class="font-disp text-shine">전해드립니다.</span>')}
 <section class="max-w-3xl mx-auto px-5 py-12">
   ${rows.length === 0 ? `<div class="text-center py-24"><span class="inline-flex w-16 h-16 rounded-3xl bg-ink/5 items-center justify-center text-2xl text-ink/25 mb-4"><i class="fas fa-bullhorn"></i></span><p class="text-ink/40 font-medium">등록된 공지사항이 없습니다.</p></div>` : `
   <ul class="space-y-2.5" data-stagger>
