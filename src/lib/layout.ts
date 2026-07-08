@@ -1,5 +1,6 @@
 import { CLINIC } from '../data/clinic'
 import { TREATMENTS } from '../data/treatments'
+import { SEO_REGIONS } from '../data/regions'
 
 export interface PageMeta {
   title: string
@@ -20,7 +21,7 @@ const NAV = [
   { href: '/cases', label: '치료사례' },
   { href: '/stories', label: '스토리' },
   { href: '/blog', label: '칼럼' },
-  { href: '/notice', label: '공지' },
+  { href: '/faq', label: 'FAQ' },
   { href: '/location', label: '오시는길' },
 ]
 
@@ -28,30 +29,70 @@ export function clinicJsonLd(): object {
   return {
     '@context': 'https://schema.org',
     '@type': 'Dentist',
+    '@id': `${CLINIC.siteUrl}/#clinic`,
     name: CLINIC.name,
-    alternateName: CLINIC.nameEn,
+    alternateName: [CLINIC.shortName, CLINIC.nameEn],
+    description: '인천 검단신도시에서 가장 오래된 치과. 보건복지부 인증 통합치의학 전문의 1인 대표원장 책임진료. 임플란트·무삭제 라미네이트·턱관절(체외충격파) 특화 진료, 과잉진료 없는 정직한 치과입니다.',
     telephone: CLINIC.phone,
     email: CLINIC.email,
     url: CLINIC.siteUrl,
+    image: `${CLINIC.siteUrl}/static/images/doctor_lobby.webp`,
+    priceRange: '₩₩',
+    currenciesAccepted: 'KRW',
+    paymentAccepted: '현금, 카드, 계좌이체',
     address: {
       '@type': 'PostalAddress',
       streetAddress: '이음5로 80, 검단퍼스트프라자 3층 303~305호',
-      addressLocality: '인천광역시 서구',
+      addressLocality: '서구',
+      addressRegion: '인천광역시',
       addressCountry: 'KR',
     },
     geo: { '@type': 'GeoCoordinates', latitude: CLINIC.lat, longitude: CLINIC.lng },
+    hasMap: 'https://map.naver.com/p/search/' + encodeURIComponent('검단퍼스트치과'),
+    sameAs: [CLINIC.blog, 'https://map.naver.com/p/search/' + encodeURIComponent('검단퍼스트치과')],
     openingHoursSpecification: [
       { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Friday'], opens: '09:30', closes: '18:30' },
       { '@type': 'OpeningHoursSpecification', dayOfWeek: 'Saturday', opens: '09:30', closes: '14:00' },
     ],
-    founder: { '@type': 'Person', name: CLINIC.doctor, jobTitle: '대표원장' },
+    areaServed: [
+      '검단신도시', '인천 서구', '원당동', '당하동', '마전동', '불로동', '대곡동', '금곡동', '오류동', '왕길동', '아라동', '검암동',
+      '청라국제도시', '루원시티', '가정동', '석남동', '인천 계양구', '계산동', '작전동',
+      '김포시', '풍무동', '사우동', '장기동', '구래동', '운양동', '통진읍', '한강신도시',
+    ].map((n) => ({ '@type': 'Place', name: n })),
+    availableService: [
+      { '@type': 'MedicalProcedure', name: '임플란트', description: '뼈이식·상악동거상술 포함 전악 임플란트, 만 65세 이상 건강보험 적용(평생 2개)' },
+      { '@type': 'MedicalProcedure', name: '무삭제 라미네이트(루미네이트)', description: '뉴욕대 Non-prep Veneer 과정 수료 원장의 페이스스캐너 기반 미소 디자인' },
+      { '@type': 'MedicalProcedure', name: '턱관절(TMJ) 치료', description: '스플린트·체외충격파(ESWT)·PDRN 인대강화주사, 턱 탈구 응급 정복' },
+      { '@type': 'MedicalProcedure', name: '미세현미경 신경치료', description: 'ZEISS 독일 미세현미경 25배율 정밀 근관치료, 플라즈마 엔도 살균' },
+      { '@type': 'MedicalProcedure', name: '충치·잇몸치료', description: 'Q-ray 형광검사 기반 조기 진단, 미온수 스케일링' },
+      { '@type': 'MedicalProcedure', name: '사랑니 발치', description: '디지털 CT 정밀진단 후 안전한 매복 사랑니 발치' },
+    ],
+    founder: {
+      '@type': 'Person',
+      name: CLINIC.doctor,
+      jobTitle: '대표원장',
+      description: '보건복지부 인증 통합치의학 전문의, 대한치과보철학회 인증 우수보철의사, Harvard Implant CE 수료, 오스템·덴티스 임상자문연구위원',
+      alumniOf: '경희대학교 치의학전문대학원',
+    },
+    medicalSpecialty: 'Dentistry',
+    isAcceptingNewPatients: true,
+  }
+}
+
+// Speakable 스키마 (음성·AI 답변엔진이 읽을 핵심 요약 영역)
+export function speakableJsonLd(path: string): object {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    '@id': `${CLINIC.siteUrl}${path}`,
+    speakable: { '@type': 'SpeakableSpecification', cssSelector: ['.speakable-summary', 'h1'] },
   }
 }
 
 export function layout(meta: PageMeta, body: string, opts?: { user?: { name: string } | null; admin?: boolean }): string {
   const fullTitle = meta.path === '/' ? `${CLINIC.name} — ${CLINIC.mission}` : `${meta.title} | ${CLINIC.shortName}`
   const url = CLINIC.siteUrl + meta.path
-  const jsonLd = [clinicJsonLd(), ...(meta.jsonLd || [])]
+  const jsonLd = [clinicJsonLd(), speakableJsonLd(meta.path), ...(meta.jsonLd || [])]
   const userName = opts?.user?.name
 
   return `<!DOCTYPE html>
@@ -72,6 +113,11 @@ ${meta.noindex ? '<meta name="robots" content="noindex,nofollow">' : '<meta name
 ${meta.ogImage ? `<meta property="og:image" content="${meta.ogImage}">` : ''}
 <meta name="twitter:card" content="summary">
 <meta name="theme-color" content="#0a1628">
+<meta name="geo.region" content="KR-28">
+<meta name="geo.placename" content="인천광역시 서구 검단신도시">
+<meta name="geo.position" content="${CLINIC.lat};${CLINIC.lng}">
+<meta name="ICBM" content="${CLINIC.lat}, ${CLINIC.lng}">
+<meta name="author" content="${CLINIC.name} ${CLINIC.doctor} 원장">
 <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
 <script src="https://cdn.tailwindcss.com"></script>
 <script>tailwind.config={theme:{extend:{colors:{ink:{DEFAULT:'#0a1628',soft:'#0f1f38',mute:'#16294a'},navy:{50:'#f2f6fb',100:'#dfeaf5',200:'#bcd3ea',400:'#5b8ec2',600:'#1d5486',700:'#173f66',800:'#12365a',900:'#0d2843'},gold:{300:'#ecd591',400:'#ddb85e',500:'#c9a227',600:'#a9871f'},cream:'#faf7f0'},fontFamily:{sans:['Pretendard','-apple-system','system-ui','sans-serif'],disp:['"Nanum Myeongjo"','Pretendard','serif']},letterSpacing:{tightest:'-0.04em'}}}}</script>
@@ -185,12 +231,20 @@ ${meta.path === '/' ? '<div id="curtain" aria-hidden="true"><span class="curtain
         <h3 class="text-white/90 font-bold mb-3 text-xs tracking-[0.2em] uppercase">Menu</h3>
         <ul class="space-y-1">
           ${NAV.map((n) => `<li><a href="${n.href}" class="hover:text-gold-400 transition">${n.label}</a></li>`).join('')}
+          <li><a href="/notice" class="hover:text-gold-400 transition">공지사항</a></li>
+          <li><a href="/region" class="hover:text-gold-400 transition">진료 지역 안내</a></li>
           <li><a href="${CLINIC.blog}" target="_blank" rel="noopener" class="hover:text-gold-400 transition">네이버 블로그 <i class="fas fa-arrow-up-right-from-square text-[9px]"></i></a></li>
           ${userName ? `<li class="text-gold-400/80">${esc(userName)}님 · <a href="/logout" class="hover:text-gold-400">로그아웃</a></li>` : `<li><a href="/login" class="hover:text-gold-400 transition">로그인</a> · <a href="/signup" class="hover:text-gold-400 transition">회원가입</a></li>`}
         </ul>
       </section>
     </div>
-    <div class="pt-6 border-t border-white/10 flex flex-col sm:flex-row justify-between gap-2 text-[11px] text-white/30">
+    <nav class="py-5 border-t border-white/10" aria-label="진료 지역 바로가기">
+      <p class="text-[10px] font-bold tracking-[0.25em] uppercase text-white/25 mb-2.5">Service Areas — 검단·서구·김포·청라·계양 치과</p>
+      <p class="text-[11.5px] leading-[2.1] text-white/30">
+        ${SEO_REGIONS.map((r) => `<a href="/region/${r.slug}" class="hover:text-gold-400 transition whitespace-nowrap">${r.name} 치과</a>`).join(' <span class="text-white/10">·</span> ')}
+      </p>
+    </nav>
+    <div class="pt-5 border-t border-white/10 flex flex-col sm:flex-row justify-between gap-2 text-[11px] text-white/30">
       <p>치료 전후 사진은 환자 동의 하에 게시되었으며, 결과는 개인에 따라 다를 수 있습니다.</p>
       <p>© ${new Date().getFullYear()} ${CLINIC.name}</p>
     </div>

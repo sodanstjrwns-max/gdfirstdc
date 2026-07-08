@@ -4,7 +4,7 @@ import { layout, esc, pageHero } from '../lib/layout'
 import { CLINIC, DOCTOR, EQUIPMENT, STORIES } from '../data/clinic'
 import { TREATMENTS, getTreatment } from '../data/treatments'
 import { FAQS } from '../data/faqs'
-import { SEO_REGIONS } from '../data/regions'
+import { SEO_REGIONS, REGION_GROUPS, type SeoRegion } from '../data/regions'
 import type { AppEnv } from '../types'
 
 const pages = new Hono<AppEnv>()
@@ -487,28 +487,222 @@ ${pageHero('Location', '검단 한복판,<br><span class="font-disp italic text-
   return c.html(layout({ title: '내원안내 · 오시는길', desc: `검단퍼스트치과 오시는 길 — ${CLINIC.address}. 진료시간 평일 09:30~18:30, 토요일 09:30~14:00. ${CLINIC.phone}`, path: '/location' }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
 })
 
-// ============ 지역 SEO 페이지 ============
+// ============ 통합 FAQ 페이지 (AEO 핵심) ============
+pages.get('/faq', (c) => {
+  const groups = TREATMENTS.filter((t) => FAQS[t.slug]?.length)
+  const allFaqs = groups.flatMap((t) => FAQS[t.slug])
+  const body = `
+${pageHero('FAQ', '궁금한 건,<br><span class="font-disp italic text-shine">전부</span> 물어보세요.', `진료과목별로 환자분들이 가장 많이 묻는 질문 ${allFaqs.length}개를 모두 정리했습니다. 여기 없는 질문은 ${CLINIC.phone}로 편하게 전화 주세요.`)}
+<section id="faq-page" class="max-w-4xl mx-auto px-5 py-14">
+  <nav class="flex flex-wrap gap-2 mb-10" aria-label="FAQ 카테고리">
+    ${groups.map((t) => `<a href="#faq-${t.slug}" class="px-4 py-2 rounded-full bg-white border border-ink/10 text-[13px] font-semibold text-ink/60 hover:bg-ink hover:text-white transition"><i class="fas ${t.icon} mr-1.5 text-gold-600"></i>${t.name}</a>`).join('')}
+  </nav>
+  ${groups.map((t) => `
+  <div id="faq-${t.slug}" class="mb-12 scroll-mt-28">
+    <div class="flex items-center justify-between gap-4">
+      <h2 class="text-xl sm:text-2xl font-extrabold text-ink tracking-tight flex items-center gap-2.5"><span class="w-9 h-9 rounded-xl bg-ink text-gold-400 flex items-center justify-center text-sm"><i class="fas ${t.icon}"></i></span>${t.name} FAQ</h2>
+      <a href="/treatments/${t.slug}" class="shrink-0 text-[12.5px] font-bold text-gold-600 hover:underline underline-offset-4">진료 안내 <i class="fas fa-arrow-right text-[10px]"></i></a>
+    </div>
+    <div class="mt-5 space-y-2.5">
+      ${FAQS[t.slug].map((f) => `<details class="group rounded-2xl bg-white border border-ink/8 overflow-hidden">
+        <summary class="flex items-center justify-between gap-4 px-5 py-4 cursor-pointer list-none">
+          <h3 class="text-[14.5px] font-bold text-ink leading-snug">${esc(f.q)}</h3>
+          <span class="shrink-0 w-7 h-7 rounded-full bg-ink/5 flex items-center justify-center text-ink/40 group-open:rotate-45 transition-transform"><i class="fas fa-plus text-[10px]"></i></span>
+        </summary>
+        <p class="px-5 pb-5 text-[13.5px] text-ink/60 leading-[1.9]">${esc(f.a)}</p>
+      </details>`).join('')}
+    </div>
+  </div>`).join('')}
+  <div class="rounded-3xl bg-ink text-white p-9 relative overflow-hidden">
+    <div class="absolute -bottom-16 -right-12 w-64 h-64 rounded-full bg-gold-500/15 blur-[80px]" aria-hidden="true"></div>
+    <div class="relative flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+      <div>
+        <h2 class="text-2xl font-extrabold tracking-tightest">원하는 답을 못 찾으셨나요?</h2>
+        <p class="mt-2 text-white/50 text-[14px]">전화 주시면 원장이 직접 확인하고 답변드립니다.</p>
+      </div>
+      <a href="tel:${CLINIC.phone}" class="btn-3d shrink-0 px-7 py-4 rounded-full bg-gold-500 text-ink font-extrabold hover:bg-gold-400 transition"><i class="fas fa-phone mr-2"></i>${CLINIC.phone}</a>
+    </div>
+  </div>
+</section>`
+  const jsonLd = [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: allFaqs.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: '홈', item: CLINIC.siteUrl },
+        { '@type': 'ListItem', position: 2, name: '자주 묻는 질문', item: `${CLINIC.siteUrl}/faq` },
+      ],
+    },
+  ]
+  return c.html(layout({ title: `자주 묻는 질문 ${allFaqs.length}가지 — 임플란트·라미네이트·턱관절`, desc: `검단퍼스트치과 FAQ — 임플란트, 무삭제 라미네이트, 턱관절, 신경치료, 충치, 잇몸, 사랑니 등 진료과목별 자주 묻는 질문 ${allFaqs.length}개와 원장이 직접 정리한 답변. 검단·김포·청라 치과 궁금증 해결.`, path: '/faq', jsonLd }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
+})
+
+// ============ 지역 SEO/AEO 페이지 ============
+
+// 지역별 FAQ 생성 (AEO — 답변엔진이 바로 인용할 수 있는 Q&A)
+function regionFaqs(r: SeoRegion): { q: string; a: string }[] {
+  return [
+    { q: `${r.name}에서 검단퍼스트치과까지 어떻게 가나요?`, a: `${r.transport} 주소는 ${CLINIC.address}입니다.` },
+    { q: `${r.name}에서 임플란트 잘하는 치과를 찾고 있어요.`, a: `검단퍼스트치과는 ${r.name}에서 ${r.distance} 거리로, 보건복지부 인증 통합치의학 전문의이자 우수보철의사인 김희수 원장이 상담·수술·보철·사후관리를 모두 직접 진행합니다. Harvard Implant CE 과정을 수료했으며 오스템·덴티스 임상자문연구위원으로 활동 중입니다. 만 65세 이상은 임플란트 건강보험(평생 2개, 본인부담 30%) 적용이 가능합니다.` },
+    { q: `${r.name} 근처에 턱관절(TMJ) 치료하는 치과가 있나요?`, a: `검단퍼스트치과는 ${r.name}에서 ${r.distance} 거리에 있는 턱관절 특화 치과입니다. 아시안 턱관절 포럼 Advanced Course를 수료한 원장이 정확한 진단 후 스플린트·체외충격파(ESWT)·PDRN 인대강화주사 등으로 치료하며, 턱 탈구 응급 정복도 가능합니다.` },
+    { q: `${r.name}에서 라미네이트 상담을 받고 싶은데 치아 삭제가 걱정돼요.`, a: `검단퍼스트치과의 루미네이트(LumiNate)는 미국 뉴욕대 무삭제 라미네이트 과정을 수료한 원장이 무삭제(Non-prep)·최소삭제 원칙으로 진행합니다. RAY 페이스 스캐너로 얼굴 전체와 조화로운 미소를 디자인하며, 무삭제 가능 여부를 정밀진단 후 정직하게 알려드립니다. ${r.name}에서 ${r.distance}면 도착합니다.` },
+    { q: `진료시간과 예약 방법이 궁금해요.`, a: `평일(월·화·수·금) 09:30~18:30, 토요일 09:30~14:00(점심시간 없이 진료), 목·일·공휴일은 휴진입니다(공휴일이 있는 주 목요일은 정상진료). 예약 및 상담은 ${CLINIC.phone}로 전화 주시면 됩니다.` },
+    { q: `다른 치과에서 받은 견적을 들고 가서 상담만 받아도 되나요?`, a: `물론입니다. 검단퍼스트치과는 "다른 병원도 다녀오세요. 그럼 저희의 가치를 더 느끼실 수 있습니다"를 원칙으로, 과잉진료 없이 꼭 필요한 치료만 말씀드립니다. 세컨드 오피니언 상담을 환영합니다.` },
+  ]
+}
+
+// /region 인덱스 허브
+pages.get('/region', (c) => {
+  const body = `
+${pageHero('Service Areas', '어디에 사시든,<br><span class="font-disp italic text-shine">가까운 정직함.</span>', `검단퍼스트치과는 인천 서구·계양·김포 생활권 전역에서 찾아주시는 치과입니다. 우리 동네에서 오시는 길을 확인해 보세요.`)}
+<section id="region-index" class="max-w-6xl mx-auto px-5 py-16">
+  ${REGION_GROUPS.map((g) => {
+    const list = SEO_REGIONS.filter((r) => r.group === g)
+    return `
+  <div class="mb-12">
+    <h2 class="reveal text-xl font-extrabold text-ink tracking-tight flex items-center gap-2.5"><span class="w-2 h-2 rounded-full bg-gold-500"></span>${g}</h2>
+    <div class="mt-5 grid sm:grid-cols-2 lg:grid-cols-3 gap-4" data-stagger>
+      ${list.map((r) => `<a href="/region/${r.slug}" class="bento group rounded-3xl bg-white border border-ink/8 p-6 block hover:border-gold-500/40 transition">
+        <div class="flex items-center justify-between">
+          <h3 class="text-lg font-extrabold text-ink tracking-tight">${r.name} <span class="font-normal text-ink/40 text-sm">치과</span></h3>
+          <span class="text-[11px] font-bold text-gold-600 bg-gold-500/10 rounded-full px-3 py-1">${r.distance}</span>
+        </div>
+        <p class="mt-2.5 text-[13px] text-ink/50 leading-relaxed line-clamp-2">${esc(r.desc)}</p>
+        <span class="mt-3 inline-flex items-center gap-1.5 text-[12.5px] font-bold text-ink/60 group-hover:text-gold-600 transition">오시는 길 · 진료안내 <i class="fas fa-arrow-right text-[10px]"></i></span>
+      </a>`).join('')}
+    </div>
+  </div>`
+  }).join('')}
+  <div class="rounded-3xl bg-ink text-white p-9 sm:p-12 relative overflow-hidden">
+    <div class="absolute -bottom-20 -right-16 w-72 h-72 rounded-full bg-gold-500/15 blur-[90px]" aria-hidden="true"></div>
+    <div class="relative flex flex-col sm:flex-row sm:items-end justify-between gap-8">
+      <div>
+        <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tightest leading-tight">우리 동네가 없어도<br>걱정하지 마세요.</h2>
+        <p class="mt-3 text-white/50 text-[14.5px]">${CLINIC.address} — 어디서 오시든 같은 진료, 같은 정직함입니다.</p>
+      </div>
+      <div class="flex flex-wrap gap-3 shrink-0">
+        <a href="tel:${CLINIC.phone}" class="btn-3d px-7 py-4 rounded-full bg-gold-500 text-ink font-extrabold hover:bg-gold-400 transition"><i class="fas fa-phone mr-2"></i>${CLINIC.phone}</a>
+        <a href="/location" class="px-7 py-4 rounded-full border border-white/25 font-bold hover:bg-white/10 transition">오시는 길</a>
+      </div>
+    </div>
+  </div>
+</section>`
+  const jsonLd = [{
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: '홈', item: CLINIC.siteUrl },
+      { '@type': 'ListItem', position: 2, name: '진료 지역 안내', item: `${CLINIC.siteUrl}/region` },
+    ],
+  }]
+  return c.html(layout({ title: '진료 지역 안내 — 검단·김포·청라·계양', desc: '검단퍼스트치과 진료 지역 안내 — 검단신도시·원당동·당하동·마전동·아라동·김포 풍무동·한강신도시·청라·계양 등 인천 서구와 김포 전역에서 찾아오시는 길과 진료 정보를 확인하세요.', path: '/region', jsonLd }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
+})
+
+// 지역 상세 페이지
 pages.get('/region/:slug', (c) => {
   const r = SEO_REGIONS.find((x) => x.slug === c.req.param('slug'))
   if (!r) return c.notFound()
   const core = TREATMENTS.filter((t) => t.isCore)
+  const faqs = regionFaqs(r)
+  const nearby = SEO_REGIONS.filter((x) => x.slug !== r.slug && x.group === r.group).slice(0, 5)
+  const others = SEO_REGIONS.filter((x) => x.slug !== r.slug && x.group !== r.group).slice(0, 6)
+
   const body = `
-${pageHero('Local', `${r.name},<br><span class="font-disp italic text-shine">가까운 정직함.</span>`, `${esc(r.desc)} <span class="text-gold-400 font-bold">— ${r.name}에서 ${r.distance}</span>`)}
-<section class="max-w-6xl mx-auto px-5 py-16">
+${pageHero('Local', `${r.name} 치과,<br><span class="font-disp italic text-shine">가까운 정직함.</span>`, `${esc(r.desc)} <span class="text-gold-400 font-bold">— ${r.name}에서 ${r.distance}</span>`)}
+
+<!-- 요약 답변 박스 (AEO: 답변엔진 인용 최적화) -->
+<section id="region-answer" class="max-w-6xl mx-auto px-5 -mt-8 relative z-10">
+  <div class="reveal-scale rounded-3xl bg-white border border-ink/8 shadow-xl shadow-ink/5 p-7 sm:p-9">
+    <p class="text-[11px] font-bold tracking-[0.3em] uppercase text-gold-600">한눈에 보기</p>
+    <p class="speakable-summary mt-3 text-[15px] sm:text-base text-ink/75 leading-[1.9]"><strong class="text-ink">${r.name}에서 치과를 찾으신다면</strong> — 검단퍼스트치과는 ${esc(r.full)}에서 <strong class="text-ink">${r.distance}</strong> 거리(${CLINIC.address})에 있는 <strong class="text-ink">통합치의학 전문의 1인 원장 책임진료</strong> 치과입니다. 임플란트·무삭제 라미네이트·턱관절(체외충격파) 특화 진료를 하며, 평일 09:30~18:30 · 토요일 09:30~14:00 진료, 예약은 <a href="tel:${CLINIC.phone}" class="font-extrabold text-gold-600 underline underline-offset-4">${CLINIC.phone}</a>.</p>
+    <div class="mt-4 flex flex-wrap gap-2">
+      ${r.keywords.slice(0, 5).map((k) => `<span class="text-[11.5px] font-semibold text-ink/40 bg-ink/5 rounded-full px-3 py-1">#${k.replace(/ /g, '')}</span>`).join('')}
+    </div>
+  </div>
+</section>
+
+<section class="max-w-6xl mx-auto px-5 py-14">
   <div class="grid sm:grid-cols-3 gap-4" data-stagger>
-    ${core.map((t, i) => `<a href="/treatments/${t.slug}" class="bento group relative rounded-3xl ${i === 0 ? 'bg-ink text-white' : 'bg-white border border-ink/8'} p-7 block"><span class="w-12 h-12 rounded-2xl ${i === 0 ? 'bg-gold-500 text-ink' : 'bg-ink text-gold-400'} flex items-center justify-center text-lg"><i class="fas ${t.icon}"></i></span><h3 class="mt-4 text-lg font-extrabold tracking-tight">${t.name}</h3><p class="mt-1 text-[13px] ${i === 0 ? 'text-gold-400' : 'text-gold-600'} font-semibold">${t.tagline}</p></a>`).join('')}
+    ${core.map((t, i) => `<a href="/treatments/${t.slug}" class="bento group relative rounded-3xl ${i === 0 ? 'bg-ink text-white' : 'bg-white border border-ink/8'} p-7 block"><span class="w-12 h-12 rounded-2xl ${i === 0 ? 'bg-gold-500 text-ink' : 'bg-ink text-gold-400'} flex items-center justify-center text-lg"><i class="fas ${t.icon}"></i></span><h3 class="mt-4 text-lg font-extrabold tracking-tight">${r.name} ${t.name}</h3><p class="mt-1 text-[13px] ${i === 0 ? 'text-gold-400' : 'text-gold-600'} font-semibold">${t.tagline}</p></a>`).join('')}
   </div>
-  <div class="mt-14 prose-clinic max-w-3xl">
-    <h2>${r.name} 주민을 위한 안내</h2>
-    <p>검단퍼스트치과는 ${CLINIC.address}에 위치해 있으며, ${r.name}에서 ${r.distance} 거리입니다. 과잉진료 없는 1인 대표원장 책임진료를 원칙으로, 통합치의학 전문의 김희수 원장이 상담부터 치료, 사후관리까지 직접 책임집니다.</p>
-    <p>임플란트, 무삭제 라미네이트(루미네이트), 턱관절 치료는 물론 충치·신경·잇몸치료까지 — ${r.name}에서 믿을 수 있는 치과를 찾으신다면 편하게 전화 주세요.</p>
+
+  <div class="mt-14 grid lg:grid-cols-5 gap-10">
+    <div class="lg:col-span-3">
+      <div class="prose-clinic">
+        <h2>${r.name} 주민을 위한 안내</h2>
+        ${r.intro.map((p) => `<p>${esc(p)}</p>`).join('')}
+        <p>검단퍼스트치과는 ${CLINIC.address}에 있으며, ${r.name}에서 ${r.distance} 거리입니다. 과잉진료 없는 1인 대표원장 책임진료를 원칙으로, 보건복지부 인증 통합치의학 전문의 김희수 원장이 상담부터 치료, 사후관리까지 직접 책임집니다.</p>
+        <h2>${r.name}에서 오시는 길</h2>
+        <p>${esc(r.transport)}</p>
+      </div>
+      <div class="mt-8 flex flex-wrap gap-3">
+        <a href="tel:${CLINIC.phone}" class="px-7 py-4 rounded-full bg-ink text-white font-extrabold hover:bg-navy-800 transition"><i class="fas fa-phone mr-2 text-gold-400"></i>${CLINIC.phone}</a>
+        <a href="/location" class="px-7 py-4 rounded-full bg-white border border-ink/15 font-bold text-ink hover:bg-ink hover:text-white transition">오시는 길 상세</a>
+      </div>
+    </div>
+    <aside class="lg:col-span-2 space-y-4">
+      <article class="rounded-3xl bg-ink text-white p-7">
+        <h2 class="font-extrabold flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-gold-400"></span>진료시간</h2>
+        <ul class="mt-4 space-y-2.5 text-[13.5px]">
+          <li class="flex justify-between"><span class="text-white/40">월·화·수·금</span><span class="font-bold">09:30–18:30</span></li>
+          <li class="flex justify-between"><span class="text-white/40">토요일</span><span class="font-bold">09:30–14:00 <span class="text-gold-400 text-[11px]">점심없이</span></span></li>
+          <li class="flex justify-between"><span class="text-white/40">목·일·공휴일</span><span class="font-bold">휴진</span></li>
+        </ul>
+      </article>
+      <article class="rounded-3xl bg-white border border-ink/8 p-7">
+        <h2 class="font-extrabold text-ink flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-gold-500"></span>가까운 지역</h2>
+        <nav class="mt-4 flex flex-wrap gap-2">
+          ${nearby.map((n) => `<a href="/region/${n.slug}" class="px-3.5 py-2 rounded-full bg-ink/5 text-[12.5px] font-semibold text-ink/60 hover:bg-ink hover:text-white transition">${n.name} 치과</a>`).join('')}
+        </nav>
+      </article>
+    </aside>
   </div>
-  <div class="mt-10 flex flex-wrap gap-3">
-    <a href="tel:${CLINIC.phone}" class="px-7 py-4 rounded-full bg-ink text-white font-extrabold hover:bg-navy-800 transition"><i class="fas fa-phone mr-2 text-gold-400"></i>${CLINIC.phone}</a>
-    <a href="/location" class="px-7 py-4 rounded-full bg-white border border-ink/15 font-bold text-ink hover:bg-ink hover:text-white transition">오시는 길</a>
+
+  <!-- 지역 FAQ (AEO 핵심) -->
+  <div id="region-faq" class="mt-16">
+    <h2 class="reveal text-2xl sm:text-3xl font-extrabold text-ink tracking-tightest">${r.name}에서 자주 묻는 질문</h2>
+    <div class="mt-6 space-y-3" data-stagger>
+      ${faqs.map((f) => `<details class="group rounded-2xl bg-white border border-ink/8 overflow-hidden">
+        <summary class="flex items-center justify-between gap-4 px-6 py-5 cursor-pointer list-none">
+          <h3 class="text-[15px] font-bold text-ink leading-snug">${esc(f.q)}</h3>
+          <span class="shrink-0 w-8 h-8 rounded-full bg-ink/5 flex items-center justify-center text-ink/40 group-open:rotate-45 transition-transform"><i class="fas fa-plus text-xs"></i></span>
+        </summary>
+        <p class="px-6 pb-6 text-[14px] text-ink/60 leading-[1.9]">${esc(f.a)}</p>
+      </details>`).join('')}
+    </div>
+    <p class="mt-5 text-[13px] text-ink/40">더 많은 질문과 답변은 <a href="/faq" class="font-bold text-gold-600 underline underline-offset-4">통합 FAQ 페이지</a>에서 확인하세요.</p>
   </div>
+
+  <!-- 다른 지역 내부링크 -->
+  <nav class="mt-14 pt-8 border-t border-ink/8 flex flex-wrap items-center gap-2" aria-label="다른 진료 지역">
+    <span class="text-[12px] font-bold text-ink/35 tracking-widest uppercase mr-2">Other Areas</span>
+    ${others.map((n) => `<a href="/region/${n.slug}" class="px-4 py-2 rounded-full bg-white border border-ink/10 text-[13px] font-semibold text-ink/60 hover:bg-ink hover:text-white transition">${n.name} 치과</a>`).join('')}
+    <a href="/region" class="px-4 py-2 rounded-full bg-ink text-white text-[13px] font-bold">전체 지역 보기</a>
+  </nav>
 </section>`
-  return c.html(layout({ title: `${r.name} 치과 — 검단퍼스트치과`, desc: `${r.name} 치과 추천 — 검단퍼스트치과. ${r.desc} 임플란트·라미네이트·턱관절 치료, 과잉진료 없는 정직한 진료. ${CLINIC.phone}`, path: `/region/${r.slug}` }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
+
+  const jsonLd = [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: faqs.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: '홈', item: CLINIC.siteUrl },
+        { '@type': 'ListItem', position: 2, name: '진료 지역 안내', item: `${CLINIC.siteUrl}/region` },
+        { '@type': 'ListItem', position: 3, name: `${r.name} 치과`, item: `${CLINIC.siteUrl}/region/${r.slug}` },
+      ],
+    },
+  ]
+  return c.html(layout({ title: `${r.name} 치과 추천 — 임플란트·라미네이트·턱관절`, desc: `${r.name} 치과 찾으세요? ${r.desc} ${r.name}에서 ${r.distance}. 통합치의학 전문의 1인 원장 책임진료, 과잉진료 없는 정직한 치과. ${CLINIC.phone}`, path: `/region/${r.slug}`, jsonLd }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
 })
 
 export default pages

@@ -18,10 +18,17 @@
 6. **건강칼럼** (`/blog`, `/blog/:slug`) — 블로그, Article JSON-LD
 7. **공지사항** (`/notice`, `/notice/:id`) — 상단 고정 공지 지원
 8. **내원안내** (`/location`) — OpenStreetMap 지도, 네이버/카카오맵 링크, 주차·교통·진료시간
-9. **지역 SEO 페이지** (`/region/:slug`) — 검단신도시·원당동·김포·청라 등 10개 지역
+9. **지역 SEO/AEO 페이지** (`/region`, `/region/:slug`) — **25개 지역** (검단·서구 12 / 청라·루원 3 / 계양·부평 3 / 김포 7). 지역별 고유 콘텐츠·교통안내·요약 답변박스(Speakable)·지역 FAQ 6개 + FAQPage/BreadcrumbList JSON-LD, 인근 지역 내부링크
 10. **회원가입/로그인** (`/signup`, `/login`, `/logout`) — PBKDF2 해시 + HMAC 세션 쿠키, 개인정보 동의
 11. **관리자** (`/admin`) — 대시보드, 치료사례/칼럼/공지 CRUD, R2 이미지 업로드, 지역 자동완성(`/api/regions`), 비밀번호 변경
-12. **SEO** — sitemap.xml (DB 콘텐츠 자동 반영), robots.txt, canonical, OG, Dentist/FAQPage/Article JSON-LD
+12. **통합 FAQ** (`/faq`) — 진료과목 10종 FAQ 203개 전체 + FAQPage JSON-LD (AEO 핵심 페이지), 글로벌 네비에 추가
+13. **SEO/AEO 슈퍼 머신**
+    - sitemap.xml: lastmod/changefreq/priority, 45+ URL (DB 콘텐츠 자동 반영)
+    - robots.txt: GPTBot·ClaudeBot·PerplexityBot·NaverBot 등 AI/검색봇 18종 명시 허용
+    - `/llms.txt`: AI 답변엔진용 병원 요약 (진료·지역·연락처·주요 페이지)
+    - Dentist JSON-LD 확장: areaServed 27개 지역, availableService 6개 진료, sameAs/hasMap/founder 상세
+    - Speakable(WebPage) 스키마 전 페이지, geo.position/ICBM/geo.region 메타
+    - 푸터 전 페이지 지역 키워드 내부링크 25개 ("OO동 치과")
 
 ## 관리자 초기 비밀번호
 - `/admin/login` → 초기 비밀번호 `gdfirst2872!` (첫 로그인 후 반드시 변경!)
@@ -56,4 +63,4 @@ pm2 start ecosystem.config.cjs                           # 개발 서버 (port 3
 ## Tech Stack
 - Hono + TypeScript + Cloudflare Pages (D1 + R2) + TailwindCSS(CDN) + FontAwesome
 - **디자인 v3 (2026 SUPER)**: View Transitions 페이지 전환, 커튼 인트로, 스크롤 프로그레스 바, 커스텀 lerp 커서, 오로라 히어로, per-char 스플릿 타이포, 스포트라이트 보더 카드, 마그네틱 버튼, 3D 틸트+글레어
-- **Last Updated**: 2026-07-08
+- **Last Updated**: 2026-07-08 (SEO/AEO 슈퍼 머신 업그레이드)
