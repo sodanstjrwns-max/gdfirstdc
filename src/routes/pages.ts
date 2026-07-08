@@ -27,6 +27,8 @@ pages.get('/', (c) => {
   const body = `
 <!-- ===== 히어로 ===== -->
 <section id="hero-section" class="relative min-h-[92vh] bg-ink text-white flex flex-col justify-end overflow-hidden">
+  <video class="absolute inset-0 w-full h-full object-cover opacity-[0.38]" autoplay muted loop playsinline preload="metadata" poster="/static/images/hero_poster.webp" aria-hidden="true"><source src="/static/video/hero.mp4" type="video/mp4"></video>
+  <div class="absolute inset-0 bg-gradient-to-t from-ink via-ink/60 to-ink/30" aria-hidden="true"></div>
   <div class="aurora" aria-hidden="true"></div>
   <div class="absolute top-[-20%] right-[-10%] w-[60vw] h-[60vw] max-w-[760px] max-h-[760px] rounded-full bg-navy-600/30 blur-[140px]" aria-hidden="true"></div>
   <div class="absolute bottom-[-30%] left-[-15%] w-[50vw] h-[50vw] max-w-[600px] max-h-[600px] rounded-full bg-gold-500/12 blur-[130px]" aria-hidden="true"></div>
@@ -120,7 +122,12 @@ pages.get('/', (c) => {
         </div>
       </div>
       <div class="reveal-scale">
-        <div class="rounded-3xl bg-white/[0.06] border border-white/10 backdrop-blur p-8" data-tilt data-tilt-max="7">
+        <div class="rounded-3xl bg-white/[0.06] border border-white/10 backdrop-blur overflow-hidden" data-tilt data-tilt-max="7">
+          <div class="relative h-56 sm:h-64 overflow-hidden">
+            <img src="/static/images/doctor_lobby.webp" alt="검단퍼스트치과 김희수 대표원장" class="w-full h-full object-cover object-top" loading="lazy">
+            <div class="absolute inset-0 bg-gradient-to-t from-ink/80 to-transparent" aria-hidden="true"></div>
+          </div>
+          <div class="p-8 pt-6">
           <div class="flex items-center gap-4 pb-6 border-b border-white/10">
             <span class="w-14 h-14 rounded-2xl bg-gold-500 text-ink flex items-center justify-center text-xl font-black">金</span>
             <div>
@@ -131,9 +138,50 @@ pages.get('/', (c) => {
           <ul class="mt-6 space-y-3.5 text-[13.5px] text-white/70">
             ${['보건복지부 인증 통합치의학 전문의 (대학병원 정식 수련)', '대한치과보철학회 인증 우수보철의사', 'Harvard School of Dental Medicine Implant CE', '서울대 치의학대학원 Periodontal/Implant Therapy', 'NYU 무삭제 라미네이트 고급과정', '오스템·덴티스 임플란트 임상자문연구위원'].map((h) => `<li class="flex gap-3"><i class="fas fa-check text-gold-400 mt-0.5"></i>${h}</li>`).join('')}
           </ul>
+          </div>
         </div>
       </div>
     </div>
+  </div>
+</section>
+
+<!-- ===== 언론 · 원내 투어 ===== -->
+<section id="media-section" class="max-w-6xl mx-auto px-5 py-20 sm:py-24">
+  <header class="mb-10">
+    <p class="reveal text-gold-600 text-xs font-bold tracking-[0.3em] uppercase">Media & Clinic</p>
+    <h2 class="reveal mt-2 text-3xl sm:text-5xl font-extrabold text-ink tracking-tightest">방송이 먼저<br class="sm:hidden"> 찾은 치과.</h2>
+  </header>
+  <div class="grid lg:grid-cols-3 gap-4">
+    <figure class="bento reveal-scale lg:col-span-1 rounded-3xl overflow-hidden bg-ink relative min-h-[420px]">
+      <video class="absolute inset-0 w-full h-full object-cover" autoplay muted loop playsinline preload="metadata" poster="/static/images/tour_poster.webp" aria-label="검단퍼스트치과 원내 소개 영상"><source src="/static/video/clinic_tour.mp4" type="video/mp4"></video>
+      <figcaption class="absolute bottom-0 inset-x-0 p-6 bg-gradient-to-t from-ink to-transparent">
+        <p class="text-gold-400 text-[11px] font-bold tracking-[0.25em] uppercase">Clinic Tour</p>
+        <p class="mt-1 text-white font-extrabold text-lg">검단퍼스트치과 둘러보기</p>
+      </figcaption>
+    </figure>
+    <article class="bento reveal-scale rounded-3xl bg-white border border-ink/8 overflow-hidden flex flex-col">
+      <div class="relative h-52 overflow-hidden">
+        <img src="/static/images/doctor_study.webp" alt="수료증과 인증서 앞에서 임상 서적을 연구하는 김희수 원장" class="w-full h-full object-cover" loading="lazy">
+      </div>
+      <div class="p-7 flex-1 flex flex-col">
+        <p class="text-gold-600 text-[11px] font-bold tracking-[0.25em] uppercase">Endless Study</p>
+        <h3 class="mt-2 text-xl font-extrabold text-ink tracking-tight">벽면을 채운 수료증은<br>거들 뿐입니다.</h3>
+        <p class="mt-3 text-[13.5px] text-ink/50 leading-relaxed flex-1">Harvard·NYU·서울대 — 12개가 넘는 연수·고급과정. 지금도 진료가 없는 시간엔 임상 서적을 폅니다.</p>
+        <a href="/about" class="mt-4 inline-flex items-center gap-2 text-sm font-bold text-ink">원장 이력 전체 보기 <i class="fas fa-arrow-right text-xs"></i></a>
+      </div>
+    </article>
+    <article class="bento reveal-scale rounded-3xl bg-ink text-white overflow-hidden flex flex-col">
+      <div class="relative h-52 overflow-hidden">
+        <img src="/static/images/news_article.webp" alt="메디컬투데이 — 검단퍼스트치과 김희수 원장 한국경제TV 건강매거진 출연 기사" class="w-full h-full object-cover object-top" loading="lazy">
+        <div class="absolute inset-0 bg-gradient-to-t from-ink/70 to-transparent" aria-hidden="true"></div>
+      </div>
+      <div class="p-7 flex-1 flex flex-col">
+        <p class="text-gold-400 text-[11px] font-bold tracking-[0.25em] uppercase">Press · TV</p>
+        <h3 class="mt-2 text-xl font-extrabold tracking-tight">한국경제TV<br>「건강매거진」 출연</h3>
+        <p class="mt-3 text-[13.5px] text-white/50 leading-relaxed flex-1">"부작용 줄이는 디지털 임플란트" — 김희수 원장이 생방송에서 임플란트 패러다임 변화를 소개하고 시청자 1:1 전화상담을 진행했습니다. (메디컬투데이 보도)</p>
+        <a href="/about#media" class="mt-4 inline-flex items-center gap-2 text-sm font-bold text-gold-400">방송·언론 보기 <i class="fas fa-arrow-right text-xs"></i></a>
+      </div>
+    </article>
   </div>
 </section>
 
@@ -200,15 +248,28 @@ ${pageHero('About Us', '광고 대신,<br><span class="font-disp italic text-shi
 <section id="doctor-profile" class="bg-ink text-white py-20 sm:py-24 relative overflow-hidden">
   <div class="absolute top-0 left-1/3 w-[500px] h-[500px] rounded-full bg-navy-600/20 blur-[140px]" aria-hidden="true"></div>
   <div class="max-w-6xl mx-auto px-5 relative">
-    <header class="mb-12">
-      <p class="reveal text-gold-400 text-xs font-bold tracking-[0.3em] uppercase">Doctor Profile</p>
-      <h2 class="reveal mt-3 text-3xl sm:text-5xl font-extrabold tracking-tightest">대표원장 ${DOCTOR.name}</h2>
-      <p class="reveal mt-3 text-white/45">보건복지부 인증 통합치의학 전문의 · 대한치과보철학회 우수보철의사</p>
-    </header>
-    <blockquote class="reveal-scale rounded-3xl bg-white/[0.06] border border-white/10 p-8 mb-10 max-w-3xl" data-tilt data-tilt-max="6">
-      <i class="fas fa-quote-left text-gold-400 text-xl"></i>
-      <p class="mt-3 text-white/75 leading-[1.9] text-[15.5px]">${DOCTOR.philosophy}</p>
-    </blockquote>
+    <div class="grid lg:grid-cols-[1fr_360px] gap-10 items-end mb-12">
+      <header>
+        <p class="reveal text-gold-400 text-xs font-bold tracking-[0.3em] uppercase">Doctor Profile</p>
+        <h2 class="reveal mt-3 text-3xl sm:text-5xl font-extrabold tracking-tightest">대표원장 ${DOCTOR.name}</h2>
+        <p class="reveal mt-3 text-white/45">보건복지부 인증 통합치의학 전문의 · 대한치과보철학회 우수보철의사</p>
+      </header>
+      <figure class="reveal-scale rounded-3xl overflow-hidden border border-white/10" data-tilt data-tilt-max="6">
+        <img src="/static/images/doctor_lobby.webp" alt="검단퍼스트치과 로비에서의 김희수 대표원장" class="w-full h-auto" loading="lazy">
+      </figure>
+    </div>
+    <div class="grid lg:grid-cols-[1fr_340px] gap-4 mb-10 items-stretch">
+      <blockquote class="reveal-scale rounded-3xl bg-white/[0.06] border border-white/10 p-8" data-tilt data-tilt-max="6">
+        <i class="fas fa-quote-left text-gold-400 text-xl"></i>
+        <p class="mt-3 text-white/75 leading-[1.9] text-[15.5px]">${DOCTOR.philosophy}</p>
+      </blockquote>
+      <figure class="reveal-scale rounded-3xl overflow-hidden bg-black relative min-h-[220px]">
+        <video class="absolute inset-0 w-full h-full object-cover" autoplay muted loop playsinline preload="metadata" aria-label="확대경을 착용하고 진료에 집중하는 김희수 원장"><source src="/static/video/doctor.mp4" type="video/mp4"></video>
+        <figcaption class="absolute bottom-0 inset-x-0 p-5 bg-gradient-to-t from-ink/90 to-transparent">
+          <p class="text-white/80 text-[12px] font-semibold">진료 중인 김희수 원장</p>
+        </figcaption>
+      </figure>
+    </div>
     <div class="grid md:grid-cols-2 gap-4" data-stagger>
       ${[
         { title: '학력 및 경력', icon: 'fa-graduation-cap', items: DOCTOR.career },
@@ -221,6 +282,30 @@ ${pageHero('About Us', '광고 대신,<br><span class="font-disp italic text-shi
         <ul class="space-y-2.5 text-[13.5px] text-white/55 leading-relaxed">${g.items.map((x) => `<li class="flex gap-2.5"><span class="text-gold-500/70 mt-1.5 w-1 h-1 rounded-full bg-gold-500 shrink-0"></span>${x}</li>`).join('')}</ul>
       </article>`).join('')}
     </div>
+  </div>
+</section>
+
+<section id="media" class="max-w-6xl mx-auto px-5 py-20">
+  <header class="mb-10">
+    <p class="reveal text-gold-600 text-xs font-bold tracking-[0.3em] uppercase">Press &amp; Broadcast</p>
+    <h2 class="reveal mt-2 text-3xl sm:text-4xl font-extrabold text-ink tracking-tightest">방송 · 언론보도</h2>
+  </header>
+  <div class="grid md:grid-cols-2 gap-4">
+    <article class="bento reveal-scale rounded-3xl bg-white border border-ink/8 overflow-hidden flex flex-col sm:flex-row">
+      <img src="/static/images/news_article.webp" alt="메디컬투데이 기사 — 검단퍼스트치과 김희수 원장 건강매거진 출연" class="sm:w-44 h-56 sm:h-auto object-cover object-top shrink-0" loading="lazy">
+      <div class="p-7">
+        <p class="text-[11px] font-bold text-gold-600 tracking-[0.2em] uppercase">메디컬투데이 · 2022.05</p>
+        <h3 class="mt-2 font-extrabold text-ink text-lg leading-snug">김희수 원장, 한국경제TV 「건강매거진」 출연 — 임플란트 패러다임 변화 소개</h3>
+        <p class="mt-3 text-[13.5px] text-ink/50 leading-relaxed">생방송으로 진행된 방송에서 3D 컴퓨터 기술을 적용한 환자 맞춤형 디지털 임플란트를 설명하고, 시청자 1:1 전화상담을 진행했습니다. 고혈압·당뇨 등 전신질환 환자와 고령 환자도 편안하고 정확하게 시술받을 수 있다고 소개했습니다.</p>
+      </div>
+    </article>
+    <figure class="bento reveal-scale rounded-3xl overflow-hidden bg-ink relative min-h-[300px]">
+      <video class="absolute inset-0 w-full h-full object-cover" autoplay muted loop playsinline preload="metadata" poster="/static/images/tour_poster.webp" aria-label="검단퍼스트치과 원내 소개 영상"><source src="/static/video/clinic_tour.mp4" type="video/mp4"></video>
+      <figcaption class="absolute bottom-0 inset-x-0 p-6 bg-gradient-to-t from-ink to-transparent">
+        <p class="text-gold-400 text-[11px] font-bold tracking-[0.25em] uppercase">Clinic Tour</p>
+        <p class="mt-1 text-white font-extrabold">원내 둘러보기</p>
+      </figcaption>
+    </figure>
   </div>
 </section>
 
