@@ -99,7 +99,7 @@ export function layout(meta: PageMeta, body: string, opts?: { user?: { name: str
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>${esc(fullTitle)}</title>
 <meta name="description" content="${esc(meta.desc)}">
 ${meta.noindex ? '<meta name="robots" content="noindex,nofollow">' : '<meta name="robots" content="index,follow">'}
@@ -164,7 +164,7 @@ ${meta.path === '/' ? '<div id="curtain" aria-hidden="true"><span class="curtain
 
 <!-- 모바일 풀스크린 메뉴 -->
 <div id="mobile-menu" class="fixed inset-0 z-[60] hidden">
-  <div class="absolute inset-0 bg-ink/98 backdrop-blur-xl"></div>
+  <div id="mobile-menu-backdrop" class="absolute inset-0 bg-ink/98 backdrop-blur-xl"></div>
   <div class="relative h-full flex flex-col p-6 overflow-y-auto">
     <div class="flex justify-between items-center">
       <span class="text-white font-extrabold text-lg">검단퍼스트치과</span>
@@ -188,11 +188,23 @@ ${meta.path === '/' ? '<div id="curtain" aria-hidden="true"><span class="curtain
 
 <main id="main-content">${body}</main>
 
-<!-- 플로팅 CTA (모바일) -->
-<a href="tel:${CLINIC.phone}" id="floating-call" class="fixed bottom-5 right-5 z-40 md:hidden w-14 h-14 rounded-2xl bg-ink text-gold-400 flex items-center justify-center text-xl shadow-2xl shadow-ink/40" aria-label="전화걸기"><i class="fas fa-phone"></i></a>
+<!-- 모바일 하단 액션바 -->
+<nav id="mobile-actionbar" class="fixed bottom-0 inset-x-0 z-40 md:hidden bg-ink/95 backdrop-blur-lg border-t border-white/10 transition-transform duration-300" aria-label="빠른 연락 메뉴">
+  <div class="grid grid-cols-3">
+    <a href="tel:${CLINIC.phone}" class="flex flex-col items-center gap-1 py-3 text-gold-400 active:bg-white/5" aria-label="전화 예약">
+      <i class="fas fa-phone text-[17px]"></i><span class="text-[10.5px] font-bold text-white/85">전화예약</span>
+    </a>
+    <a href="/location" class="flex flex-col items-center gap-1 py-3 text-white/70 active:bg-white/5 border-x border-white/10" aria-label="오시는 길">
+      <i class="fas fa-location-dot text-[17px]"></i><span class="text-[10.5px] font-bold text-white/85">오시는길</span>
+    </a>
+    <a href="/faq" class="flex flex-col items-center gap-1 py-3 text-white/70 active:bg-white/5" aria-label="자주 묻는 질문">
+      <i class="fas fa-circle-question text-[17px]"></i><span class="text-[10.5px] font-bold text-white/85">FAQ</span>
+    </a>
+  </div>
+</nav>
 
 <!-- 푸터 -->
-<footer id="site-footer" class="relative bg-ink text-white/60 mt-24 overflow-hidden">
+<footer id="site-footer" class="relative bg-ink text-white/60 mt-24 overflow-hidden pb-16 md:pb-0">
   <div class="absolute -top-20 -right-20 w-96 h-96 rounded-full bg-navy-600/20 blur-[120px]" aria-hidden="true"></div>
   <div class="max-w-6xl mx-auto px-5 pt-16 pb-8 relative">
     <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-8 pb-12 border-b border-white/10">

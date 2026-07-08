@@ -88,6 +88,38 @@ document.addEventListener('DOMContentLoaded', () => {
     btn.addEventListener('click', openMenu)
     closeBtn && closeBtn.addEventListener('click', closeMenu)
     menu.querySelectorAll('a').forEach((a) => a.addEventListener('click', closeMenu))
+    const backdrop = document.getElementById('mobile-menu-backdrop')
+    backdrop && backdrop.addEventListener('click', closeMenu)
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !menu.classList.contains('hidden')) closeMenu() })
+  }
+
+  // ===== 영상 지연로딩 & 뷰포트 재생 제어 (모바일 데이터·배터리 절약) =====
+  const lazyVids = document.querySelectorAll('video[data-lazy]')
+  if (lazyVids.length) {
+    const vidIO = new IntersectionObserver((entries) => {
+      entries.forEach((en) => {
+        const v = en.target
+        if (en.isIntersecting) {
+          if (!v.dataset.loaded) {
+            v.querySelectorAll('source[data-src]').forEach((s) => { s.src = s.dataset.src })
+            v.load()
+            v.dataset.loaded = '1'
+          }
+          v.play().catch(() => {})
+        } else if (v.dataset.loaded) {
+          v.pause()
+        }
+      })
+    }, { threshold: 0.25 })
+    lazyVids.forEach((v) => vidIO.observe(v))
+  }
+  // 히어로 등 autoplay 영상도 화면 밖으로 나가면 일시정지
+  const autoVids = document.querySelectorAll('video[autoplay]')
+  if (autoVids.length) {
+    const avIO = new IntersectionObserver((entries) => {
+      entries.forEach((en) => { en.isIntersecting ? en.target.play().catch(() => {}) : en.target.pause() })
+    }, { threshold: 0.1 })
+    autoVids.forEach((v) => avIO.observe(v))
   }
 
   // ===== 스크롤 시 네비 숨김/표시 =====

@@ -153,7 +153,7 @@ pages.get('/', (c) => {
   </header>
   <div class="grid lg:grid-cols-3 gap-4">
     <figure class="bento reveal-scale lg:col-span-1 rounded-3xl overflow-hidden bg-ink relative min-h-[420px]">
-      <video class="absolute inset-0 w-full h-full object-cover" autoplay muted loop playsinline preload="metadata" poster="/static/images/tour_poster.webp" aria-label="검단퍼스트치과 원내 소개 영상"><source src="/static/video/clinic_tour.mp4" type="video/mp4"></video>
+      <video class="absolute inset-0 w-full h-full object-cover" data-lazy muted loop playsinline preload="none" poster="/static/images/tour_poster.webp" aria-label="검단퍼스트치과 원내 소개 영상"><source data-src="/static/video/clinic_tour.mp4" type="video/mp4"></video>
       <figcaption class="absolute bottom-0 inset-x-0 p-6 bg-gradient-to-t from-ink to-transparent">
         <p class="text-gold-400 text-[11px] font-bold tracking-[0.25em] uppercase">Clinic Tour</p>
         <p class="mt-1 text-white font-extrabold text-lg">검단퍼스트치과 둘러보기</p>
@@ -264,7 +264,7 @@ ${pageHero('About Us', '광고 대신,<br><span class="font-disp italic text-shi
         <p class="mt-3 text-white/75 leading-[1.9] text-[15.5px]">${DOCTOR.philosophy}</p>
       </blockquote>
       <figure class="reveal-scale rounded-3xl overflow-hidden bg-black relative min-h-[220px]">
-        <video class="absolute inset-0 w-full h-full object-cover" autoplay muted loop playsinline preload="metadata" aria-label="확대경을 착용하고 진료에 집중하는 김희수 원장"><source src="/static/video/doctor.mp4" type="video/mp4"></video>
+        <video class="absolute inset-0 w-full h-full object-cover" data-lazy muted loop playsinline preload="none" aria-label="확대경을 착용하고 진료에 집중하는 김희수 원장"><source data-src="/static/video/doctor.mp4" type="video/mp4"></video>
         <figcaption class="absolute bottom-0 inset-x-0 p-5 bg-gradient-to-t from-ink/90 to-transparent">
           <p class="text-white/80 text-[12px] font-semibold">진료 중인 김희수 원장</p>
         </figcaption>
@@ -300,7 +300,7 @@ ${pageHero('About Us', '광고 대신,<br><span class="font-disp italic text-shi
       </div>
     </article>
     <figure class="bento reveal-scale rounded-3xl overflow-hidden bg-ink relative min-h-[300px]">
-      <video class="absolute inset-0 w-full h-full object-cover" autoplay muted loop playsinline preload="metadata" poster="/static/images/tour_poster.webp" aria-label="검단퍼스트치과 원내 소개 영상"><source src="/static/video/clinic_tour.mp4" type="video/mp4"></video>
+      <video class="absolute inset-0 w-full h-full object-cover" data-lazy muted loop playsinline preload="none" poster="/static/images/tour_poster.webp" aria-label="검단퍼스트치과 원내 소개 영상"><source data-src="/static/video/clinic_tour.mp4" type="video/mp4"></video>
       <figcaption class="absolute bottom-0 inset-x-0 p-6 bg-gradient-to-t from-ink to-transparent">
         <p class="text-gold-400 text-[11px] font-bold tracking-[0.25em] uppercase">Clinic Tour</p>
         <p class="mt-1 text-white font-extrabold">원내 둘러보기</p>

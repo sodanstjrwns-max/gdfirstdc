@@ -156,6 +156,51 @@ html.has-cursor, html.has-cursor a, html.has-cursor button { cursor: none; }
 /* ===== 마그네틱 버튼 ===== */
 .magnetic-el { transition: translate .35s cubic-bezier(.16,1,.3,1); will-change: translate; }
 
+/* ============================================================
+   ===== 모바일 최적화 =====
+   ============================================================ */
+html { -webkit-tap-highlight-color: transparent; }
+a, button, summary, input[type=checkbox], label { touch-action: manipulation; }
+
+/* 최신 브라우저: 주소창 변동에도 안정적인 svh 뷰포트 */
+@supports (height: 100svh) {
+  #hero-section { min-height: 92svh; }
+  #mobile-menu .relative.h-full { height: 100svh; }
+}
+
+@media (max-width: 768px) {
+  /* 필름 그레인·오로라 → 모바일 GPU 부하 경감 */
+  .grain-overlay { display: none; }
+  .aurora { filter: blur(56px) saturate(1.15); opacity: .4; }
+  .aurora::before, .aurora::after { animation-duration: 34s; }
+
+  /* iOS 입력 포커스 자동 줌 방지 (16px 미만 입력에서 발생) */
+  input, select, textarea { font-size: 16px !important; }
+
+  /* 호버 없는 기기: 탭 즉각 피드백 */
+  .bento:active, [data-tilt]:active { transform: scale(.985); transition: transform .12s; }
+  .btn-3d:active { transform: translateY(2px); }
+
+  /* 마퀴 속도 (좁은 화면에서 너무 느리게 보임) */
+  .marquee-track { animation-duration: 22s; }
+
+  /* 히어로 배경 데코 블러 축소 */
+  #hero-section [class*="blur-["] { filter: blur(70px); }
+
+  /* 프로즈 가독성 */
+  .prose-clinic p { font-size: 15px; }
+}
+
+/* 호버 불가 기기에서 데스크톱 전용 효과 비활성 */
+@media (hover: none) {
+  .bento:hover { transform: none; box-shadow: none; }
+  .spotlight::before, .spotlight::after { display: none; }
+}
+
+/* ===== 모바일 하단 액션바 ===== */
+#mobile-actionbar { padding-bottom: env(safe-area-inset-bottom); }
+#mobile-actionbar.bar-hidden { transform: translateY(110%); }
+
 @media (prefers-reduced-motion: reduce) {
   #curtain { display: none !important; }
   .char { transform: none !important; animation: none !important; }
@@ -172,4 +217,4 @@ html.has-cursor, html.has-cursor a, html.has-cursor button { cursor: none; }
   .float-3d { animation: none; }
   .tilt-3d { transform: none !important; }
 }
-@media print { #site-header, #site-footer, #floating-call, .grain-overlay { display: none !important; } }
+@media print { #site-header, #site-footer, #floating-call, #mobile-actionbar, .grain-overlay { display: none !important; } }
