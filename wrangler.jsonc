@@ -1,20 +1,20 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "webapp",
+  "name": "gdfirst-dental",
   "compatibility_date": "2026-04-26",
   "pages_build_output_dir": "./dist",
   "compatibility_flags": ["nodejs_compat"],
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "webapp-production",
-      "database_id": "placeholder-replace-on-deploy"
+      "database_name": "gdfirst-dental-production",
+      "database_id": "cdc2e02b-69ae-4a36-a82c-d38dfa64df61"
     }
   ],
   "r2_buckets": [
     {
       "binding": "R2",
-      "bucket_name": "webapp-images"
+      "bucket_name": "gdfirst-dental-images"
     }
   ]
 }

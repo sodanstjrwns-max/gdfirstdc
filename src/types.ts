@@ -29,6 +29,7 @@ export interface R2Bucket {
 export type Bindings = {
   DB: D1Database
   R2: R2Bucket
+  SESSION_SECRET?: string
 }
 
 export type Variables = {

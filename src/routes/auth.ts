@@ -74,7 +74,7 @@ auth.post('/signup', async (c) => {
     'INSERT INTO users (email, phone, name, password_hash, privacy_agree, marketing_agree) VALUES (?, ?, ?, ?, ?, ?)'
   ).bind(email, phone, name, hash, 1, marketing ? 1 : 0).run()
 
-  const token = await createSession({ uid: res.meta.last_row_id, name })
+  const token = await createSession({ uid: res.meta.last_row_id, name }, c.env.SESSION_SECRET)
   setCookie(c, 'session', token, { httpOnly: true, sameSite: 'Lax', path: '/', maxAge: 60 * 60 * 24 * 7 })
   return c.redirect('/?welcome=1')
 })
@@ -106,7 +106,7 @@ auth.post('/login', async (c) => {
   if (!user || !(await verifyPassword(password, user.password_hash))) {
     return c.redirect(`/login?error=${encodeURIComponent('이메일 또는 비밀번호가 올바르지 않습니다.')}&next=${encodeURIComponent(safeNext)}`)
   }
-  const token = await createSession({ uid: user.id, name: user.name })
+  const token = await createSession({ uid: user.id, name: user.name }, c.env.SESSION_SECRET)
   setCookie(c, 'session', token, { httpOnly: true, sameSite: 'Lax', path: '/', maxAge: 60 * 60 * 24 * 7 })
   return c.redirect(safeNext)
 })

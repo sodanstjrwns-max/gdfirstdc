@@ -13,7 +13,7 @@ const DEFAULT_ADMIN_PW = 'gdfirst2872!'
 const inputCls = 'w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-navy-600'
 
 async function isAdminReq(c: any): Promise<boolean> {
-  const sess = await readSession(getCookie(c, 'admin_session'))
+  const sess = await readSession(getCookie(c, 'admin_session'), c.env.SESSION_SECRET)
   return !!sess?.admin
 }
 
@@ -71,7 +71,7 @@ admin.post('/admin/login', async (c) => {
   if (!(await verifyPassword(password, row.value))) {
     return c.redirect(`/admin/login?error=${encodeURIComponent('비밀번호가 올바르지 않습니다.')}`)
   }
-  const token = await createSession({ admin: true, name: '관리자' })
+  const token = await createSession({ admin: true, name: '관리자' }, c.env.SESSION_SECRET)
   setCookie(c, 'admin_session', token, { httpOnly: true, sameSite: 'Lax', path: '/', maxAge: 60 * 60 * 8 })
   return c.redirect('/admin')
 })

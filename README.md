@@ -7,7 +7,7 @@
 
 ## URLs
 - **개발(샌드박스)**: https://3000-i6855r7gxvdlqx169sebt-3844e1b6.sandbox.novita.ai
-- **Production**: 미배포 (Cloudflare Pages 배포 예정)
+- **Production**: https://gdfirst-dental.pages.dev ✅
 
 ## 완성된 기능
 1. **메인 홈** (`/`) — 히어로, 신뢰 배너, 시그니처 진료 3종(임플란트/루미네이트/턱관절), 원장 소개, 장비 9종, 진료시간/오시는길
@@ -38,21 +38,22 @@ npx wrangler d1 migrations apply webapp-production --local  # 로컬 DB 마이�
 pm2 start ecosystem.config.cjs                           # 개발 서버 (port 3000)
 ```
 
-## 배포 시 필요 작업
-1. `npx wrangler d1 create webapp-production` → database_id를 wrangler.jsonc에 반영
-2. `npx wrangler r2 bucket create webapp-images`
-3. `npx wrangler d1 migrations apply webapp-production` (프로덕션)
-4. `npm run build && npx wrangler pages deploy dist --project-name <프로젝트명>`
-5. `src/data/clinic.ts`의 `siteUrl`을 실제 도메인으로 교체
-6. `src/lib/auth.ts`의 SESSION_SECRET을 환경변수로 교체 권장
+## 배포 상태 (2026-07-08 완료 ✅)
+- **Cloudflare Pages 프로젝트**: `gdfirst-dental` (사용자 본인 CF 계정, BYOK)
+- **D1**: `gdfirst-dental-production` (id: cdc2e02b-69ae-4a36-a82c-d38dfa64df61) — 마이그레이션 적용 완료
+- **R2**: `gdfirst-dental-images`
+- **Secrets**: `SESSION_SECRET` 설정 완료 (세션 HMAC 서명용)
+- **재배포**: `npm run build && npx wrangler pages deploy dist --project-name gdfirst-dental`
+- **프로덕션 마이그레이션**: `npx wrangler d1 migrations apply gdfirst-dental-production --remote`
 
 ## 미구현 / 다음 단계
 - 실제 병원 사진·전후 사진 업로드 (관리자에서 직접 가능)
 - 온라인 예약 시스템 (현재는 전화 예약 안내)
 - 네이버 서치어드바이저/구글 서치콘솔 등록
-- 커스텀 도메인 연결
+- 커스텀 도메인 연결 (`npx wrangler pages domain add <도메인> --project-name gdfirst-dental`)
+- 관리자 초기 비밀번호 변경 (프로덕션 /admin/login 첫 로그인 후 필수!)
 
 ## Tech Stack
 - Hono + TypeScript + Cloudflare Pages (D1 + R2) + TailwindCSS(CDN) + FontAwesome
 - **디자인 v3 (2026 SUPER)**: View Transitions 페이지 전환, 커튼 인트로, 스크롤 프로그레스 바, 커스텀 lerp 커서, 오로라 히어로, per-char 스플릿 타이포, 스포트라이트 보더 카드, 마그네틱 버튼, 3D 틸트+글레어
-- **Last Updated**: 2026-07-05
+- **Last Updated**: 2026-07-08

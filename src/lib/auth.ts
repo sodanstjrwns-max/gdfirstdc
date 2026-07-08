@@ -41,7 +41,7 @@ export async function verifyPassword(password: string, stored: string): Promise<
 }
 
 // ===== 세션 쿠키 (HMAC 서명) =====
-const SECRET = 'gdfirst-dental-session-secret-v1' // 배포 시 env SESSION_SECRET 권장
+const SECRET = 'gdfirst-dental-session-secret-v1' // 폴백용 — 프로덕션은 env SESSION_SECRET 사용
 
 async function hmac(data: string, secret: string): Promise<string> {
   const key = await crypto.subtle.importKey('raw', enc.encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign'])
@@ -56,20 +56,22 @@ export interface Session {
   exp: number
 }
 
-export async function createSession(payload: Omit<Session, 'exp'>, secret = SECRET): Promise<string> {
+export async function createSession(payload: Omit<Session, 'exp'>, secret?: string): Promise<string> {
+  const sec = secret || SECRET
   const sess: Session = { ...payload, exp: Date.now() + 1000 * 60 * 60 * 24 * 7 } // 7일
   const data = toB64(enc.encode(JSON.stringify(sess)))
-  const sig = await hmac(data, secret)
+  const sig = await hmac(data, sec)
   return `${data}.${sig}`
 }
 
-export async function readSession(cookie: string | undefined, secret = SECRET): Promise<Session | null> {
+export async function readSession(cookie: string | undefined, secret?: string): Promise<Session | null> {
+  const sec = secret || SECRET
   if (!cookie) return null
   const idx = cookie.lastIndexOf('.')
   if (idx < 0) return null
   const data = cookie.slice(0, idx)
   const sig = cookie.slice(idx + 1)
-  const expect = await hmac(data, secret)
+  const expect = await hmac(data, sec)
   if (sig !== expect) return null
   try {
     const sess: Session = JSON.parse(new TextDecoder().decode(fromB64(data)))

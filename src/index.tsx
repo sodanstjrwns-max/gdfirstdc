@@ -15,9 +15,9 @@ const app = new Hono<AppEnv>()
 
 // ===== 세션 미들웨어 =====
 app.use('*', async (c, next) => {
-  const sess = await readSession(getCookie(c, 'session'))
+  const sess = await readSession(getCookie(c, 'session'), c.env.SESSION_SECRET)
   c.set('user', sess?.uid ? { uid: sess.uid, name: sess.name || '회원' } : null)
-  const adminSess = await readSession(getCookie(c, 'admin_session'))
+  const adminSess = await readSession(getCookie(c, 'admin_session'), c.env.SESSION_SECRET)
   c.set('isAdmin', !!adminSess?.admin)
   await next()
 })
