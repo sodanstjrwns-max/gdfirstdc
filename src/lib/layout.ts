@@ -19,6 +19,7 @@ const NAV = [
   { href: '/about', label: '병원소개' },
   { href: '/treatments', label: '진료과목', children: TREATMENTS.map((t) => ({ href: `/treatments/${t.slug}`, label: t.name })) },
   { href: '/cases', label: '치료사례' },
+  { href: '/pricing', label: '치료비용' },
   { href: '/stories', label: '스토리' },
   { href: '/blog', label: '칼럼' },
   { href: '/faq', label: 'FAQ' },
@@ -217,11 +218,23 @@ ${meta.path === '/' ? '<div id="curtain" aria-hidden="true"><span class="curtain
         <a href="/location" class="px-7 py-4 rounded-full border border-white/25 text-white font-bold hover:bg-white/10 transition">오시는 길</a>
       </div>
     </div>
-    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 py-10 text-[13.5px]">
+    <div class="grid sm:grid-cols-2 lg:grid-cols-5 gap-8 py-10 text-[13.5px]">
       <section>
         <h3 class="text-white/90 font-bold mb-3 text-xs tracking-[0.2em] uppercase">Clinic</h3>
         <p class="leading-relaxed">${CLINIC.address}</p>
         <p class="mt-2">대표자 ${CLINIC.doctor} · 사업자 ${CLINIC.bizNo}<br>${CLINIC.email}</p>
+      </section>
+      <section id="footer-pricing">
+        <h3 class="text-white/90 font-bold mb-3 text-xs tracking-[0.2em] uppercase">Pricing</h3>
+        <ul class="space-y-1">
+          <li class="flex justify-between max-w-[240px]"><span class="text-white/35">임플란트</span><span>90만원~</span></li>
+          <li class="flex justify-between max-w-[240px]"><span class="text-white/35">라미네이트</span><span>55만원</span></li>
+          <li class="flex justify-between max-w-[240px]"><span class="text-white/35">지르코니아 크라운</span><span>50만원~</span></li>
+          <li class="flex justify-between max-w-[240px]"><span class="text-white/35">세라믹인레이</span><span>30만원~</span></li>
+          <li class="flex justify-between max-w-[240px]"><span class="text-white/35">전문가미백</span><span>14만원~</span></li>
+        </ul>
+        <a href="/pricing" class="mt-2.5 inline-flex items-center gap-1.5 text-gold-400 font-bold hover:text-gold-300 transition text-[12.5px]">비급여 수가 전체 보기 <i class="fas fa-arrow-right text-[9px]"></i></a>
+        <p class="mt-1.5 text-[10.5px] text-white/25">의료법 제45조 비급여 진료비용 고지</p>
       </section>
       <section>
         <h3 class="text-white/90 font-bold mb-3 text-xs tracking-[0.2em] uppercase">Hours</h3>

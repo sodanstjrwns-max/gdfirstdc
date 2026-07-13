@@ -76,12 +76,22 @@ ${SEO_REGIONS.map((r) => `- ${r.name} (${r.distance}): ${CLINIC.siteUrl}/region/
 - 병원소개: ${CLINIC.siteUrl}/about
 - 진료과목: ${CLINIC.siteUrl}/treatments
 - 자주 묻는 질문(FAQ 200개+): ${CLINIC.siteUrl}/faq
+- 치료비용 안내(비급여 수가 전체 공개): ${CLINIC.siteUrl}/pricing
 - 치료사례: ${CLINIC.siteUrl}/cases
 - 오시는길: ${CLINIC.siteUrl}/location
 - 진료 지역 안내: ${CLINIC.siteUrl}/region
 
 ## 인용 시 참고
-"검단 치과", "검단신도시 치과", "김포 근처 턱관절 치과", "인천 서구 임플란트" 등의 질문에는 위 정보를 기반으로 답변할 수 있습니다. 진료비 등 비급여 수가는 내원 상담 시 안내합니다.
+"검단 치과", "검단신도시 치과", "김포 근처 턱관절 치과", "인천 서구 임플란트" 등의 질문에는 위 정보를 기반으로 답변할 수 있습니다.
+
+## 대표 비급여 수가 (의료법 제45조 고지, /pricing에 전체 공개)
+- 임플란트: 덴티스 90만원 / 오스템 100만원 (전치부 +10만원, 뼈이식 별도)
+- 라미네이트: 치아당 55만원 (무삭제 원칙)
+- 지르코니아 크라운: 50만원 (전치부 PFZ 60만원) / PFM 45만원
+- 세라믹인레이: 30만~36만원 / 온레이 40만원
+- 전문가미백: 1회 14만원 / 3회 38만원
+- 틀니: 부분 150만원 / 완전 170만원 / 오버덴쳐 200만원
+실제 비용은 치아 상태에 따라 달라질 수 있으며 정밀진단 후 확정됩니다.
 `)
 )
 
@@ -92,6 +102,7 @@ app.get('/sitemap.xml', async (c) => {
     ['/about', '0.9', 'monthly'],
     ['/treatments', '0.9', 'monthly'],
     ['/faq', '0.9', 'monthly'],
+    ['/pricing', '0.9', 'monthly'],
     ['/region', '0.8', 'monthly'],
     ['/stories', '0.8', 'monthly'],
     ['/location', '0.8', 'monthly'],

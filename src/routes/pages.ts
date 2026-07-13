@@ -5,6 +5,7 @@ import { CLINIC, DOCTOR, EQUIPMENT, STORIES } from '../data/clinic'
 import { TREATMENTS, getTreatment } from '../data/treatments'
 import { FAQS } from '../data/faqs'
 import { SEO_REGIONS, REGION_GROUPS, type SeoRegion } from '../data/regions'
+import { PRICING, fmtPrice, PRICING_UPDATED } from '../data/pricing'
 import type { AppEnv } from '../types'
 
 const pages = new Hono<AppEnv>()
@@ -203,6 +204,25 @@ pages.get('/', (c) => {
   </div>
 </section>
 
+<!-- ===== 원내 갤러리 스트립 ===== -->
+<section id="gallery-strip" class="max-w-6xl mx-auto px-5 pb-20">
+  <a href="/about#clinic-gallery" class="group block">
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3" data-stagger>
+      ${[
+        { img: 'lobby_tmj', alt: '검단퍼스트치과 대기실과 턱관절센터', label: '대기실 · 턱관절센터' },
+        { img: 'treatment_room', alt: '파티션으로 분리된 진료실', label: '프라이버시 진료실' },
+        { img: 'consult_room', alt: '독립 1:1 상담실', label: '1:1 상담실' },
+        { img: 'waiting_garden', alt: '정원 콘셉트 대기 공간', label: '가든 라운지' },
+      ].map((g) => `
+      <figure class="bento reveal-scale relative rounded-3xl overflow-hidden bg-ink min-h-[200px] sm:min-h-[240px]">
+        <img src="/static/images/${g.img}.webp" alt="${g.alt}" class="absolute inset-0 w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700" loading="lazy">
+        <figcaption class="absolute bottom-0 inset-x-0 p-4 bg-gradient-to-t from-ink/80 to-transparent"><p class="text-white font-bold text-[13px]">${g.label}</p></figcaption>
+      </figure>`).join('')}
+    </div>
+    <p class="mt-4 text-right text-sm font-bold text-ink/60 group-hover:text-gold-600 transition">실제 원내 모습 더 보기 <i class="fas fa-arrow-right text-xs"></i></p>
+  </a>
+</section>
+
 <!-- ===== 진료시간/CTA ===== -->
 <section id="visit-info" class="max-w-6xl mx-auto px-5 pb-24">
   <div class="grid lg:grid-cols-5 gap-4">
@@ -304,6 +324,58 @@ ${pageHero('About Us', '광고 대신,<br><span class="font-disp text-shine">진
       <figcaption class="absolute bottom-0 inset-x-0 p-6 bg-gradient-to-t from-ink to-transparent">
         <p class="text-gold-400 text-[11px] font-bold tracking-[0.25em] uppercase">Clinic Tour</p>
         <p class="mt-1 text-white font-extrabold">원내 둘러보기</p>
+      </figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="clinic-gallery" class="max-w-6xl mx-auto px-5 py-20">
+  <header class="mb-10">
+    <p class="reveal text-gold-600 text-xs font-bold tracking-[0.3em] uppercase">Inside the Clinic</p>
+    <h2 class="reveal mt-2 text-3xl sm:text-4xl font-extrabold text-ink tracking-tightest">공간에도<br class="sm:hidden"> 진심을 담았습니다.</h2>
+    <p class="reveal mt-4 text-ink/45 text-[15px]">긴장을 덜어드리는 공간 설계 — 실제 원내 모습 그대로입니다.</p>
+  </header>
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-3" data-stagger>
+    <figure class="bento reveal-scale col-span-2 rounded-3xl overflow-hidden bg-ink relative min-h-[280px] lg:min-h-[340px]">
+      <img src="/static/images/lobby_tmj.webp" alt="검단퍼스트치과 대기실과 턱관절센터 입구" class="absolute inset-0 w-full h-full object-cover" loading="lazy">
+      <figcaption class="absolute bottom-0 inset-x-0 p-5 bg-gradient-to-t from-ink/85 to-transparent">
+        <p class="text-gold-400 text-[10px] font-bold tracking-[0.25em] uppercase">Lobby · TMJ Center</p>
+        <p class="mt-1 text-white font-extrabold">넓은 대기실과 턱관절센터</p>
+      </figcaption>
+    </figure>
+    <figure class="bento reveal-scale rounded-3xl overflow-hidden bg-ink relative min-h-[280px] lg:min-h-[340px]">
+      <img src="/static/images/waiting_garden.webp" alt="검단퍼스트치과 정원 콘셉트 대기 공간" class="absolute inset-0 w-full h-full object-cover" loading="lazy">
+      <figcaption class="absolute bottom-0 inset-x-0 p-5 bg-gradient-to-t from-ink/85 to-transparent">
+        <p class="text-gold-400 text-[10px] font-bold tracking-[0.25em] uppercase">Waiting</p>
+        <p class="mt-1 text-white font-extrabold text-[14px]">정원처럼, 편안하게</p>
+      </figcaption>
+    </figure>
+    <figure class="bento reveal-scale rounded-3xl overflow-hidden bg-ink relative min-h-[280px] lg:min-h-[340px]">
+      <img src="/static/images/treatment_room.webp" alt="검단퍼스트치과 파티션으로 분리된 진료실" class="absolute inset-0 w-full h-full object-cover" loading="lazy">
+      <figcaption class="absolute bottom-0 inset-x-0 p-5 bg-gradient-to-t from-ink/85 to-transparent">
+        <p class="text-gold-400 text-[10px] font-bold tracking-[0.25em] uppercase">Treatment</p>
+        <p class="mt-1 text-white font-extrabold text-[14px]">프라이버시 진료 공간</p>
+      </figcaption>
+    </figure>
+    <figure class="bento reveal-scale rounded-3xl overflow-hidden bg-ink relative min-h-[240px]">
+      <img src="/static/images/consult_room.webp" alt="검단퍼스트치과 독립 상담실" class="absolute inset-0 w-full h-full object-cover" loading="lazy">
+      <figcaption class="absolute bottom-0 inset-x-0 p-5 bg-gradient-to-t from-ink/85 to-transparent">
+        <p class="text-gold-400 text-[10px] font-bold tracking-[0.25em] uppercase">Consulting</p>
+        <p class="mt-1 text-white font-extrabold text-[14px]">차분한 1:1 상담실</p>
+      </figcaption>
+    </figure>
+    <figure class="bento reveal-scale rounded-3xl overflow-hidden bg-ink relative min-h-[240px]">
+      <img src="/static/images/interior_curve.webp" alt="검단퍼스트치과 곡선 유리 인테리어" class="absolute inset-0 w-full h-full object-cover" loading="lazy">
+      <figcaption class="absolute bottom-0 inset-x-0 p-5 bg-gradient-to-t from-ink/85 to-transparent">
+        <p class="text-gold-400 text-[10px] font-bold tracking-[0.25em] uppercase">Interior</p>
+        <p class="mt-1 text-white font-extrabold text-[14px]">부드러운 동선 설계</p>
+      </figcaption>
+    </figure>
+    <figure class="bento reveal-scale col-span-2 rounded-3xl overflow-hidden bg-ink relative min-h-[240px]">
+      <img src="/static/images/entrance.webp" alt="검단퍼스트치과 입구 전경" class="absolute inset-0 w-full h-full object-cover object-center" loading="lazy">
+      <figcaption class="absolute bottom-0 inset-x-0 p-5 bg-gradient-to-t from-ink/85 to-transparent">
+        <p class="text-gold-400 text-[10px] font-bold tracking-[0.25em] uppercase">Entrance · 3F</p>
+        <p class="mt-1 text-white font-extrabold">검단퍼스트프라자 3층, 이 문으로 들어오세요</p>
       </figcaption>
     </figure>
   </div>
@@ -480,11 +552,120 @@ ${pageHero('Location', '검단 한복판,<br><span class="font-disp text-shine">
     </article>
     <article class="rounded-3xl bg-white border border-ink/8 p-7" data-tilt data-tilt-max="7">
       <h2 class="font-extrabold text-ink flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-gold-500"></span>비급여 진료비</h2>
-      <p class="mt-3 text-[13.5px] text-ink/55 leading-relaxed">비급여 수가는 의료법에 따라 원내 게시되어 있으며, 내원 상담 시 정확한 견적을 안내해 드립니다.</p>
+      <p class="mt-3 text-[13.5px] text-ink/55 leading-relaxed">임플란트 90만원~, 라미네이트 55만원, 크라운 45만원~ — 의료법에 따라 전 항목을 홈페이지와 원내에 공개하고 있습니다.</p>
+      <a href="/pricing" class="mt-3 inline-flex items-center gap-2 text-sm font-bold text-ink border-b border-gold-500 hover:text-gold-600 transition">비급여 수가표 전체 보기 <i class="fas fa-arrow-right text-xs"></i></a>
     </article>
+  </div>
+</section>
+
+<section id="clinic-entrance" class="max-w-6xl mx-auto px-5 pb-16">
+  <div class="grid md:grid-cols-2 gap-4">
+    <figure class="reveal-scale rounded-3xl overflow-hidden border border-ink/8 bg-white">
+      <img src="/static/images/entrance.webp" alt="검단퍼스트치과 입구 — 검단퍼스트프라자 3층" class="w-full h-72 sm:h-80 object-cover" loading="lazy">
+      <figcaption class="p-5">
+        <p class="text-gold-600 text-[11px] font-bold tracking-[0.25em] uppercase">Entrance</p>
+        <p class="mt-1 font-extrabold text-ink">3층에서 이 입구를 찾아주세요</p>
+        <p class="mt-1 text-[13px] text-ink/50">엘리베이터에서 내리시면 바로 보입니다.</p>
+      </figcaption>
+    </figure>
+    <figure class="reveal-scale rounded-3xl overflow-hidden border border-ink/8 bg-white">
+      <img src="/static/images/reception.webp" alt="검단퍼스트치과 인포메이션 데스크" class="w-full h-72 sm:h-80 object-cover" loading="lazy">
+      <figcaption class="p-5">
+        <p class="text-gold-600 text-[11px] font-bold tracking-[0.25em] uppercase">Information</p>
+        <p class="mt-1 font-extrabold text-ink">접수는 이곳에서</p>
+        <p class="mt-1 text-[13px] text-ink/50">처음 오셨다면 데스크에서 편하게 말씀해 주세요.</p>
+      </figcaption>
+    </figure>
   </div>
 </section>`
   return c.html(layout({ title: '내원안내 · 오시는길', desc: `검단퍼스트치과 오시는 길 — ${CLINIC.address}. 진료시간 평일 09:30~18:30, 토요일 09:30~14:00. ${CLINIC.phone}`, path: '/location' }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
+})
+
+// ============ 치료비용 안내 (비급여 수가표) ============
+pages.get('/pricing', (c) => {
+  const nonInsured = PRICING.filter((p) => !p.insured)
+  const insured = PRICING.find((p) => p.insured)
+  const totalItems = PRICING.reduce((n, p) => n + p.items.length, 0)
+  const body = `
+${pageHero('Pricing', '비용까지,<br><span class="font-disp text-shine">투명하게.</span>', `의료법 제45조에 따라 비급여 진료비용을 모두 공개합니다. 총 ${totalItems}개 항목 — 숨기는 비용은 없습니다.`)}
+
+<section id="pricing-summary" class="max-w-6xl mx-auto px-5 pt-14">
+  <div class="speakable-summary rounded-3xl bg-white border border-ink/8 p-7 sm:p-8">
+    <p class="text-[14.5px] text-ink/65 leading-[1.9]"><strong class="text-ink">검단퍼스트치과 대표 비급여 수가</strong> — 임플란트(덴티스) 90만원·(오스템) 100만원, 지르코니아 크라운 50만원부터, 라미네이트 55만원, 세라믹인레이 30만원부터, 전문가미백 1회 14만원. 만 65세 이상 임플란트·틀니는 건강보험 적용이 가능합니다. 정확한 비용은 정밀진단 후 안내드리며, 진단 없이 부풀리거나 깎아 부르는 일은 없습니다. (기준: ${PRICING_UPDATED})</p>
+  </div>
+  <nav class="mt-8 flex flex-wrap gap-2" aria-label="비용 카테고리">
+    ${PRICING.map((p) => `<a href="#price-${p.key}" class="px-4 py-2 rounded-full bg-white border border-ink/10 text-[13px] font-semibold text-ink/60 hover:bg-ink hover:text-white transition"><i class="fas ${p.icon} mr-1.5 text-gold-600"></i>${p.label}</a>`).join('')}
+  </nav>
+</section>
+
+<section id="pricing-tables" class="max-w-6xl mx-auto px-5 py-12 space-y-10">
+  ${nonInsured.map((p) => `
+  <article id="price-${p.key}" class="scroll-mt-28">
+    <header class="flex items-center justify-between gap-4 mb-4">
+      <h2 class="text-xl sm:text-2xl font-extrabold text-ink tracking-tight flex items-center gap-2.5"><span class="w-9 h-9 rounded-xl bg-ink text-gold-400 flex items-center justify-center text-sm"><i class="fas ${p.icon}"></i></span>${p.label}</h2>
+      <span class="text-[12px] text-ink/35 font-medium shrink-0">${p.items.length}개 항목</span>
+    </header>
+    <p class="text-[13px] text-ink/45 mb-4">${p.desc}</p>
+    <div class="rounded-3xl bg-white border border-ink/8 overflow-hidden">
+      <table class="w-full text-[13.5px]">
+        <thead><tr class="bg-ink/[0.03] text-left"><th class="px-5 sm:px-6 py-3 font-bold text-ink/60 text-[12px] tracking-wider uppercase">항목</th><th class="px-5 sm:px-6 py-3 font-bold text-ink/60 text-[12px] tracking-wider uppercase text-right">비용</th></tr></thead>
+        <tbody>
+          ${p.items.map((it, i) => `<tr class="${i % 2 ? 'bg-ink/[0.015]' : ''} border-t border-ink/5"><td class="px-5 sm:px-6 py-3 text-ink/75 font-medium">${esc(it.name)}${it.note ? ` <span class="text-[11px] text-gold-600 font-semibold">(${esc(it.note)})</span>` : ''}</td><td class="px-5 sm:px-6 py-3 text-right font-bold text-ink whitespace-nowrap">${fmtPrice(it.price)}</td></tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+  </article>`).join('')}
+
+  ${insured ? `
+  <article id="price-${insured.key}" class="scroll-mt-28">
+    <header class="flex items-center gap-2.5 mb-4">
+      <h2 class="text-xl sm:text-2xl font-extrabold text-ink tracking-tight flex items-center gap-2.5"><span class="w-9 h-9 rounded-xl bg-ink text-gold-400 flex items-center justify-center text-sm"><i class="fas ${insured.icon}"></i></span>${insured.label} <span class="text-[12px] font-bold text-white bg-gold-500 rounded-full px-3 py-1">건강보험 적용</span></h2>
+    </header>
+    <p class="text-[13px] text-ink/45 mb-4">${insured.desc}</p>
+    <div class="rounded-3xl bg-white border border-ink/8 p-6 sm:p-7">
+      <p class="flex flex-wrap gap-2">${insured.items.map((it) => `<span class="px-3.5 py-1.5 rounded-full bg-ink/[0.04] text-[12.5px] font-semibold text-ink/65">${esc(it.name)}</span>`).join('')}</p>
+      <p class="mt-4 text-[12.5px] text-ink/45 leading-relaxed"><i class="fas fa-shield-halved text-gold-600 mr-1.5"></i>위 항목은 건강보험이 적용되어 본인부담금 기준으로 진료받으실 수 있습니다. 만 65세 이상은 임플란트(평생 2개)·틀니 보험 적용 대상입니다.</p>
+    </div>
+  </article>` : ''}
+</section>
+
+<section class="max-w-6xl mx-auto px-5 pb-20">
+  <div class="rounded-3xl bg-ink text-white p-9 sm:p-12 relative overflow-hidden">
+    <div class="absolute -bottom-16 -right-12 w-64 h-64 rounded-full bg-gold-500/15 blur-[80px]" aria-hidden="true"></div>
+    <div class="relative grid lg:grid-cols-[1fr_auto] gap-8 items-center">
+      <div>
+        <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tightest">견적이 다르다고요?<br>들고 오셔도 됩니다.</h2>
+        <p class="mt-3 text-white/50 text-[14.5px] leading-relaxed max-w-xl">치아 상태에 따라 실제 비용은 달라질 수 있습니다. 정밀진단 후 필요한 치료와 필요 없는 치료를 구분해 정확한 견적을 드립니다. 상담은 강요 없이, 결정은 환자분이.</p>
+        <p class="mt-4 text-[11.5px] text-white/30">* 본 수가표는 의료법 제45조에 따른 비급여 진료비용 고지이며, ${PRICING_UPDATED} 기준입니다. 세부 항목은 원내 게시물과 상담을 통해 확인하실 수 있습니다.</p>
+      </div>
+      <div class="flex flex-wrap lg:flex-col gap-3 shrink-0">
+        <a href="tel:${CLINIC.phone}" class="btn-3d px-7 py-4 rounded-full bg-gold-500 text-ink font-extrabold hover:bg-gold-400 transition text-center"><i class="fas fa-phone mr-2"></i>${CLINIC.phone}</a>
+        <a href="/location" class="px-7 py-4 rounded-full border border-white/25 font-bold hover:bg-white/10 transition text-center">오시는 길</a>
+      </div>
+    </div>
+  </div>
+</section>`
+  const jsonLd = [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: '홈', item: CLINIC.siteUrl },
+        { '@type': 'ListItem', position: 2, name: '치료비용 안내', item: `${CLINIC.siteUrl}/pricing` },
+      ],
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: [
+        { '@type': 'Question', name: '검단퍼스트치과 임플란트 비용은 얼마인가요?', acceptedAnswer: { '@type': 'Answer', text: `덴티스 임플란트 90만원, 오스템 임플란트 100만원입니다(전치부 각 +10만원). 뼈이식은 기본 30만원부터이며, 만 65세 이상은 건강보험(평생 2개, 본인부담 30%)이 적용됩니다. 정확한 비용은 정밀진단 후 안내드립니다. 문의 ${CLINIC.phone}` } },
+        { '@type': 'Question', name: '검단퍼스트치과 라미네이트 비용은 얼마인가요?', acceptedAnswer: { '@type': 'Answer', text: '라미네이트는 치아당 55만원입니다. 뉴욕대 무삭제 라미네이트 과정을 수료한 원장이 무삭제(Non-prep) 원칙으로 진행하며, 치료 전 3D 스캔으로 결과를 미리 확인할 수 있습니다.' } },
+        { '@type': 'Question', name: '검단퍼스트치과 크라운·인레이 비용은 얼마인가요?', acceptedAnswer: { '@type': 'Answer', text: '지르코니아 크라운 50만원(전치부 PFZ 60만원), PFM 크라운 45만원, 세라믹인레이 30만~36만원, 세라믹온레이 40만원입니다.' } },
+        { '@type': 'Question', name: '치아미백 비용은 얼마인가요?', acceptedAnswer: { '@type': 'Answer', text: '전문가미백 1회 14만원, 2회 27만원, 3회 38만원이며 전문가(3회)+자가(4회) 패키지는 63만원입니다.' } },
+      ],
+    },
+  ]
+  return c.html(layout({ title: `치료비용 안내 — 임플란트 90만원부터, 비급여 수가 전체 공개`, desc: `검단퍼스트치과 비급여 진료비용 안내 — 임플란트 90만원~, 라미네이트 55만원, 지르코니아 크라운 50만원, 세라믹인레이 30만원~, 전문가미백 14만원~. 의료법에 따라 ${totalItems}개 전 항목 투명 공개. 검단신도시·김포·청라 치과 비용 비교.`, path: '/pricing', jsonLd }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
 })
 
 // ============ 통합 FAQ 페이지 (AEO 핵심) ============
