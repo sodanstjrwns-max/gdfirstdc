@@ -17,7 +17,9 @@
 5. **치료사례** (`/cases`, `/cases/:id`) — 카테고리 필터, 페이지네이션, **전/후 비교 슬라이더** (구내포토·파노라마)
 6. **건강칼럼** (`/blog`, `/blog/:slug`) — 블로그, Article JSON-LD
 7. **공지사항** (`/notice`, `/notice/:id`) — 상단 고정 공지 지원
-8. **내원안내** (`/location`) — OpenStreetMap 지도, 네이버/카카오맵 링크, 주차·교통·진료시간
+8. **내원안내** (`/location`) — OpenStreetMap 지도, 네이버/카카오맵 링크, 주차·교통·진료시간, 입구·접수데스크 실사진, /pricing 연결 비급여 카드
+8-1. **치료비용 안내** (`/pricing`) — 원장 제공 수가표 기반 비급여 137항목 전체 공개(의료법 제45조). 9개 카테고리, 앵커 네비게이션, speakable 요약박스, 비용 FAQPage JSON-LD. 데이터: `src/data/pricing.ts`
+8-2. **원내 실사진 7장** — 홈 갤러리 스트립(4장), 병원소개 갤러리 섹션(6장), 오시는길 입구·접수(2장) — webp 변환(1200px, q82)
 9. **지역 SEO/AEO 페이지** (`/region`, `/region/:slug`) — **25개 지역** (검단·서구 12 / 청라·루원 3 / 계양·부평 3 / 김포 7). 지역별 고유 콘텐츠·교통안내·요약 답변박스(Speakable)·지역 FAQ 6개 + FAQPage/BreadcrumbList JSON-LD, 인근 지역 내부링크
 10. **회원가입/로그인** (`/signup`, `/login`, `/logout`) — PBKDF2 해시 + HMAC 세션 쿠키, 개인정보 동의
 11. **관리자** (`/admin`) — 대시보드, 치료사례/칼럼/공지 CRUD, R2 이미지 업로드, 지역 자동완성(`/api/regions`), 비밀번호 변경
@@ -63,4 +65,4 @@ pm2 start ecosystem.config.cjs                           # 개발 서버 (port 3
 ## Tech Stack
 - Hono + TypeScript + Cloudflare Pages (D1 + R2) + TailwindCSS(CDN) + FontAwesome
 - **디자인 v3 (2026 SUPER)**: View Transitions 페이지 전환, 커튼 인트로, 스크롤 프로그레스 바, 커스텀 lerp 커서, 오로라 히어로, per-char 스플릿 타이포, 스포트라이트 보더 카드, 마그네틱 버튼, 3D 틸트+글레어
-- **Last Updated**: 2026-07-08 (SEO/AEO 슈퍼 머신 업그레이드)
+- **Last Updated**: 2026-07-13 (치료비용 수가표 /pricing + 푸터 비용 정보 + 원내 실사진 7장 배치)
