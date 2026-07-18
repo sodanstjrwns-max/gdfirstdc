@@ -26,6 +26,10 @@ export const CLINIC = {
   lunch: 'PM 13:00 ~ PM 14:00 (평일)',
   mission: '미소에 자신감을 더하는, 검단에서 가장 정직한 치과',
   missionEn: 'Make Luminate, More Attractive',
+  // 원장님이 직접 작성하신 비전·가치·슬로건 (제작 신청서 원문)
+  vision: '자연스러운 심미와 정밀한 진료로 오래 신뢰받는 치과',
+  coreValue: '사람에 대한 진심과 배려',
+  slogan: '미소에 자신감을 더하는, 가장 편안한 진료를 제공합니다',
   slogans: [
     '과잉진료 없는 1인 대표원장 책임진료',
     '검단신도시에서 가장 오래된 치과, 그 이름의 무게를 압니다',

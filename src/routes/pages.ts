@@ -265,6 +265,28 @@ ${pageHero('About Us', '광고 대신,<br><span class="font-disp text-shine">진
   </div>
 </section>
 
+<!-- ===== 비전 · 핵심가치 · 슬로건 ===== -->
+<section id="vision-values" class="max-w-6xl mx-auto px-5 pb-20">
+  <div class="grid md:grid-cols-3 gap-4" data-stagger>
+    <article class="bento reveal-scale rounded-3xl bg-ink text-white p-8 relative overflow-hidden" data-tilt data-tilt-max="5">
+      <div class="absolute -top-10 -right-10 w-40 h-40 rounded-full bg-gold-500/15 blur-[60px]" aria-hidden="true"></div>
+      <p class="text-gold-400 text-[11px] font-bold tracking-[0.3em] uppercase">Vision</p>
+      <h3 class="mt-4 text-xl font-extrabold tracking-tight leading-snug">자연스러운 심미와<br>정밀한 진료로<br>오래 신뢰받는 치과</h3>
+      <p class="mt-4 text-[13px] text-white/45 leading-relaxed">유행을 좇는 화려함이 아닌, 얼굴과 조화로운 자연스러움. 검단퍼스트치과가 바라보는 방향입니다.</p>
+    </article>
+    <article class="bento reveal-scale rounded-3xl bg-white border border-ink/8 p-8" data-tilt data-tilt-max="5">
+      <p class="text-gold-600 text-[11px] font-bold tracking-[0.3em] uppercase">Core Value</p>
+      <h3 class="mt-4 text-xl font-extrabold text-ink tracking-tight leading-snug">사람에 대한<br>진심과 배려</h3>
+      <p class="mt-4 text-[13px] text-ink/50 leading-relaxed">최고의 진료뿐 아니라 최상의 만족을 위해, 환자분의 불편감을 최대한 없애드리는 것 — 저희가 해드릴 수 있는 최고의 배려입니다.</p>
+    </article>
+    <article class="bento reveal-scale rounded-3xl bg-white border border-ink/8 p-8" data-tilt data-tilt-max="5">
+      <p class="text-gold-600 text-[11px] font-bold tracking-[0.3em] uppercase">Slogan</p>
+      <h3 class="mt-4 text-xl font-extrabold text-ink tracking-tight leading-snug">미소에 자신감을 더하는,<br>가장 편안한 진료</h3>
+      <p class="mt-4 text-[13px] text-ink/50 leading-relaxed">미소에 자신감을 더하는 가장 편안한 진료를 제공합니다. 검단퍼스트치과가 모든 환자분께 드리는 약속입니다.</p>
+    </article>
+  </div>
+</section>
+
 <section id="doctor-profile" class="bg-ink text-white py-20 sm:py-24 relative overflow-hidden">
   <div class="absolute top-0 left-1/3 w-[500px] h-[500px] rounded-full bg-navy-600/20 blur-[140px]" aria-hidden="true"></div>
   <div class="max-w-6xl mx-auto px-5 relative">
