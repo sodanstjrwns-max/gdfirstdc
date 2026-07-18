@@ -119,9 +119,10 @@ ${meta.ogImage ? `<meta property="og:image" content="${meta.ogImage}">` : ''}
 <meta name="geo.position" content="${CLINIC.lat};${CLINIC.lng}">
 <meta name="ICBM" content="${CLINIC.lat}, ${CLINIC.lng}">
 <meta name="author" content="${CLINIC.name} ${CLINIC.doctor} 원장">
-<link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/static/images/logo.png" type="image/png">
+<link rel="apple-touch-icon" href="/static/images/logo.png">
 <script src="https://cdn.tailwindcss.com"></script>
-<script>tailwind.config={theme:{extend:{colors:{ink:{DEFAULT:'#0a1628',soft:'#0f1f38',mute:'#16294a'},navy:{50:'#f2f6fb',100:'#dfeaf5',200:'#bcd3ea',400:'#5b8ec2',600:'#1d5486',700:'#173f66',800:'#12365a',900:'#0d2843'},gold:{300:'#ecd591',400:'#ddb85e',500:'#c9a227',600:'#a9871f'},cream:'#faf7f0'},fontFamily:{sans:['Pretendard','-apple-system','system-ui','sans-serif'],disp:['"Nanum Myeongjo"','Pretendard','serif']},letterSpacing:{tightest:'-0.04em'}}}}</script>
+<script>tailwind.config={theme:{extend:{colors:{ink:{DEFAULT:'#0a1628',soft:'#0f1f38',mute:'#16294a'},navy:{50:'#f2f6fb',100:'#dfeaf5',200:'#bcd3ea',400:'#5b8ec2',600:'#1d5486',700:'#173f66',800:'#12365a',900:'#0d2843'},gold:{300:'#eef1f6',400:'#cdd5e0',500:'#b7c1cf',600:'#5c6b82'},royal:{DEFAULT:'#0a4fc2',600:'#0040a0'},cream:'#faf7f0'},fontFamily:{sans:['Pretendard','-apple-system','system-ui','sans-serif'],disp:['"Nanum Myeongjo"','Pretendard','serif']},letterSpacing:{tightest:'-0.04em'}}}}</script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&display=swap">
 <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
@@ -139,7 +140,7 @@ ${meta.path === '/' ? '<div id="curtain" aria-hidden="true"><span class="curtain
 <header id="site-header" class="fixed top-0 inset-x-0 z-50 px-3 pt-3 transition-transform duration-300">
   <div class="max-w-6xl mx-auto glass-nav rounded-2xl px-4 sm:px-6 flex items-center justify-between h-16">
     <a href="/" id="logo" class="flex items-center gap-2.5 shrink-0">
-      <span class="w-9 h-9 rounded-xl bg-ink text-gold-400 flex items-center justify-center text-sm font-black">GF</span>
+      <img src="/static/images/logo.png" alt="검단퍼스트치과 로고" class="w-10 h-10 object-contain shrink-0" width="40" height="40">
       <span class="leading-none">
         <strong class="block text-ink text-[17px] font-extrabold tracking-tightest">검단퍼스트치과</strong>
         <span class="block text-[9px] text-ink/40 mt-1 tracking-[0.22em] uppercase font-semibold">First &amp; Honest</span>

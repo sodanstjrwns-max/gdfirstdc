@@ -173,7 +173,7 @@ const AGE_GROUPS = ['10대', '20대', '30대', '40대', '50대', '60대', '70대
 admin.get('/admin/cases', async (c) => {
   const rows = (await c.env.DB.prepare('SELECT id, title, category, region, published, views, created_at FROM before_after ORDER BY created_at DESC LIMIT 100').all<any>()).results
   const inner = `
-<a href="/admin/cases/new" class="inline-block mb-5 px-5 py-2.5 rounded-xl bg-gold-500 text-white font-bold text-sm hover:bg-gold-600"><i class="fas fa-plus mr-1"></i>새 치료사례</a>
+<a href="/admin/cases/new" class="inline-block mb-5 px-5 py-2.5 rounded-xl bg-royal text-white font-bold text-sm hover:bg-royal-600"><i class="fas fa-plus mr-1"></i>새 치료사례</a>
 ${rows.length === 0 ? '<p class="text-slate-400 py-10 text-center">등록된 치료사례가 없습니다.</p>' : `
 <div class="overflow-x-auto rounded-xl border border-slate-200">
 <table class="w-full text-sm">
@@ -318,7 +318,7 @@ admin.post('/admin/cases/:id/delete', async (c) => {
 admin.get('/admin/blog', async (c) => {
   const rows = (await c.env.DB.prepare('SELECT id, title, slug, published, views, created_at FROM blog_posts ORDER BY created_at DESC LIMIT 100').all<any>()).results
   const inner = `
-<a href="/admin/blog/new" class="inline-block mb-5 px-5 py-2.5 rounded-xl bg-gold-500 text-white font-bold text-sm hover:bg-gold-600"><i class="fas fa-plus mr-1"></i>새 칼럼</a>
+<a href="/admin/blog/new" class="inline-block mb-5 px-5 py-2.5 rounded-xl bg-royal text-white font-bold text-sm hover:bg-royal-600"><i class="fas fa-plus mr-1"></i>새 칼럼</a>
 ${rows.length === 0 ? '<p class="text-slate-400 py-10 text-center">등록된 칼럼이 없습니다.</p>' : `
 <div class="overflow-x-auto rounded-xl border border-slate-200">
 <table class="w-full text-sm">
@@ -411,7 +411,7 @@ admin.post('/admin/blog/:id/delete', async (c) => {
 admin.get('/admin/notice', async (c) => {
   const rows = (await c.env.DB.prepare('SELECT id, title, is_pinned, published, views, created_at FROM notices ORDER BY is_pinned DESC, created_at DESC LIMIT 100').all<any>()).results
   const inner = `
-<a href="/admin/notice/new" class="inline-block mb-5 px-5 py-2.5 rounded-xl bg-gold-500 text-white font-bold text-sm hover:bg-gold-600"><i class="fas fa-plus mr-1"></i>새 공지</a>
+<a href="/admin/notice/new" class="inline-block mb-5 px-5 py-2.5 rounded-xl bg-royal text-white font-bold text-sm hover:bg-royal-600"><i class="fas fa-plus mr-1"></i>새 공지</a>
 ${rows.length === 0 ? '<p class="text-slate-400 py-10 text-center">등록된 공지가 없습니다.</p>' : `
 <div class="overflow-x-auto rounded-xl border border-slate-200">
 <table class="w-full text-sm">

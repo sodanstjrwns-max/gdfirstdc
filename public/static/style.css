@@ -1,6 +1,6 @@
 /* ============ 검단퍼스트치과 — 2026 트렌디 리뉴얼 ============ */
 html { scroll-behavior: smooth; }
-::selection { background: #c9a227; color: #0a1628; }
+::selection { background: #b7c1cf; color: #0a1628; }
 
 /* 필름 그레인 */
 .grain-overlay { position: fixed; inset: 0; z-index: 100; pointer-events: none; opacity: .035; mix-blend-mode: overlay;
@@ -34,7 +34,7 @@ html { scroll-behavior: smooth; }
 @keyframes heroUp { to { transform: none; } }
 
 /* 그라데이션 텍스트 */
-.text-shine { background: linear-gradient(100deg, #ecd591 10%, #c9a227 45%, #ecd591 80%); background-size: 200% auto; -webkit-background-clip: text; background-clip: text; color: transparent; animation: shine 5s linear infinite; }
+.text-shine { background: linear-gradient(100deg, #eef1f6 10%, #b7c1cf 45%, #eef1f6 80%); background-size: 200% auto; -webkit-background-clip: text; background-clip: text; color: transparent; animation: shine 5s linear infinite; }
 @keyframes shine { to { background-position: 200% center; } }
 
 /* 벤토 카드 호버 */
@@ -72,11 +72,11 @@ html { scroll-behavior: smooth; }
 
 /* 본문 프로즈 */
 .prose-clinic h2 { font-size: 1.45rem; font-weight: 800; color: #0a1628; margin-top: 3rem; margin-bottom: 1rem; letter-spacing: -.03em; }
-.prose-clinic h2::before { content: ''; display: block; width: 44px; height: 3px; background: #c9a227; margin-bottom: .9rem; border-radius: 2px; }
+.prose-clinic h2::before { content: ''; display: block; width: 44px; height: 3px; background: #b7c1cf; margin-bottom: .9rem; border-radius: 2px; }
 .prose-clinic p { line-height: 1.9; margin-bottom: 1.1rem; color: #3d4a5c; font-size: 15.5px; }
 .prose-clinic ul { margin: 1rem 0 1.5rem; display: grid; gap: .6rem; }
 .prose-clinic li { position: relative; padding: .9rem 1.1rem .9rem 2.6rem; background: #fff; border: 1px solid rgba(10,22,40,.07); border-radius: 14px; line-height: 1.65; color: #3d4a5c; font-size: 14.5px; }
-.prose-clinic li::before { content: '\2713'; position: absolute; left: 1rem; top: .9rem; color: #c9a227; font-weight: 800; }
+.prose-clinic li::before { content: '\2713'; position: absolute; left: 1rem; top: .9rem; color: #b7c1cf; font-weight: 800; }
 
 .blog-content h2 { font-size: 1.4rem; font-weight: 800; color: #0a1628; margin: 2rem 0 .8rem; letter-spacing: -.02em; }
 .blog-content h3 { font-size: 1.15rem; font-weight: 700; color: #12365a; margin: 1.5rem 0 .5rem; }
@@ -89,7 +89,7 @@ html { scroll-behavior: smooth; }
 .ba-compare { position: relative; user-select: none; }
 .ba-compare .ba-after { clip-path: inset(0 0 0 50%); }
 .ba-compare .ba-divider { position: absolute; top: 0; bottom: 0; left: 50%; width: 2px; background: #fff; box-shadow: 0 0 0 1px rgba(10,22,40,.2); pointer-events: none; }
-.ba-compare .ba-divider::after { content: '\2194'; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 40px; height: 40px; background: #0a1628; color: #ddb85e; border-radius: 999px; display: flex; align-items: center; justify-content: center; font-size: 15px; }
+.ba-compare .ba-divider::after { content: '\2194'; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 40px; height: 40px; background: #0a1628; color: #cdd5e0; border-radius: 999px; display: flex; align-items: center; justify-content: center; font-size: 15px; }
 .ba-compare input[type=range] { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: ew-resize; }
 
 /* FAQ */
@@ -113,16 +113,16 @@ html { scroll-behavior: smooth; }
 /* ===== 커튼 인트로 (첫 방문) ===== */
 #curtain { position: fixed; inset: 0; z-index: 999; background: #0a1628; display: flex; align-items: center; justify-content: center; transition: clip-path .9s cubic-bezier(.76,0,.24,1); clip-path: inset(0 0 0 0); }
 #curtain.done { clip-path: inset(0 0 100% 0); }
-#curtain .curtain-logo { color: #ddb85e; font-size: 12px; font-weight: 800; letter-spacing: .5em; text-transform: uppercase; opacity: 0; animation: curtainLogo .6s ease .1s forwards; }
+#curtain .curtain-logo { color: #cdd5e0; font-size: 12px; font-weight: 800; letter-spacing: .5em; text-transform: uppercase; opacity: 0; animation: curtainLogo .6s ease .1s forwards; }
 @keyframes curtainLogo { to { opacity: 1; letter-spacing: .34em; } }
 #curtain.off { display: none; }
 
 /* ===== 스크롤 프로그레스 바 ===== */
-#scroll-progress { position: fixed; top: 0; left: 0; right: 0; height: 3px; z-index: 200; background: linear-gradient(90deg, #c9a227, #ecd591, #c9a227); transform-origin: 0 50%; transform: scaleX(0); pointer-events: none; }
+#scroll-progress { position: fixed; top: 0; left: 0; right: 0; height: 3px; z-index: 200; background: linear-gradient(90deg, #b7c1cf, #eef1f6, #b7c1cf); transform-origin: 0 50%; transform: scaleX(0); pointer-events: none; }
 
 /* ===== 커스텀 커서 ===== */
 html.has-cursor, html.has-cursor a, html.has-cursor button { cursor: none; }
-#cursor-dot { position: fixed; top: 0; left: 0; z-index: 998; width: 6px; height: 6px; margin: -3px 0 0 -3px; border-radius: 50%; background: #c9a227; pointer-events: none; }
+#cursor-dot { position: fixed; top: 0; left: 0; z-index: 998; width: 6px; height: 6px; margin: -3px 0 0 -3px; border-radius: 50%; background: #b7c1cf; pointer-events: none; }
 #cursor-ring { position: fixed; top: 0; left: 0; z-index: 997; width: 38px; height: 38px; margin: -19px 0 0 -19px; border-radius: 50%; border: 1.5px solid rgba(201,162,39,.65); pointer-events: none; transition: width .3s, height .3s, margin .3s, background .3s, border-color .3s; mix-blend-mode: exclusion; }
 #cursor-ring.cursor-hover { width: 62px; height: 62px; margin: -31px 0 0 -31px; background: rgba(221,184,94,.14); border-color: rgba(221,184,94,.9); }
 @media (hover: none), (pointer: coarse) { #cursor-dot, #cursor-ring { display: none; } }
@@ -135,8 +135,8 @@ html.has-cursor, html.has-cursor a, html.has-cursor button { cursor: none; }
 /* ===== 오로라 배경 (히어로) ===== */
 .aurora { position: absolute; inset: -20%; pointer-events: none; filter: blur(90px) saturate(1.3); opacity: .55; }
 .aurora::before, .aurora::after { content: ''; position: absolute; width: 55%; height: 55%; border-radius: 50%; }
-.aurora::before { top: 5%; right: 8%; background: conic-gradient(from 90deg, #1d5486, #0d2843, #c9a22755, #1d5486); animation: auroraSpin 18s linear infinite; }
-.aurora::after { bottom: 0; left: 5%; background: conic-gradient(from 240deg, #c9a22740, #12365a, #5b8ec244, #c9a22740); animation: auroraSpin 24s linear infinite reverse; }
+.aurora::before { top: 5%; right: 8%; background: conic-gradient(from 90deg, #1d5486, #0d2843, #b7c1cf55, #1d5486); animation: auroraSpin 18s linear infinite; }
+.aurora::after { bottom: 0; left: 5%; background: conic-gradient(from 240deg, #b7c1cf40, #12365a, #5b8ec244, #b7c1cf40); animation: auroraSpin 24s linear infinite reverse; }
 @keyframes auroraSpin { to { transform: rotate(360deg) scale(1.12); } }
 
 /* ===== 스포트라이트 카드 (마우스 추적 골드 글로우) ===== */
@@ -150,7 +150,7 @@ html.has-cursor, html.has-cursor a, html.has-cursor button { cursor: none; }
 /* ===== 스크롤 힌트 ===== */
 .scroll-hint { display: flex; flex-direction: column; align-items: center; gap: 10px; color: rgba(255,255,255,.35); font-size: 10px; letter-spacing: .3em; text-transform: uppercase; writing-mode: vertical-rl; }
 .scroll-hint .scroll-line { width: 1px; height: 44px; background: rgba(255,255,255,.15); overflow: hidden; position: relative; }
-.scroll-hint .scroll-line::after { content: ''; position: absolute; left: 0; top: -50%; width: 100%; height: 50%; background: #ddb85e; animation: scrollDrop 1.8s cubic-bezier(.76,0,.24,1) infinite; }
+.scroll-hint .scroll-line::after { content: ''; position: absolute; left: 0; top: -50%; width: 100%; height: 50%; background: #cdd5e0; animation: scrollDrop 1.8s cubic-bezier(.76,0,.24,1) infinite; }
 @keyframes scrollDrop { to { top: 110%; } }
 
 /* ===== 마그네틱 버튼 ===== */
