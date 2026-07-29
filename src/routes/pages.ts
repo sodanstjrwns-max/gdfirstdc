@@ -440,7 +440,7 @@ ${pageHero('About Us', '광고 대신,<br><span class="font-disp text-shine">진
     memberOf: DOCTOR.memberships.slice(0, 7).map((m) => ({ '@type': 'Organization', name: m })),
     knowsAbout: ['임플란트', '무삭제 라미네이트', '턱관절 치료', '체외충격파', '미세현미경 신경치료', '심미보철'],
   }
-  return c.html(layout({ title: '병원소개', desc: `검단퍼스트치과 소개 — 통합치의학 전문의 김희수 대표원장, 1인 책임진료, ZEISS 미세현미경·체외충격파·페이스스캐너 등 첨단장비.`, path: '/about', jsonLd: [doctorLd] }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
+  return c.html(layout({ title: '병원소개 — 통합치의학 전문의 1인 책임진료', desc: `검단퍼스트치과 소개 — 통합치의학 전문의 김희수 대표원장, 1인 책임진료, ZEISS 미세현미경·체외충격파·페이스스캐너 등 첨단장비.`, path: '/about', jsonLd: [doctorLd] }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
 })
 
 // ============ 진료과목 목록 ============
@@ -461,7 +461,7 @@ ${pageHero('Treatments', '필요한 치료만,<br><span class="font-disp text-sh
     </a>`).join('')}
   </div>
 </section>`
-  return c.html(layout({ title: '진료과목', desc: '검단퍼스트치과 진료과목 — 임플란트, 루미네이트(라미네이트), 턱관절치료, 심미보철, 신경치료, 충치치료, 잇몸치료, 보철, 사랑니 발치, 치과 보톡스.', path: '/treatments' }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
+  return c.html(layout({ title: '진료과목 — 임플란트·라미네이트·턱관절 치료', desc: '검단퍼스트치과 진료과목 — 임플란트, 루미네이트(라미네이트), 턱관절치료, 심미보철, 신경치료, 충치치료, 잇몸치료, 보철, 사랑니 발치, 치과 보톡스.', path: '/treatments' }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
 })
 
 // ============ 진료과목 상세 ============
@@ -541,7 +541,7 @@ ${faqs.length ? `
     <a href="/treatments" class="px-5 py-2.5 rounded-full bg-ink text-white text-[13.5px] font-bold">전체 보기</a>
   </nav>
 </section>`
-  return c.html(layout({ title: t.name, desc: t.metaDesc, path: `/treatments/${t.slug}`, jsonLd: faqLd }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
+  return c.html(layout({ title: `${t.name} — 인천 검단신도시 치과`, desc: t.metaDesc, path: `/treatments/${t.slug}`, jsonLd: faqLd }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
 })
 
 // ============ 치료스토리 ============
@@ -560,7 +560,7 @@ ${pageHero('Stories', '숫자가 아닌,<br><span class="font-disp text-shine">�
   </article>`
   }).join('')}
 </section>`
-  return c.html(layout({ title: '치료스토리', desc: '검단퍼스트치과 치료스토리 — 아버지의 전악 임플란트, 응급실에서 못 넣은 턱을 5초 만에, 정확한 진단이 바꾼 턱관절 치료.', path: '/stories' }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
+  return c.html(layout({ title: '치료스토리 — 환자와 원장의 진짜 이야기', desc: '검단퍼스트치과 치료스토리 — 아버지께 직접 심어드린 전악 임플란트 16개, 응급실에서 못 넣은 턱을 5초 만에 정복한 이야기, 정확한 진단이 바꾼 턱관절 치료까지 — 숫자가 아닌 사람의 이야기입니다.', path: '/stories' }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
 })
 
 // ============ 내원안내 / 오시는길 ============
@@ -628,7 +628,7 @@ ${pageHero('Location', '검단 한복판,<br><span class="font-disp text-shine">
     </figure>
   </div>
 </section>`
-  return c.html(layout({ title: '내원안내 · 오시는길', desc: `검단퍼스트치과 오시는 길 — ${CLINIC.address}. 진료시간 평일 09:30~18:30, 토요일 09:30~14:00. ${CLINIC.phone}`, path: '/location' }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
+  return c.html(layout({ title: '내원안내 · 오시는길 — 검단신도시 이음5로 치과', desc: `검단퍼스트치과 오시는 길 — ${CLINIC.address}. 진료시간 평일 09:30~18:30, 토요일 09:30~14:00, 목·일 휴진. 건물 주차장 완비. 예약 문의 ${CLINIC.phone}`, path: '/location' }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
 })
 
 // ============ 치료비용 안내 (비급여 수가표) ============
@@ -859,7 +859,7 @@ ${pageHero('Local', `${r.name} 치과,<br><span class="font-disp text-shine">가
 
 <section class="max-w-6xl mx-auto px-5 py-14">
   <div class="grid sm:grid-cols-3 gap-4" data-stagger>
-    ${core.map((t, i) => `<a href="/treatments/${t.slug}" class="bento group relative rounded-3xl ${i === 0 ? 'bg-ink text-white' : 'bg-white border border-ink/8'} p-7 block"><span class="w-12 h-12 rounded-2xl ${i === 0 ? 'bg-gold-500 text-ink' : 'bg-ink text-gold-400'} flex items-center justify-center text-lg"><i class="fas ${t.icon}"></i></span><h3 class="mt-4 text-lg font-extrabold tracking-tight">${r.name} ${t.name}</h3><p class="mt-1 text-[13px] ${i === 0 ? 'text-gold-400' : 'text-gold-600'} font-semibold">${t.tagline}</p></a>`).join('')}
+    ${core.map((t, i) => `<a href="/treatments/${t.slug}" class="bento group relative rounded-3xl ${i === 0 ? 'bg-ink text-white' : 'bg-white border border-ink/8'} p-7 block"><span class="w-12 h-12 rounded-2xl ${i === 0 ? 'bg-gold-500 text-ink' : 'bg-ink text-gold-400'} flex items-center justify-center text-lg"><i class="fas ${t.icon}"></i></span><h2 class="mt-4 text-lg font-extrabold tracking-tight">${r.name} ${t.name}</h2><p class="mt-1 text-[13px] ${i === 0 ? 'text-gold-400' : 'text-gold-600'} font-semibold">${t.tagline}</p></a>`).join('')}
   </div>
 
   <div class="mt-14 grid lg:grid-cols-5 gap-10">

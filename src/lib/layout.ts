@@ -280,12 +280,12 @@ ${meta.path === '/' ? '<div id="curtain" aria-hidden="true"><span class="curtain
     </div>
     <div class="grid sm:grid-cols-2 lg:grid-cols-5 gap-8 py-10 text-[13.5px]">
       <section>
-        <h3 class="text-white/90 font-bold mb-3 text-xs tracking-[0.2em] uppercase">Clinic</h3>
+        <h2 class="text-white/90 font-bold mb-3 text-xs tracking-[0.2em] uppercase">Clinic</h2>
         <p class="leading-relaxed">${CLINIC.address}</p>
         <p class="mt-2">대표자 ${CLINIC.doctor} · 사업자 ${CLINIC.bizNo}<br>${CLINIC.email}</p>
       </section>
       <section id="footer-pricing">
-        <h3 class="text-white/90 font-bold mb-3 text-xs tracking-[0.2em] uppercase">Pricing</h3>
+        <h2 class="text-white/90 font-bold mb-3 text-xs tracking-[0.2em] uppercase">Pricing</h2>
         <ul class="space-y-1">
           <li class="flex justify-between max-w-[240px]"><span class="text-white/35">임플란트</span><span>90만원~</span></li>
           <li class="flex justify-between max-w-[240px]"><span class="text-white/35">라미네이트</span><span>55만원</span></li>
@@ -297,7 +297,7 @@ ${meta.path === '/' ? '<div id="curtain" aria-hidden="true"><span class="curtain
         <p class="mt-1.5 text-[10.5px] text-white/25">의료법 제45조 비급여 진료비용 고지</p>
       </section>
       <section>
-        <h3 class="text-white/90 font-bold mb-3 text-xs tracking-[0.2em] uppercase">Hours</h3>
+        <h2 class="text-white/90 font-bold mb-3 text-xs tracking-[0.2em] uppercase">Hours</h2>
         <ul class="space-y-1">
           <li class="flex justify-between max-w-[240px]"><span class="text-white/35">월·화·수·금</span><span>09:30–18:30</span></li>
           <li class="flex justify-between max-w-[240px]"><span class="text-white/35">토요일</span><span>09:30–14:00</span></li>
@@ -307,13 +307,13 @@ ${meta.path === '/' ? '<div id="curtain" aria-hidden="true"><span class="curtain
         <p class="mt-2 text-[11px] text-white/30">* 공휴일이 있는 주 목요일은 정상진료</p>
       </section>
       <section>
-        <h3 class="text-white/90 font-bold mb-3 text-xs tracking-[0.2em] uppercase">Treatments</h3>
+        <h2 class="text-white/90 font-bold mb-3 text-xs tracking-[0.2em] uppercase">Treatments</h2>
         <ul class="grid grid-cols-2 gap-1">
           ${TREATMENTS.map((t) => `<li><a href="/treatments/${t.slug}" class="hover:text-gold-400 transition">${t.name}</a></li>`).join('')}
         </ul>
       </section>
       <section>
-        <h3 class="text-white/90 font-bold mb-3 text-xs tracking-[0.2em] uppercase">Menu</h3>
+        <h2 class="text-white/90 font-bold mb-3 text-xs tracking-[0.2em] uppercase">Menu</h2>
         <ul class="space-y-1">
           ${NAV.map((n) => `<li><a href="${n.href}" class="hover:text-gold-400 transition">${n.label}</a></li>`).join('')}
           <li><a href="/notice" class="hover:text-gold-400 transition">공지사항</a></li>

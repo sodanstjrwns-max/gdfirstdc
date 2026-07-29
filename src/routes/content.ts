@@ -91,7 +91,7 @@ ${pageHero('Before &amp; After', '결과로<br><span class="font-disp text-shine
   </div>
   ${pager(`/cases?${cat ? `category=${cat}&` : ''}`, page, pages)}`}
 </section>`
-  return c.html(layout({ title: '치료사례', desc: '검단퍼스트치과 치료사례 — 임플란트, 라미네이트, 턱관절 등 실제 치료 전후 사진. 환자 동의 하에 게시.', path: '/cases' }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
+  return c.html(layout({ title: '치료사례 — 임플란트·라미네이트 전후사진', desc: '검단퍼스트치과 치료사례 — 임플란트, 무삭제 라미네이트, 턱관절 치료 등 실제 환자 치료 전후 사진을 확인하세요. 모든 사례는 환자 동의 하에 게시됩니다.', path: '/cases' }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
 })
 
 // ============ 치료사례 상세 ============
@@ -158,7 +158,7 @@ ${pageHero('Column', '원장이 직접 쓰는<br><span class="font-disp text-shi
   </div>
   ${pager('/blog?', page, pages)}`}
 </section>`
-  return c.html(layout({ title: '건강칼럼', desc: '검단퍼스트치과 건강칼럼 — 임플란트, 라미네이트, 턱관절 등 김희수 원장이 직접 쓰는 치아 건강 정보.', path: '/blog' }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
+  return c.html(layout({ title: '건강칼럼 — 원장이 직접 쓰는 치아 이야기', desc: '검단퍼스트치과 건강칼럼 — 임플란트, 라미네이트, 턱관절, 신경치료 등 통합치의학 전문의 김희수 원장이 직접 쓰는 치아 건강 정보와 치료 상식을 전해드립니다.', path: '/blog' }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
 })
 
 // ============ 건강칼럼 상세 ============
@@ -222,7 +222,7 @@ ${pageHero('Notice', '병원 소식을<br><span class="font-disp text-shine">전
   </ul>
   ${pager('/notice?', page, pages)}`}
 </section>`
-  return c.html(layout({ title: '공지사항', desc: '검단퍼스트치과 공지사항 — 진료일정, 휴진 안내, 병원 소식.', path: '/notice' }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
+  return c.html(layout({ title: '공지사항 — 진료일정·휴진 안내', desc: '검단퍼스트치과 공지사항 — 진료일정 변경, 공휴일·휴진 안내, 병원 소식을 가장 빠르게 확인하실 수 있습니다. 진료 문의 032-563-2872.', path: '/notice' }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
 })
 
 // ============ 공지사항 상세 ============
