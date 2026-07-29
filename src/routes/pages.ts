@@ -79,6 +79,13 @@ pages.get('/', (c) => {
   </div>
 </section>
 
+<!-- ===== AEO 핵심 요약 (speakable) ===== -->
+<section id="clinic-summary" class="max-w-6xl mx-auto px-5 pb-14">
+  <p class="speakable-summary reveal rounded-3xl bg-white border border-ink/8 p-7 sm:p-8 text-[15px] sm:text-base text-ink/70 leading-[1.9]">
+    <strong class="text-ink">검단퍼스트치과</strong>는 인천 검단신도시에서 가장 오래된 치과로, <strong class="text-ink">보건복지부 인증 통합치의학 전문의 김희수 대표원장의 1인 책임진료</strong> 치과입니다. 임플란트·무삭제 라미네이트(루미네이트)·턱관절(체외충격파) 특화 진료를 하며, 과잉진료 없이 꾱 필요한 치료만 권합니다. 위치는 ${CLINIC.address}, 평일 09:30~18:30 · 토요일 09:30~14:00 진료(목·일 휴진), 예약 문의는 <a href="tel:${CLINIC.phone}" class="font-extrabold text-gold-600 underline underline-offset-4">${CLINIC.phone}</a>입니다.
+  </p>
+</section>
+
 <!-- ===== 시그니처 진료 (벤토) ===== -->
 <section id="core-treatments" class="max-w-6xl mx-auto px-5 pb-20">
   <header class="mb-10 flex flex-wrap items-end justify-between gap-4">
@@ -258,7 +265,7 @@ ${pageHero('About Us', '광고 대신,<br><span class="font-disp text-shine">진
   <div class="grid lg:grid-cols-2 gap-10 items-start">
     <h2 class="reveal text-2xl sm:text-4xl font-extrabold text-ink tracking-tightest leading-[1.25] lg:sticky lg:top-28">"다른 병원도 다녀오세요.<br>그럼 저희의 가치를<br>더 느끼실 수 있습니다."</h2>
     <div class="space-y-5 text-ink/60 leading-[1.9] text-[15.5px]">
-      <p class="reveal">검단퍼스트치과는 화려한 광고 대신 정직한 진단으로 승부합니다. 꼭 필요한 치료만 권해드리고, 하지 않아도 되는 치료는 하지 않아도 된다고 말씀드립니다.</p>
+      <p class="reveal speakable-summary">검단퍼스트치과는 화려한 광고 대신 정직한 진단으로 승부합니다. 꼭 필요한 치료만 권해드리고, 하지 않아도 되는 치료는 하지 않아도 된다고 말씀드립니다.</p>
       <p class="reveal">상담한 원장이 직접 치료하고, 치료한 원장이 끝까지 관리하는 <strong class="text-ink">1인 대표원장 책임진료 시스템</strong>. 페이닥터 교체로 담당의가 바뀌는 일은 이곳에 없습니다.</p>
       <p class="reveal">그것이 검단에서 가장 오래 신뢰받아온 이유입니다.</p>
     </div>
@@ -412,7 +419,28 @@ ${pageHero('About Us', '광고 대신,<br><span class="font-disp text-shine">진
     ${EQUIPMENT.map((e, i) => `<article class="bento rounded-3xl bg-white border border-ink/8 p-6 relative"><span class="absolute top-5 right-6 text-[11px] font-mono text-ink/25">${String(i + 1).padStart(2, '0')}</span><span class="w-11 h-11 rounded-xl bg-ink/[0.04] text-ink flex items-center justify-center"><i class="fas ${e.icon}"></i></span><h3 class="mt-4 font-extrabold text-ink text-[15.5px]">${e.name}</h3><p class="mt-2 text-[13.5px] text-ink/50 leading-relaxed">${e.desc}</p></article>`).join('')}
   </div>
 </section>`
-  return c.html(layout({ title: '병원소개', desc: `검단퍼스트치과 소개 — 통합치의학 전문의 김희수 대표원장, 1인 책임진료, ZEISS 미세현미경·체외충격파·페이스스캐너 등 첨단장비.`, path: '/about' }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
+  const doctorLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    '@id': `${CLINIC.siteUrl}/about#doctor`,
+    name: DOCTOR.name,
+    jobTitle: '대표원장 · 보건복지부 인증 통합치의학 전문의',
+    worksFor: { '@id': `${CLINIC.siteUrl}/#clinic` },
+    image: `${CLINIC.siteUrl}/static/images/doctor_lobby.webp`,
+    alumniOf: [
+      { '@type': 'CollegeOrUniversity', name: '경희대학교 치의학전문대학원' },
+      { '@type': 'CollegeOrUniversity', name: '가톨릭대학교 부천성모병원 통합치의학과 (레지던트)' },
+    ],
+    hasCredential: [
+      { '@type': 'EducationalOccupationalCredential', name: '보건복지부 인증 통합치의학 전문의' },
+      { '@type': 'EducationalOccupationalCredential', name: '대한치과보철학회 인증 우수보철의사' },
+      { '@type': 'EducationalOccupationalCredential', name: 'Harvard School of Dental Medicine Implant Dentistry CE' },
+      { '@type': 'EducationalOccupationalCredential', name: 'NYU Non-prep Veneer(무삭제 라미네이트) 고급과정' },
+    ],
+    memberOf: DOCTOR.memberships.slice(0, 7).map((m) => ({ '@type': 'Organization', name: m })),
+    knowsAbout: ['임플란트', '무삭제 라미네이트', '턱관절 치료', '체외충격파', '미세현미경 신경치료', '심미보철'],
+  }
+  return c.html(layout({ title: '병원소개', desc: `검단퍼스트치과 소개 — 통합치의학 전문의 김희수 대표원장, 1인 책임진료, ZEISS 미세현미경·체외충격파·페이스스캐너 등 첨단장비.`, path: '/about', jsonLd: [doctorLd] }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
 })
 
 // ============ 진료과목 목록 ============
@@ -463,7 +491,7 @@ pages.get('/treatments/:slug', (c) => {
       </div>
       <span class="reveal-scale hidden sm:flex w-20 h-20 rounded-3xl bg-white/[0.06] border border-white/10 items-center justify-center text-3xl text-gold-400" data-tilt data-tilt-max="16"><i class="fas ${t.icon}"></i></span>
     </div>
-    <p class="reveal mt-7 text-white/50 leading-relaxed max-w-2xl text-[15px]">${esc(t.heroDesc)}</p>
+    <p class="reveal speakable-summary mt-7 text-white/50 leading-relaxed max-w-2xl text-[15px]">${esc(t.heroDesc)}</p>
   </div>
 </section>
 

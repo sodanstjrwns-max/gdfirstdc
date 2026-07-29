@@ -80,6 +80,51 @@ export function clinicJsonLd(): object {
   }
 }
 
+// WebSite 스키마 (사이트 전체 아이덴티티)
+export function websiteJsonLd(): object {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    '@id': `${CLINIC.siteUrl}/#website`,
+    name: CLINIC.name,
+    alternateName: [CLINIC.shortName, CLINIC.nameEn],
+    url: CLINIC.siteUrl,
+    inLanguage: 'ko-KR',
+    publisher: { '@id': `${CLINIC.siteUrl}/#clinic` },
+  }
+}
+
+// 경로 세그먼트 → 한글 라벨 맵 (브레드크럼 자동 생성용)
+const PATH_LABELS: Record<string, string> = {
+  about: '병원소개',
+  treatments: '진료과목',
+  cases: '치료사례',
+  pricing: '치료비용',
+  stories: '스토리',
+  blog: '칼럼',
+  faq: '자주 묻는 질문',
+  location: '오시는길',
+  notice: '공지사항',
+  region: '진료 지역 안내',
+}
+TREATMENTS.forEach((t) => { PATH_LABELS[t.slug] = t.name })
+SEO_REGIONS.forEach((r) => { PATH_LABELS[r.slug] = `${r.name} 치과` })
+
+// BreadcrumbList 자동 생성 (마지막 세그먼트는 PATH_LABELS 없으면 페이지 title 사용)
+export function autoBreadcrumbJsonLd(path: string, pageTitle: string): object | null {
+  if (path === '/' || !path) return null
+  const segs = path.split('/').filter(Boolean)
+  const items = [{ '@type': 'ListItem', position: 1, name: '홈', item: CLINIC.siteUrl + '/' }]
+  let acc = ''
+  segs.forEach((seg, i) => {
+    acc += '/' + seg
+    const isLast = i === segs.length - 1
+    const name = PATH_LABELS[seg] || (isLast ? pageTitle : decodeURIComponent(seg))
+    items.push({ '@type': 'ListItem', position: i + 2, name, item: CLINIC.siteUrl + acc })
+  })
+  return { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: items }
+}
+
 // Speakable 스키마 (음성·AI 답변엔진이 읽을 핵심 요약 영역)
 export function speakableJsonLd(path: string): object {
   return {
@@ -93,7 +138,10 @@ export function speakableJsonLd(path: string): object {
 export function layout(meta: PageMeta, body: string, opts?: { user?: { name: string } | null; admin?: boolean }): string {
   const fullTitle = meta.path === '/' ? `${CLINIC.name} — ${CLINIC.mission}` : `${meta.title} | ${CLINIC.shortName}`
   const url = CLINIC.siteUrl + meta.path
-  const jsonLd = [clinicJsonLd(), speakableJsonLd(meta.path), ...(meta.jsonLd || [])]
+  const extraLd = meta.jsonLd || []
+  const hasBreadcrumb = extraLd.some((j) => (j as Record<string, unknown>)['@type'] === 'BreadcrumbList')
+  const autoBc = hasBreadcrumb ? null : autoBreadcrumbJsonLd(meta.path, meta.title)
+  const jsonLd = [clinicJsonLd(), websiteJsonLd(), speakableJsonLd(meta.path), ...(autoBc ? [autoBc] : []), ...extraLd]
   const userName = opts?.user?.name
 
   return `<!DOCTYPE html>
@@ -111,8 +159,14 @@ ${meta.noindex ? '<meta name="robots" content="noindex,nofollow">' : '<meta name
 <meta property="og:url" content="${url}">
 <meta property="og:site_name" content="${CLINIC.name}">
 <meta property="og:locale" content="ko_KR">
-${meta.ogImage ? `<meta property="og:image" content="${meta.ogImage}">` : ''}
-<meta name="twitter:card" content="summary">
+<meta property="og:image" content="${meta.ogImage || `${CLINIC.siteUrl}/static/images/og_default.jpg`}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="${esc(CLINIC.name)} — 검단신도시 임플란트·라미네이트·턱관절 치과">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="${esc(fullTitle)}">
+<meta name="twitter:description" content="${esc(meta.desc)}">
+<meta name="twitter:image" content="${meta.ogImage || `${CLINIC.siteUrl}/static/images/og_default.jpg`}">
 <meta name="theme-color" content="#0a1628">
 <meta name="geo.region" content="KR-28">
 <meta name="geo.placename" content="인천광역시 서구 검단신도시">
