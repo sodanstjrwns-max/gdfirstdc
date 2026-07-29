@@ -3,6 +3,18 @@ document.addEventListener('DOMContentLoaded', () => {
   const noMotionQ = window.matchMedia('(prefers-reduced-motion: reduce)').matches
   const canHoverQ = window.matchMedia('(hover: hover) and (pointer: fine)').matches
 
+  // ===== 데이터 절약 모드 / 느린 회선: 배경 영상 다운로드 차단 (포스터 이미지로 대체) =====
+  const conn = navigator.connection || {}
+  const saveData = conn.saveData === true || /(^|-)2g$/.test(conn.effectiveType || '')
+  if (saveData) {
+    document.querySelectorAll('video').forEach((v) => {
+      v.removeAttribute('autoplay')
+      v.preload = 'none'
+      v.querySelectorAll('source[src]').forEach((s) => s.removeAttribute('src'))
+      v.load()
+    })
+  }
+
   // ===== 커튼 인트로 (세션당 1회) =====
   const curtain = document.getElementById('curtain')
   if (curtain) {
@@ -208,9 +220,9 @@ document.addEventListener('DOMContentLoaded', () => {
     })
   }
 
-  // ===== 스크롤 패럴랙스 ([data-parallax="0.2"]) =====
+  // ===== 스크롤 패럴랙스 ([data-parallax="0.2"]) — 터치 기기에서는 비활성(스크롤 성능) =====
   const pxEls = document.querySelectorAll('[data-parallax]')
-  if (pxEls.length && !noMotion) {
+  if (pxEls.length && !noMotion && canHoverQ) {
     const onScroll = () => {
       const vh = window.innerHeight
       pxEls.forEach((el) => {

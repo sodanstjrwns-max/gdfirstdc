@@ -119,6 +119,11 @@ ${meta.ogImage ? `<meta property="og:image" content="${meta.ogImage}">` : ''}
 <meta name="geo.position" content="${CLINIC.lat};${CLINIC.lng}">
 <meta name="ICBM" content="${CLINIC.lat}, ${CLINIC.lng}">
 <meta name="author" content="${CLINIC.name} ${CLINIC.doctor} 원장">
+<link rel="preconnect" href="https://cdn.tailwindcss.com" crossorigin>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+${meta.path === '/' ? '<link rel="preload" as="image" href="/static/images/hero_poster.webp" fetchpriority="high">' : ''}
 <link rel="icon" href="/static/images/logo.png" type="image/png">
 <link rel="apple-touch-icon" href="/static/images/logo.png">
 <script src="https://cdn.tailwindcss.com"></script>

@@ -168,9 +168,23 @@ a, button, summary, input[type=checkbox], label { touch-action: manipulation; }
   #mobile-menu .relative.h-full { height: 100svh; }
 }
 
+/* 터치 탭 하이라이트 정리 + 더블탭 줌 지연 제거 */
+a, button, [role="button"], input[type="range"] { -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+
 @media (max-width: 768px) {
   /* 필름 그레인·오로라 → 모바일 GPU 부하 경감 */
   .grain-overlay { display: none; }
+  /* 스크롤 프로그레스·커튼 인트로 생략 (첫 페인트 가속) */
+  #curtain { display: none !important; }
+
+  /* 터치 타깃 최소 44px 보장 (푸터·네비 링크) */
+  #site-footer a, #main-nav a { padding-top: .4rem; padding-bottom: .4rem; }
+
+  /* 히어로 타이포 줄바꿈 안정화 */
+  #hero-section h1 { word-break: keep-all; }
+
+  /* 가격표: 좁은 화면 셀 패딩 축소 */
+  #pricing-tables td, #pricing-tables th { padding-left: .9rem; padding-right: .9rem; }
   .aurora { filter: blur(56px) saturate(1.15); opacity: .4; }
   .aurora::before, .aurora::after { animation-duration: 34s; }
 

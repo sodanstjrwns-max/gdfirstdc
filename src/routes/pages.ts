@@ -125,7 +125,7 @@ pages.get('/', (c) => {
       <div class="reveal-scale">
         <div class="rounded-3xl bg-white/[0.06] border border-white/10 backdrop-blur overflow-hidden" data-tilt data-tilt-max="7">
           <div class="relative h-56 sm:h-64 overflow-hidden">
-            <img src="/static/images/doctor_lobby.webp" alt="검단퍼스트치과 김희수 대표원장" class="w-full h-full object-cover object-top" loading="lazy">
+            <img src="/static/images/doctor_lobby.webp" alt="검단퍼스트치과 김희수 대표원장" class="w-full h-full object-cover object-top" loading="lazy" decoding="async">
             <div class="absolute inset-0 bg-gradient-to-t from-ink/80 to-transparent" aria-hidden="true"></div>
           </div>
           <div class="p-8 pt-6">
@@ -162,7 +162,7 @@ pages.get('/', (c) => {
     </figure>
     <article class="bento reveal-scale rounded-3xl bg-white border border-ink/8 overflow-hidden flex flex-col">
       <div class="relative h-52 overflow-hidden">
-        <img src="/static/images/doctor_study.webp" alt="수료증과 인증서 앞에서 임상 서적을 연구하는 김희수 원장" class="w-full h-full object-cover" loading="lazy">
+        <img src="/static/images/doctor_study.webp" alt="수료증과 인증서 앞에서 임상 서적을 연구하는 김희수 원장" class="w-full h-full object-cover" loading="lazy" decoding="async">
       </div>
       <div class="p-7 flex-1 flex flex-col">
         <p class="text-gold-600 text-[11px] font-bold tracking-[0.25em] uppercase">Endless Study</p>
@@ -173,7 +173,7 @@ pages.get('/', (c) => {
     </article>
     <article class="bento reveal-scale rounded-3xl bg-ink text-white overflow-hidden flex flex-col">
       <div class="relative h-52 overflow-hidden">
-        <img src="/static/images/news_article.webp" alt="메디컬투데이 — 검단퍼스트치과 김희수 원장 한국경제TV 건강매거진 출연 기사" class="w-full h-full object-cover object-top" loading="lazy">
+        <img src="/static/images/news_article.webp" alt="메디컬투데이 — 검단퍼스트치과 김희수 원장 한국경제TV 건강매거진 출연 기사" class="w-full h-full object-cover object-top" width="340" height="1024" loading="lazy" decoding="async">
         <div class="absolute inset-0 bg-gradient-to-t from-ink/70 to-transparent" aria-hidden="true"></div>
       </div>
       <div class="p-7 flex-1 flex flex-col">
@@ -215,7 +215,7 @@ pages.get('/', (c) => {
         { img: 'waiting_garden', alt: '정원 콘셉트 대기 공간', label: '가든 라운지' },
       ].map((g) => `
       <figure class="bento reveal-scale relative rounded-3xl overflow-hidden bg-ink min-h-[200px] sm:min-h-[240px]">
-        <img src="/static/images/${g.img}.webp" alt="${g.alt}" class="absolute inset-0 w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700" loading="lazy">
+        <img src="/static/images/${g.img}.webp" alt="${g.alt}" class="absolute inset-0 w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700" loading="lazy" decoding="async">
         <figcaption class="absolute bottom-0 inset-x-0 p-4 bg-gradient-to-t from-ink/80 to-transparent"><p class="text-white font-bold text-[13px]">${g.label}</p></figcaption>
       </figure>`).join('')}
     </div>
@@ -297,7 +297,7 @@ ${pageHero('About Us', '광고 대신,<br><span class="font-disp text-shine">진
         <p class="reveal mt-3 text-white/45">보건복지부 인증 통합치의학 전문의 · 대한치과보철학회 우수보철의사</p>
       </header>
       <figure class="reveal-scale rounded-3xl overflow-hidden border border-white/10" data-tilt data-tilt-max="6">
-        <img src="/static/images/doctor_lobby.webp" alt="검단퍼스트치과 로비에서의 김희수 대표원장" class="w-full h-auto" loading="lazy">
+        <img src="/static/images/doctor_lobby.webp" alt="검단퍼스트치과 로비에서의 김희수 대표원장" class="w-full h-auto" width="640" height="426" loading="lazy" decoding="async">
       </figure>
     </div>
     <div class="grid lg:grid-cols-[1fr_340px] gap-4 mb-10 items-stretch">
@@ -334,7 +334,7 @@ ${pageHero('About Us', '광고 대신,<br><span class="font-disp text-shine">진
   </header>
   <div class="grid md:grid-cols-2 gap-4">
     <article class="bento reveal-scale rounded-3xl bg-white border border-ink/8 overflow-hidden flex flex-col sm:flex-row">
-      <img src="/static/images/news_article.webp" alt="메디컬투데이 기사 — 검단퍼스트치과 김희수 원장 건강매거진 출연" class="sm:w-44 h-56 sm:h-auto object-cover object-top shrink-0" loading="lazy">
+      <img src="/static/images/news_article.webp" alt="메디컬투데이 기사 — 검단퍼스트치과 김희수 원장 건강매거진 출연" class="sm:w-44 h-56 sm:h-auto object-cover object-top shrink-0" loading="lazy" decoding="async">
       <div class="p-7">
         <p class="text-[11px] font-bold text-gold-600 tracking-[0.2em] uppercase">메디컬투데이 · 2022.05</p>
         <h3 class="mt-2 font-extrabold text-ink text-lg leading-snug">김희수 원장, 한국경제TV 「건강매거진」 출연 — 임플란트 패러다임 변화 소개</h3>
@@ -359,42 +359,42 @@ ${pageHero('About Us', '광고 대신,<br><span class="font-disp text-shine">진
   </header>
   <div class="grid grid-cols-2 lg:grid-cols-4 gap-3" data-stagger>
     <figure class="bento reveal-scale col-span-2 rounded-3xl overflow-hidden bg-ink relative min-h-[280px] lg:min-h-[340px]">
-      <img src="/static/images/lobby_tmj.webp" alt="검단퍼스트치과 대기실과 턱관절센터 입구" class="absolute inset-0 w-full h-full object-cover" loading="lazy">
+      <img src="/static/images/lobby_tmj.webp" alt="검단퍼스트치과 대기실과 턱관절센터 입구" class="absolute inset-0 w-full h-full object-cover" loading="lazy" decoding="async">
       <figcaption class="absolute bottom-0 inset-x-0 p-5 bg-gradient-to-t from-ink/85 to-transparent">
         <p class="text-gold-400 text-[10px] font-bold tracking-[0.25em] uppercase">Lobby · TMJ Center</p>
         <p class="mt-1 text-white font-extrabold">넓은 대기실과 턱관절센터</p>
       </figcaption>
     </figure>
     <figure class="bento reveal-scale rounded-3xl overflow-hidden bg-ink relative min-h-[280px] lg:min-h-[340px]">
-      <img src="/static/images/waiting_garden.webp" alt="검단퍼스트치과 정원 콘셉트 대기 공간" class="absolute inset-0 w-full h-full object-cover" loading="lazy">
+      <img src="/static/images/waiting_garden.webp" alt="검단퍼스트치과 정원 콘셉트 대기 공간" class="absolute inset-0 w-full h-full object-cover" loading="lazy" decoding="async">
       <figcaption class="absolute bottom-0 inset-x-0 p-5 bg-gradient-to-t from-ink/85 to-transparent">
         <p class="text-gold-400 text-[10px] font-bold tracking-[0.25em] uppercase">Waiting</p>
         <p class="mt-1 text-white font-extrabold text-[14px]">정원처럼, 편안하게</p>
       </figcaption>
     </figure>
     <figure class="bento reveal-scale rounded-3xl overflow-hidden bg-ink relative min-h-[280px] lg:min-h-[340px]">
-      <img src="/static/images/treatment_room.webp" alt="검단퍼스트치과 파티션으로 분리된 진료실" class="absolute inset-0 w-full h-full object-cover" loading="lazy">
+      <img src="/static/images/treatment_room.webp" alt="검단퍼스트치과 파티션으로 분리된 진료실" class="absolute inset-0 w-full h-full object-cover" loading="lazy" decoding="async">
       <figcaption class="absolute bottom-0 inset-x-0 p-5 bg-gradient-to-t from-ink/85 to-transparent">
         <p class="text-gold-400 text-[10px] font-bold tracking-[0.25em] uppercase">Treatment</p>
         <p class="mt-1 text-white font-extrabold text-[14px]">프라이버시 진료 공간</p>
       </figcaption>
     </figure>
     <figure class="bento reveal-scale rounded-3xl overflow-hidden bg-ink relative min-h-[240px]">
-      <img src="/static/images/consult_room.webp" alt="검단퍼스트치과 독립 상담실" class="absolute inset-0 w-full h-full object-cover" loading="lazy">
+      <img src="/static/images/consult_room.webp" alt="검단퍼스트치과 독립 상담실" class="absolute inset-0 w-full h-full object-cover" loading="lazy" decoding="async">
       <figcaption class="absolute bottom-0 inset-x-0 p-5 bg-gradient-to-t from-ink/85 to-transparent">
         <p class="text-gold-400 text-[10px] font-bold tracking-[0.25em] uppercase">Consulting</p>
         <p class="mt-1 text-white font-extrabold text-[14px]">차분한 1:1 상담실</p>
       </figcaption>
     </figure>
     <figure class="bento reveal-scale rounded-3xl overflow-hidden bg-ink relative min-h-[240px]">
-      <img src="/static/images/interior_curve.webp" alt="검단퍼스트치과 곡선 유리 인테리어" class="absolute inset-0 w-full h-full object-cover" loading="lazy">
+      <img src="/static/images/interior_curve.webp" alt="검단퍼스트치과 곡선 유리 인테리어" class="absolute inset-0 w-full h-full object-cover" loading="lazy" decoding="async">
       <figcaption class="absolute bottom-0 inset-x-0 p-5 bg-gradient-to-t from-ink/85 to-transparent">
         <p class="text-gold-400 text-[10px] font-bold tracking-[0.25em] uppercase">Interior</p>
         <p class="mt-1 text-white font-extrabold text-[14px]">부드러운 동선 설계</p>
       </figcaption>
     </figure>
     <figure class="bento reveal-scale col-span-2 rounded-3xl overflow-hidden bg-ink relative min-h-[240px]">
-      <img src="/static/images/entrance.webp" alt="검단퍼스트치과 입구 전경" class="absolute inset-0 w-full h-full object-cover object-center" loading="lazy">
+      <img src="/static/images/entrance.webp" alt="검단퍼스트치과 입구 전경" class="absolute inset-0 w-full h-full object-cover object-center" loading="lazy" decoding="async">
       <figcaption class="absolute bottom-0 inset-x-0 p-5 bg-gradient-to-t from-ink/85 to-transparent">
         <p class="text-gold-400 text-[10px] font-bold tracking-[0.25em] uppercase">Entrance · 3F</p>
         <p class="mt-1 text-white font-extrabold">검단퍼스트프라자 3층, 이 문으로 들어오세요</p>
@@ -583,7 +583,7 @@ ${pageHero('Location', '검단 한복판,<br><span class="font-disp text-shine">
 <section id="clinic-entrance" class="max-w-6xl mx-auto px-5 pb-16">
   <div class="grid md:grid-cols-2 gap-4">
     <figure class="reveal-scale rounded-3xl overflow-hidden border border-ink/8 bg-white">
-      <img src="/static/images/entrance.webp" alt="검단퍼스트치과 입구 — 검단퍼스트프라자 3층" class="w-full h-72 sm:h-80 object-cover" loading="lazy">
+      <img src="/static/images/entrance.webp" alt="검단퍼스트치과 입구 — 검단퍼스트프라자 3층" class="w-full h-72 sm:h-80 object-cover" loading="lazy" decoding="async">
       <figcaption class="p-5">
         <p class="text-gold-600 text-[11px] font-bold tracking-[0.25em] uppercase">Entrance</p>
         <p class="mt-1 font-extrabold text-ink">3층에서 이 입구를 찾아주세요</p>
@@ -591,7 +591,7 @@ ${pageHero('Location', '검단 한복판,<br><span class="font-disp text-shine">
       </figcaption>
     </figure>
     <figure class="reveal-scale rounded-3xl overflow-hidden border border-ink/8 bg-white">
-      <img src="/static/images/reception.webp" alt="검단퍼스트치과 인포메이션 데스크" class="w-full h-72 sm:h-80 object-cover" loading="lazy">
+      <img src="/static/images/reception.webp" alt="검단퍼스트치과 인포메이션 데스크" class="w-full h-72 sm:h-80 object-cover" loading="lazy" decoding="async">
       <figcaption class="p-5">
         <p class="text-gold-600 text-[11px] font-bold tracking-[0.25em] uppercase">Information</p>
         <p class="mt-1 font-extrabold text-ink">접수는 이곳에서</p>

@@ -38,8 +38,8 @@ function baCompare(beforeKey: string | null, afterKey: string | null, label: str
     <span class="text-[11.5px] text-ink/35"><i class="fas fa-arrows-left-right mr-1"></i>드래그해서 비교</span>
   </figcaption>
   <div class="ba-compare rounded-3xl overflow-hidden border border-ink/8 relative shadow-xl shadow-ink/5">
-    <img src="${imgUrl(beforeKey)}" alt="${label} 치료 전" class="w-full block" loading="lazy">
-    <img src="${imgUrl(afterKey)}" alt="${label} 치료 후" class="ba-after w-full block absolute inset-0" loading="lazy">
+    <img src="${imgUrl(beforeKey)}" alt="${label} 치료 전" class="w-full block" loading="lazy" decoding="async">
+    <img src="${imgUrl(afterKey)}" alt="${label} 치료 후" class="ba-after w-full block absolute inset-0" loading="lazy" decoding="async">
     <div class="ba-divider"></div>
     <span class="absolute bottom-3 left-3 text-[10px] font-extrabold tracking-[0.15em] bg-ink/70 backdrop-blur text-white rounded-full px-3 py-1.5 pointer-events-none">BEFORE</span>
     <span class="absolute bottom-3 right-3 text-[10px] font-extrabold tracking-[0.15em] bg-gold-500 text-ink rounded-full px-3 py-1.5 pointer-events-none">AFTER</span>
@@ -49,7 +49,7 @@ function baCompare(beforeKey: string | null, afterKey: string | null, label: str
   }
   const key = beforeKey || afterKey
   const suffix = beforeKey ? '치료 전' : '치료 후'
-  return `<figure class="mb-8"><figcaption class="text-[13px] font-extrabold text-ink mb-3 uppercase tracking-wide">${label} <span class="text-ink/35 font-medium">(${suffix})</span></figcaption><img src="${imgUrl(key)}" alt="${label} ${suffix}" class="w-full rounded-3xl border border-ink/8" loading="lazy"></figure>`
+  return `<figure class="mb-8"><figcaption class="text-[13px] font-extrabold text-ink mb-3 uppercase tracking-wide">${label} <span class="text-ink/35 font-medium">(${suffix})</span></figcaption><img src="${imgUrl(key)}" alt="${label} ${suffix}" class="w-full rounded-3xl border border-ink/8" loading="lazy" decoding="async"></figure>`
 }
 
 // ============ 치료사례 목록 ============
@@ -78,7 +78,7 @@ ${pageHero('Before &amp; After', '결과로<br><span class="font-disp text-shine
       return `
     <a href="/cases/${r.id}" class="bento case-card group block rounded-3xl bg-white border border-ink/8 overflow-hidden">
       <div class="aspect-[4/3] bg-ink/[0.03] overflow-hidden flex items-center justify-center relative">
-        ${thumb ? `<img src="${imgUrl(thumb)}" alt="${esc(r.title)}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy">` : '<i class="fas fa-tooth text-5xl text-ink/10"></i>'}
+        ${thumb ? `<img src="${imgUrl(thumb)}" alt="${esc(r.title)}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy" decoding="async">` : '<i class="fas fa-tooth text-5xl text-ink/10"></i>'}
         ${t ? `<span class="absolute top-3 left-3 text-[10.5px] font-extrabold tracking-wide bg-ink/75 backdrop-blur text-gold-400 rounded-full px-3 py-1.5">${t.name}</span>` : ''}
       </div>
       <div class="p-6">
@@ -144,7 +144,7 @@ ${pageHero('Column', '원장이 직접 쓰는<br><span class="font-disp text-shi
   <div class="space-y-3" data-stagger>
     ${rows.map((r) => `
     <a href="/blog/${esc(r.slug)}" class="bento blog-card group flex gap-6 rounded-3xl bg-white border border-ink/8 p-6 items-center">
-      ${r.thumbnail_key ? `<img src="${imgUrl(r.thumbnail_key)}" alt="${esc(r.title)}" class="w-28 h-28 rounded-2xl object-cover shrink-0 hidden sm:block" loading="lazy">` : `<span class="w-28 h-28 rounded-2xl bg-ink/[0.04] text-ink/15 hidden sm:flex items-center justify-center text-3xl shrink-0"><i class="fas fa-tooth"></i></span>`}
+      ${r.thumbnail_key ? `<img src="${imgUrl(r.thumbnail_key)}" alt="${esc(r.title)}" class="w-28 h-28 rounded-2xl object-cover shrink-0 hidden sm:block" loading="lazy" decoding="async">` : `<span class="w-28 h-28 rounded-2xl bg-ink/[0.04] text-ink/15 hidden sm:flex items-center justify-center text-3xl shrink-0"><i class="fas fa-tooth"></i></span>`}
       <div class="min-w-0 flex-1">
         <div class="flex items-center gap-2.5 text-[11.5px]">
           ${r.category ? `<span class="font-extrabold text-gold-600 tracking-wide uppercase">${esc(r.category)}</span><span class="w-0.5 h-0.5 rounded-full bg-ink/25"></span>` : ''}
@@ -246,7 +246,7 @@ content.get('/notice/:id', async (c) => {
 </section>
 <article class="max-w-3xl mx-auto px-5 py-12 blog-content">
   ${r.content_html}
-  ${images.map((k) => `<img src="${imgUrl(k)}" alt="공지 이미지" class="w-full rounded-3xl my-5" loading="lazy">`).join('')}
+  ${images.map((k) => `<img src="${imgUrl(k)}" alt="공지 이미지" class="w-full rounded-3xl my-5" loading="lazy" decoding="async">`).join('')}
 </article>`
   return c.html(layout({ title: r.title, desc: `${r.title} — 검단퍼스트치과 공지사항`, path: `/notice/${r.id}` }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
 })
