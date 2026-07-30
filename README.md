@@ -7,7 +7,8 @@
 
 ## URLs
 - **개발(샌드박스)**: https://3000-i6855r7gxvdlqx169sebt-3844e1b6.sandbox.novita.ai
-- **Production**: https://gdfirst-dental.pages.dev ✅
+- **공식 도메인**: https://gdfirstdc.kr ✅ (가비아 등록, Cloudflare DNS/SSL)
+- **Pages 원본**: https://gdfirst-dental.pages.dev → gdfirstdc.kr로 301 리다이렉트
 
 ## 완성된 기능
 1. **메인 홈** (`/`) — 히어로, 신뢰 배너, 시그니처 진료 3종(임플란트/루미네이트/턱관절), 원장 소개, 장비 9종, 진료시간/오시는길

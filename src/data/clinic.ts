@@ -13,7 +13,7 @@ export const CLINIC = {
   bizNo: '141-59-00634',
   email: 'khs831009@naver.com',
   blog: 'https://blog.naver.com/gdfirstdental',
-  siteUrl: 'https://gdfirst-dental.pages.dev', // 커스텀 도메인 연결 시 교체
+  siteUrl: 'https://gdfirstdc.kr', // 공식 도메인 (가비아 등록, Cloudflare DNS)
   hours: [
     { day: '월요일', time: 'AM 09:30 ~ PM 18:30' },
     { day: '화요일', time: 'AM 09:30 ~ PM 18:30' },

@@ -14,6 +14,19 @@ import type { AppEnv } from './types'
 
 const app = new Hono<AppEnv>()
 
+// ===== 공식 도메인 정규화 (www / *.pages.dev → gdfirstdc.kr 301) =====
+app.use('*', async (c, next) => {
+  const url = new URL(c.req.url)
+  const host = url.hostname
+  if (host === 'www.gdfirstdc.kr' || host.endsWith('.pages.dev') || host === 'gdfirst-dental.pages.dev') {
+    url.hostname = 'gdfirstdc.kr'
+    url.protocol = 'https:'
+    url.port = ''
+    return c.redirect(url.toString(), 301)
+  }
+  await next()
+})
+
 // ===== 보안 헤더 =====
 app.use('*', secureHeaders({
   xFrameOptions: 'SAMEORIGIN',
