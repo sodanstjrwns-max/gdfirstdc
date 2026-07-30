@@ -46,6 +46,10 @@ app.use('*', async (c, next) => {
   await next()
 })
 
+// ===== IndexNow 인증 키 (네이버·빙 즉시 색인 프로토콜) =====
+const INDEXNOW_KEY = '590444d00bd12772f2739457f987a200'
+app.get(`/${INDEXNOW_KEY}.txt`, (c) => c.text(INDEXNOW_KEY))
+
 // ===== SEO/AEO: robots.txt / sitemap.xml / llms.txt =====
 const AI_BOTS = ['GPTBot', 'OAI-SearchBot', 'ChatGPT-User', 'ClaudeBot', 'Claude-Web', 'anthropic-ai', 'PerplexityBot', 'Perplexity-User', 'Google-Extended', 'Applebot-Extended', 'Amazonbot', 'cohere-ai', 'CCBot', 'Bytespider', 'meta-externalagent', 'Yeti', 'Daum', 'NaverBot']
 
