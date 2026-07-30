@@ -6,6 +6,7 @@ import { TREATMENTS, getTreatment } from '../data/treatments'
 import { FAQS } from '../data/faqs'
 import { SEO_REGIONS, REGION_GROUPS, type SeoRegion } from '../data/regions'
 import { PRICING, fmtPrice, PRICING_UPDATED } from '../data/pricing'
+import { getExtras } from '../data/treatment_extras'
 import type { AppEnv } from '../types'
 
 const pages = new Hono<AppEnv>()
@@ -465,18 +466,58 @@ ${pageHero('Treatments', '필요한 치료만,<br><span class="font-disp text-sh
 })
 
 // ============ 진료과목 상세 ============
-pages.get('/treatments/:slug', (c) => {
+pages.get('/treatments/:slug', async (c) => {
   const t = getTreatment(c.req.param('slug'))
   if (!t) return c.notFound()
   const faqs = FAQS[t.slug] || []
-  const faqLd = faqs.length
-    ? [{
-        '@context': 'https://schema.org',
-        '@type': 'FAQPage',
-        mainEntity: faqs.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
-      }]
-    : []
+  const ex = getExtras(t.slug)
   const related = TREATMENTS.filter((x) => x.slug !== t.slug).slice(0, 4)
+
+  // 관련 치료사례·칼럼 (D1, 실패해도 페이지는 동작)
+  let relCases: { id: number; title: string; thumb: string | null }[] = []
+  let relPosts: { slug: string; title: string; excerpt: string | null }[] = []
+  try {
+    const [cs, ps] = await Promise.all([
+      c.env.DB.prepare('SELECT id, title, COALESCE(intra_after_key, pano_after_key, intra_before_key, pano_before_key) AS thumb FROM before_after WHERE published = 1 AND category = ? ORDER BY created_at DESC LIMIT 3').bind(t.slug).all<{ id: number; title: string; thumb: string | null }>(),
+      c.env.DB.prepare('SELECT slug, title, excerpt FROM blog_posts WHERE published = 1 AND category = ? ORDER BY created_at DESC LIMIT 3').bind(t.slug).all<{ slug: string; title: string; excerpt: string | null }>(),
+    ])
+    relCases = cs.results
+    relPosts = ps.results
+  } catch { /* D1 미연결 환경 대비 */ }
+
+  // 수가 모듈: extras의 priceRefs 기준으로 pricing.ts에서 자동 추출
+  const priceRows: { name: string; price: number; note?: string }[] = []
+  if (ex) {
+    for (const ref of ex.priceRefs) {
+      const cat = PRICING.find((p) => p.key === ref.category)
+      if (!cat) continue
+      let items = cat.items.filter((i) => i.price > 0)
+      if (ref.include) items = items.filter((i) => ref.include!.some((k) => i.name.includes(k)))
+      priceRows.push(...items.slice(0, ref.limit ?? 8))
+    }
+  }
+  const priceView = priceRows.slice(0, 10)
+
+  // JSON-LD: FAQ + MedicalProcedure
+  const jsonLd: object[] = []
+  if (faqs.length) jsonLd.push({
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+  })
+  jsonLd.push({
+    '@context': 'https://schema.org',
+    '@type': 'MedicalProcedure',
+    '@id': `${CLINIC.siteUrl}/treatments/${t.slug}#procedure`,
+    name: t.name,
+    alternateName: t.nameEn,
+    description: t.metaDesc,
+    procedureType: 'https://schema.org/NoninvasiveProcedure',
+    howPerformed: ex ? ex.timeline.map((s, i) => `${i + 1}. ${s.title}: ${s.desc}`).join(' ') : undefined,
+    followup: '정기검진을 통한 유지관리',
+    provider: { '@id': `${CLINIC.siteUrl}/#clinic` },
+  })
+
   const body = `
 <section class="page-hero relative bg-ink text-white pt-36 pb-16 sm:pt-44 sm:pb-20 px-5 overflow-hidden">
   <div class="absolute -top-32 -left-32 w-[480px] h-[480px] rounded-full bg-navy-600/25 blur-[130px]" aria-hidden="true"></div>
@@ -495,6 +536,40 @@ pages.get('/treatments/:slug', (c) => {
   </div>
 </section>
 
+${ex ? `
+<!-- 이런 분께 필요합니다 (증상 체크리스트) -->
+<section id="symptom-check" class="max-w-6xl mx-auto px-5 -mt-8 relative z-[3]">
+  <div class="rounded-3xl bg-white border border-ink/8 shadow-xl shadow-ink/5 p-7 sm:p-9">
+    <header class="flex flex-wrap items-baseline justify-between gap-3 mb-6">
+      <h2 class="text-xl sm:text-2xl font-extrabold text-ink tracking-tight"><i class="fas fa-clipboard-check text-gold-600 mr-2"></i>이런 분께 필요한 치료입니다</h2>
+      <p class="text-[12.5px] text-ink/40 font-semibold">하나라도 해당되면 검진을 권해드립니다</p>
+    </header>
+    <ul class="grid sm:grid-cols-2 gap-2.5" data-stagger>
+      ${ex.checklist.map((item) => `
+      <li class="flex items-start gap-3 rounded-2xl bg-cream border border-ink/5 px-5 py-4">
+        <span class="mt-0.5 w-5 h-5 rounded-md bg-ink text-gold-400 flex items-center justify-center shrink-0 text-[10px]"><i class="fas fa-check"></i></span>
+        <span class="text-[14px] text-ink/75 font-medium leading-snug">${esc(item)}</span>
+      </li>`).join('')}
+    </ul>
+  </div>
+</section>
+
+<!-- 원장 한마디 -->
+<section id="doctor-note" class="max-w-3xl mx-auto px-5 pt-14">
+  <figure class="reveal rounded-3xl bg-ink text-white p-7 sm:p-9 relative overflow-hidden" data-tilt data-tilt-max="3">
+    <div class="absolute -top-14 -right-14 w-52 h-52 rounded-full bg-gold-500/12 blur-[70px]" aria-hidden="true"></div>
+    <i class="fas fa-quote-left text-gold-500/40 text-3xl" aria-hidden="true"></i>
+    <blockquote class="mt-4 text-[15px] sm:text-[15.5px] leading-[1.95] text-white/80">${esc(ex.doctorNote)}</blockquote>
+    <figcaption class="mt-6 flex items-center gap-3.5">
+      <img src="/static/images/doctor_lobby.webp" alt="김희수 대표원장" class="w-12 h-12 rounded-full object-cover border-2 border-gold-500/50" width="48" height="48" loading="lazy" decoding="async">
+      <div>
+        <p class="font-extrabold text-white text-sm">김희수 대표원장</p>
+        <p class="text-[11.5px] text-gold-400">보건복지부 인증 통합치의학 전문의</p>
+      </div>
+    </figcaption>
+  </figure>
+</section>` : ''}
+
 <article class="max-w-3xl mx-auto px-5 py-14 prose-clinic">
   ${t.sections.map((s) => `
   <h2>${esc(s.h2)}</h2>
@@ -502,6 +577,80 @@ pages.get('/treatments/:slug', (c) => {
   ${s.list ? `<ul>${s.list.map((li) => `<li>${esc(li)}</li>`).join('')}</ul>` : ''}
   `).join('')}
 </article>
+
+${ex ? `
+<!-- 치료 과정 타임라인 -->
+<section id="treatment-timeline" class="bg-ink text-white py-16 sm:py-20 relative overflow-hidden">
+  <div class="absolute -top-24 right-0 w-[420px] h-[420px] rounded-full bg-navy-600/20 blur-[120px]" aria-hidden="true"></div>
+  <div class="max-w-5xl mx-auto px-5 relative">
+    <header class="mb-10">
+      <p class="reveal text-gold-400 text-xs font-bold tracking-[0.3em] uppercase">Process</p>
+      <h2 class="reveal mt-2 text-2xl sm:text-4xl font-extrabold tracking-tightest">${t.name}, 이렇게 진행됩니다</h2>
+    </header>
+    <ol class="grid sm:grid-cols-2 lg:grid-cols-${Math.min(ex.timeline.length, 5)} gap-3" data-stagger>
+      ${ex.timeline.map((s, i) => `
+      <li class="rounded-3xl bg-white/[0.05] border border-white/10 p-6 flex flex-col" data-tilt data-tilt-max="5">
+        <span class="text-gold-400 font-mono text-xs font-bold">STEP ${i + 1}</span>
+        <h3 class="mt-2.5 font-extrabold text-white text-[15.5px] tracking-tight">${esc(s.title)}</h3>
+        <p class="mt-2 text-[12.5px] text-white/45 leading-relaxed flex-1">${esc(s.desc)}</p>
+        ${s.duration ? `<p class="mt-3.5 pt-3 border-t border-white/10 text-[11.5px] font-bold text-gold-400/90"><i class="far fa-clock mr-1.5"></i>${esc(s.duration)}</p>` : ''}
+      </li>`).join('')}
+    </ol>
+  </div>
+</section>
+
+${ex.compare ? `
+<!-- 비교표 -->
+<section id="treatment-compare" class="max-w-5xl mx-auto px-5 py-16">
+  <header class="mb-7">
+    <p class="reveal text-gold-600 text-xs font-bold tracking-[0.3em] uppercase">Compare</p>
+    <h2 class="reveal mt-2 text-2xl sm:text-3xl font-extrabold text-ink tracking-tightest">${esc(ex.compare.title)}</h2>
+  </header>
+  <div class="reveal rounded-3xl bg-white border border-ink/8 overflow-hidden overflow-x-auto">
+    <table class="w-full min-w-[560px] text-[13.5px]">
+      <thead>
+        <tr class="bg-ink text-white">
+          <th class="text-left px-5 py-4 font-bold text-white/60 text-[12px] uppercase tracking-wider">항목</th>
+          ${ex.compare.headers.map((h, i) => `<th class="text-left px-5 py-4 font-extrabold ${i === 0 ? 'text-gold-400' : ''}">${esc(h)}</th>`).join('')}
+        </tr>
+      </thead>
+      <tbody>
+        ${ex.compare.rows.map((r, ri) => `
+        <tr class="${ri % 2 ? 'bg-cream/60' : ''} border-t border-ink/5">
+          <th class="text-left px-5 py-3.5 font-bold text-ink/60 text-[12.5px]">${esc(r.label)}</th>
+          ${r.cols.map((cell, ci) => `<td class="px-5 py-3.5 ${ci === 0 ? 'font-bold text-ink' : 'text-ink/60'}">${esc(cell)}</td>`).join('')}
+        </tr>`).join('')}
+      </tbody>
+    </table>
+  </div>
+  ${ex.compare.note ? `<p class="mt-3.5 text-[12.5px] text-ink/40 flex items-start gap-2"><i class="fas fa-circle-info mt-0.5 text-gold-600"></i>${esc(ex.compare.note)}</p>` : ''}
+</section>` : ''}
+
+${priceView.length ? `
+<!-- 비용 투명 공개 -->
+<section id="treatment-pricing" class="max-w-5xl mx-auto px-5 pb-16 ${ex.compare ? '' : 'pt-16'}">
+  <div class="rounded-3xl bg-white border border-ink/8 p-7 sm:p-9">
+    <header class="flex flex-wrap items-baseline justify-between gap-3 mb-6">
+      <div>
+        <p class="text-gold-600 text-xs font-bold tracking-[0.3em] uppercase">Pricing</p>
+        <h2 class="mt-2 text-xl sm:text-2xl font-extrabold text-ink tracking-tight">${t.name} 비용, 숨기지 않습니다</h2>
+      </div>
+      <p class="text-[11.5px] text-ink/35">의료법 제45조 비급여 진료비용 고지 · ${PRICING_UPDATED} 기준</p>
+    </header>
+    <ul class="grid sm:grid-cols-2 gap-x-8 gap-y-1">
+      ${priceView.map((p) => `
+      <li class="flex items-baseline justify-between gap-4 py-2.5 border-b border-ink/5">
+        <span class="text-[13.5px] text-ink/65 font-medium">${esc(p.name)}${p.note ? ` <em class="not-italic text-[11px] text-ink/30">(${esc(p.note)})</em>` : ''}</span>
+        <span class="font-extrabold text-ink text-[14px] whitespace-nowrap">${fmtPrice(p.price)}</span>
+      </li>`).join('')}
+    </ul>
+    <div class="mt-6 flex flex-wrap items-center justify-between gap-3">
+      <p class="text-[12px] text-ink/40">개인 구강 상태에 따라 달라질 수 있으며, 정밀진단 후 정확히 안내드립니다.</p>
+      <a href="/pricing" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-ink text-white text-[13px] font-bold hover:bg-navy-800 transition">전체 수가표 보기 <i class="fas fa-arrow-right text-[10px]"></i></a>
+    </div>
+  </div>
+</section>` : ''}
+` : ''}
 
 ${faqs.length ? `
 <section id="faq-section" class="max-w-3xl mx-auto px-5 pb-16">
@@ -540,8 +689,44 @@ ${faqs.length ? `
     ${related.map((r) => `<a href="/treatments/${r.slug}" class="px-4.5 px-5 py-2.5 rounded-full bg-white border border-ink/10 text-[13.5px] font-semibold text-ink/70 hover:bg-ink hover:text-white transition">${r.name}</a>`).join('')}
     <a href="/treatments" class="px-5 py-2.5 rounded-full bg-ink text-white text-[13.5px] font-bold">전체 보기</a>
   </nav>
-</section>`
-  return c.html(layout({ title: `${t.name} — 인천 검단신도시 치과`, desc: t.metaDesc, path: `/treatments/${t.slug}`, jsonLd: faqLd }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
+</section>
+
+${relCases.length || relPosts.length ? `
+<!-- 관련 실제 콘텐츠 -->
+<section id="related-content" class="max-w-6xl mx-auto px-5 pb-20">
+  <header class="mb-7">
+    <p class="reveal text-gold-600 text-xs font-bold tracking-[0.3em] uppercase">Real Stories</p>
+    <h2 class="reveal mt-2 text-2xl sm:text-3xl font-extrabold text-ink tracking-tightest">${t.name}, 실제 기록</h2>
+  </header>
+  <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4" data-stagger>
+    ${relCases.map((r) => `
+    <a href="/cases/${r.id}" class="bento group block rounded-3xl bg-white border border-ink/8 overflow-hidden">
+      <div class="aspect-[16/9] bg-ink/[0.03] overflow-hidden flex items-center justify-center">
+        ${r.thumb ? `<img src="/images/${r.thumb}" alt="${esc(r.title)}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy" decoding="async">` : '<i class="fas fa-tooth text-4xl text-ink/10"></i>'}
+      </div>
+      <div class="p-5">
+        <span class="text-[10.5px] font-extrabold tracking-widest text-gold-600 uppercase">치료사례</span>
+        <h3 class="mt-1.5 font-extrabold text-ink text-[14.5px] leading-snug line-clamp-2">${esc(r.title)}</h3>
+      </div>
+    </a>`).join('')}
+    ${relPosts.map((p) => `
+    <a href="/blog/${esc(p.slug)}" class="bento group block rounded-3xl bg-ink text-white p-6 flex flex-col min-h-[180px]">
+      <span class="text-[10.5px] font-extrabold tracking-widest text-gold-400 uppercase">원장 칼럼</span>
+      <h3 class="mt-2.5 font-extrabold text-[15.5px] leading-snug line-clamp-2">${esc(p.title)}</h3>
+      ${p.excerpt ? `<p class="mt-2.5 text-[12.5px] text-white/45 leading-relaxed line-clamp-2 flex-1">${esc(p.excerpt)}</p>` : ''}
+      <p class="mt-4 text-[12.5px] font-bold text-gold-400">읽어보기 <i class="fas fa-arrow-right ml-1 text-[10px] group-hover:translate-x-1 transition-transform"></i></p>
+    </a>`).join('')}
+  </div>
+</section>` : ''}
+
+<!-- 지역 키워드 칩 (내부링크) -->
+<nav id="region-chips" class="max-w-6xl mx-auto px-5 pb-20" aria-label="지역별 ${t.name} 안내">
+  <p class="text-[11px] font-bold tracking-[0.25em] uppercase text-ink/30 mb-3">지역별 안내 — ${t.name}</p>
+  <p class="flex flex-wrap gap-x-1.5 gap-y-2 text-[12.5px] leading-none">
+    ${SEO_REGIONS.slice(0, 12).map((r) => `<a href="/region/${r.slug}" class="px-3.5 py-2 rounded-full bg-white border border-ink/8 text-ink/50 hover:text-ink hover:border-ink/25 transition whitespace-nowrap">${r.name} ${t.name.replace(/ LumiNate$/, '')}</a>`).join('')}
+  </p>
+</nav>`
+  return c.html(layout({ title: `${t.name} — 인천 검단신도시 치과`, desc: t.metaDesc, path: `/treatments/${t.slug}`, jsonLd }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
 })
 
 // ============ 치료스토리 ============
