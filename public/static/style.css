@@ -314,3 +314,12 @@ svg [data-hl].svg-hl { opacity: 1; filter: none; }
   .hotspot::after { animation: none; opacity: 0; }
   [data-hl], [data-when], .istep, .sc-item, .irange::-webkit-slider-thumb { transition: none; }
 }
+
+/* ===== 스토리 매거진 ===== */
+.story-lead::first-letter {
+  font-family: 'Nanum Myeongjo', serif;
+  font-size: 3.4em; font-weight: 800; line-height: 0.85;
+  float: left; margin: 0.06em 0.14em 0 0;
+  color: #b7c1cf;
+}
+#read-progress { will-change: width; }

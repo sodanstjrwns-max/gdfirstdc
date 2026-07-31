@@ -302,15 +302,16 @@ ${pageHero('About Us', '광고 대신,<br><span class="font-disp text-shine">진
         <img src="/static/images/doctor_lobby.webp" alt="검단퍼스트치과 로비에서의 김희수 대표원장" class="w-full h-auto" width="640" height="426" loading="lazy" decoding="async">
       </figure>
     </div>
-    <div class="grid lg:grid-cols-[1fr_340px] gap-4 mb-10 items-stretch">
+    <div class="grid lg:grid-cols-2 gap-4 mb-10 items-stretch">
       <blockquote class="reveal-scale rounded-3xl bg-white/[0.06] border border-white/10 p-8" data-tilt data-tilt-max="6">
         <i class="fas fa-quote-left text-gold-400 text-xl"></i>
         <p class="mt-3 text-white/75 leading-[1.9] text-[15.5px]">${DOCTOR.philosophy}</p>
       </blockquote>
-      <figure class="reveal-scale rounded-3xl overflow-hidden bg-black relative min-h-[220px]">
+      <figure class="reveal-scale rounded-3xl overflow-hidden bg-black relative min-h-[320px] sm:min-h-[400px]">
         <video class="absolute inset-0 w-full h-full object-cover" data-lazy muted loop playsinline preload="none" aria-label="확대경을 착용하고 진료에 집중하는 김희수 원장"><source data-src="/static/video/doctor.mp4" type="video/mp4"></video>
-        <figcaption class="absolute bottom-0 inset-x-0 p-5 bg-gradient-to-t from-ink/90 to-transparent">
-          <p class="text-white/80 text-[12px] font-semibold">진료 중인 김희수 원장</p>
+        <figcaption class="absolute bottom-0 inset-x-0 p-6 bg-gradient-to-t from-ink/90 to-transparent">
+          <p class="text-gold-400 text-[10.5px] font-bold tracking-[0.25em] uppercase">In Treatment</p>
+          <p class="mt-1 text-white font-extrabold text-[15px]">진료 중인 김희수 원장</p>
         </figcaption>
       </figure>
     </div>
@@ -329,28 +330,35 @@ ${pageHero('About Us', '광고 대신,<br><span class="font-disp text-shine">진
   </div>
 </section>
 
-<section id="media" class="max-w-6xl mx-auto px-5 py-20">
+<!-- ===== 원내 투어 영상 (풀와이드 시네마틱) ===== -->
+<section id="clinic-tour" class="max-w-6xl mx-auto px-5 py-20">
+  <header class="mb-8">
+    <p class="reveal text-gold-600 text-xs font-bold tracking-[0.3em] uppercase">Clinic Tour</p>
+    <h2 class="reveal mt-2 text-3xl sm:text-5xl font-extrabold text-ink tracking-tightest">오시기 전에,<br class="sm:hidden"> 미리 둘러보세요.</h2>
+    <p class="reveal mt-4 text-ink/45 text-[15px]">긴장을 덜어드리는 공간 설계 — 실제 원내 모습 그대로입니다.</p>
+  </header>
+  <figure class="reveal-scale rounded-3xl overflow-hidden bg-ink relative aspect-video sm:aspect-[21/9] min-h-[300px]">
+    <video class="absolute inset-0 w-full h-full object-cover" data-lazy muted loop playsinline preload="none" poster="/static/images/tour_poster.webp" aria-label="검단퍼스트치과 원내 소개 영상"><source data-src="/static/video/clinic_tour.mp4" type="video/mp4"></video>
+    <figcaption class="absolute bottom-0 inset-x-0 p-7 sm:p-9 bg-gradient-to-t from-ink/90 via-ink/30 to-transparent">
+      <p class="text-gold-400 text-[11px] font-bold tracking-[0.3em] uppercase">Inside First Dental Clinic</p>
+      <p class="mt-1.5 text-white font-extrabold text-xl sm:text-2xl tracking-tight">검단퍼스트치과 원내 둘러보기</p>
+    </figcaption>
+  </figure>
+</section>
+
+<section id="media" class="max-w-6xl mx-auto px-5 pb-20">
   <header class="mb-10">
     <p class="reveal text-gold-600 text-xs font-bold tracking-[0.3em] uppercase">Press &amp; Broadcast</p>
     <h2 class="reveal mt-2 text-3xl sm:text-4xl font-extrabold text-ink tracking-tightest">방송 · 언론보도</h2>
   </header>
-  <div class="grid md:grid-cols-2 gap-4">
-    <article class="bento reveal-scale rounded-3xl bg-white border border-ink/8 overflow-hidden flex flex-col sm:flex-row">
-      <img src="/static/images/news_article.webp" alt="메디컬투데이 기사 — 검단퍼스트치과 김희수 원장 건강매거진 출연" class="sm:w-44 h-56 sm:h-auto object-cover object-top shrink-0" loading="lazy" decoding="async">
-      <div class="p-7">
-        <p class="text-[11px] font-bold text-gold-600 tracking-[0.2em] uppercase">메디컬투데이 · 2022.05</p>
-        <h3 class="mt-2 font-extrabold text-ink text-lg leading-snug">김희수 원장, 한국경제TV 「건강매거진」 출연 — 임플란트 패러다임 변화 소개</h3>
-        <p class="mt-3 text-[13.5px] text-ink/50 leading-relaxed">생방송으로 진행된 방송에서 3D 컴퓨터 기술을 적용한 환자 맞춤형 디지털 임플란트를 설명하고, 시청자 1:1 전화상담을 진행했습니다. 고혈압·당뇨 등 전신질환 환자와 고령 환자도 편안하고 정확하게 시술받을 수 있다고 소개했습니다.</p>
-      </div>
-    </article>
-    <figure class="bento reveal-scale rounded-3xl overflow-hidden bg-ink relative min-h-[300px]">
-      <video class="absolute inset-0 w-full h-full object-cover" data-lazy muted loop playsinline preload="none" poster="/static/images/tour_poster.webp" aria-label="검단퍼스트치과 원내 소개 영상"><source data-src="/static/video/clinic_tour.mp4" type="video/mp4"></video>
-      <figcaption class="absolute bottom-0 inset-x-0 p-6 bg-gradient-to-t from-ink to-transparent">
-        <p class="text-gold-400 text-[11px] font-bold tracking-[0.25em] uppercase">Clinic Tour</p>
-        <p class="mt-1 text-white font-extrabold">원내 둘러보기</p>
-      </figcaption>
-    </figure>
-  </div>
+  <article class="bento reveal-scale rounded-3xl bg-white border border-ink/8 overflow-hidden flex flex-col sm:flex-row">
+    <img src="/static/images/news_article.webp" alt="메디컬투데이 기사 — 검단퍼스트치과 김희수 원장 건강매거진 출연" class="sm:w-56 h-56 sm:h-auto object-cover object-top shrink-0" loading="lazy" decoding="async">
+    <div class="p-7 sm:p-9">
+      <p class="text-[11px] font-bold text-gold-600 tracking-[0.2em] uppercase">메디컬투데이 · 2022.05</p>
+      <h3 class="mt-2 font-extrabold text-ink text-lg sm:text-xl leading-snug">김희수 원장, 한국경제TV 「건강매거진」 출연 — 임플란트 패러다임 변화 소개</h3>
+      <p class="mt-3 text-[13.5px] text-ink/50 leading-relaxed">생방송으로 진행된 방송에서 3D 컴퓨터 기술을 적용한 환자 맞춤형 디지털 임플란트를 설명하고, 시청자 1:1 전화상담을 진행했습니다. 고혈압·당뇨 등 전신질환 환자와 고령 환자도 편안하고 정확하게 시술받을 수 있다고 소개했습니다.</p>
+    </div>
+  </article>
 </section>
 
 <section id="clinic-gallery" class="max-w-6xl mx-auto px-5 py-20">
@@ -748,22 +756,147 @@ ${relCases.length || relPosts.length ? `
   return c.html(layout({ title: `${t.name} — 인천 검단신도시 치과`, desc: t.metaDesc, path: `/treatments/${t.slug}`, jsonLd }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
 })
 
-// ============ 치료스토리 ============
+// ============ 치료스토리 (매거진 챕터형) ============
+const STORY_META: Record<string, { chapterEn: string; lead: string; quote: string; quoteBy: string; facts: { label: string; value: string }[] }> = {
+  father: {
+    chapterEn: 'The Father',
+    lead: '평생 아프다는 말 한마디 없던 아버지가, 밥을 안 드시기 시작했습니다.',
+    quote: '야, 아빠가 고기를 너무 잘 드셔서 너무 좋댄다. 그동안 빠졌던 살도 금방 다시 올라오겠다. 고생했다.',
+    quoteBy: '보철물을 올린 날 저녁, 어머니의 전화',
+    facts: [
+      { label: '임플란트', value: '상악 9 · 하악 7' },
+      { label: '치료 여정', value: '판교 ↔ 검단' },
+      { label: '기간', value: '약 5개월' },
+    ],
+  },
+  'jaw-student': {
+    chapterEn: 'Five Seconds',
+    lead: '하품을 하다 턱이 빠진 고3 수험생 — 응급실은 30분을 쩔쩔맸습니다.',
+    quote: '수험생에게 가장 중요한 시기를 지켜드릴 수 있어 다행이었습니다.',
+    quoteBy: '김희수 원장',
+    facts: [
+      { label: '응급 처치', value: '탈구정복술' },
+      { label: '이후 치료', value: '스플린트 · PDRN' },
+      { label: '지금은', value: '재발 방지 관리 중' },
+    ],
+  },
+  'jaw-splint': {
+    chapterEn: 'Diagnosis First',
+    lead: '6개월간 낫지 않던 턱관절 — 문제는 장치가 아니라 진단이었습니다.',
+    quote: '턱관절 치료는 장치가 아니라 진단이 먼저입니다.',
+    quoteBy: '김희수 원장',
+    facts: [
+      { label: '타 병원', value: '6개월 호전 없음' },
+      { label: '진단', value: '디스크 전방변위' },
+      { label: '재치료', value: '스플린트 재제작' },
+    ],
+  },
+}
+
 pages.get('/stories', (c) => {
+  const chapterTone = [
+    { section: 'bg-ink text-white', num: 'text-white/[0.06]', chip: 'bg-gold-500 text-ink', title: 'text-white', bodyTxt: 'text-white/65', quoteBg: 'bg-white/[0.05] border-white/10', quoteTxt: 'text-white', quoteBy: 'text-gold-400', factBg: 'bg-white/[0.04] border-white/10', factLabel: 'text-white/35', factValue: 'text-gold-400', cta: 'bg-gold-500 text-ink hover:bg-gold-400', glow: true },
+    { section: 'bg-cream text-ink', num: 'text-ink/[0.05]', chip: 'bg-ink text-gold-400', title: 'text-ink', bodyTxt: 'text-ink/60', quoteBg: 'bg-white border-ink/8', quoteTxt: 'text-ink', quoteBy: 'text-gold-600', factBg: 'bg-white border-ink/8', factLabel: 'text-ink/35', factValue: 'text-ink', cta: 'bg-ink text-white hover:bg-navy-800', glow: false },
+    { section: 'bg-white text-ink', num: 'text-ink/[0.05]', chip: 'bg-ink text-gold-400', title: 'text-ink', bodyTxt: 'text-ink/60', quoteBg: 'bg-cream border-ink/8', quoteTxt: 'text-ink', quoteBy: 'text-gold-600', factBg: 'bg-cream border-ink/8', factLabel: 'text-ink/35', factValue: 'text-ink', cta: 'bg-ink text-white hover:bg-navy-800', glow: false },
+  ]
+
   const body = `
-${pageHero('Stories', '숫자가 아닌,<br><span class="font-disp text-shine">사람</span>의 이야기.', '치료 케이스 뒤에는 언제나 한 사람의 삶이 있습니다.')}
-<section class="max-w-3xl mx-auto px-5 py-16 space-y-8">
-  ${STORIES.map((s, i) => {
-    const t = getTreatment(s.treatment)
-    return `
-  <article id="story-${s.id}" class="reveal-scale relative rounded-3xl bg-white border border-ink/8 p-8 sm:p-10 overflow-hidden" data-tilt data-tilt-max="4">
-    <span class="idx-num absolute top-6 right-8 text-7xl font-extrabold select-none" aria-hidden="true">${String(i + 1).padStart(2, '0')}</span>
-    ${t ? `<a href="/treatments/${t.slug}" class="inline-flex items-center gap-2 text-[11.5px] font-bold bg-ink text-gold-400 rounded-full px-3.5 py-1.5 tracking-wide"><i class="fas ${t.icon}"></i>${t.name}</a>` : ''}
-    <h2 class="mt-5 text-2xl sm:text-3xl font-extrabold text-ink tracking-tightest leading-snug max-w-lg">${esc(s.title)}</h2>
-    <div class="mt-6 space-y-4 text-ink/60 leading-[1.9] text-[15px]">${s.body.map((p) => `<p>${esc(p)}</p>`).join('')}</div>
-  </article>`
-  }).join('')}
+<div id="read-progress" class="fixed top-0 left-0 h-[3px] bg-gradient-to-r from-gold-500 to-royal z-[60] w-0 transition-[width] duration-150" aria-hidden="true"></div>
+
+${pageHero('Stories', '숫자가 아닌,<br><span class="font-disp text-shine">사람</span>의 이야기.', '치료 케이스 뒤에는 언제나 한 사람의 삶이 있습니다. 세 편의 기록을 매거진처럼 담았습니다.')}
+
+<!-- 챕터 목차 -->
+<nav id="chapter-index" class="max-w-6xl mx-auto px-5 -mt-8 relative z-[3]" aria-label="스토리 목차">
+  <div class="grid sm:grid-cols-3 gap-3" data-stagger>
+    ${STORIES.map((s, i) => {
+      const m = STORY_META[s.id]
+      return `
+    <a href="#story-${s.id}" class="bento group rounded-3xl bg-white border border-ink/8 shadow-xl shadow-ink/5 p-6 flex flex-col">
+      <p class="text-[10.5px] font-extrabold tracking-[0.3em] uppercase text-gold-600">Chapter ${String(i + 1).padStart(2, '0')} — ${m?.chapterEn || ''}</p>
+      <h2 class="mt-2.5 font-extrabold text-ink text-[15.5px] leading-snug tracking-tight flex-1">${esc(s.title)}</h2>
+      <p class="mt-4 text-[12.5px] font-bold text-ink/40 group-hover:text-royal transition">읽으러 가기 <i class="fas fa-arrow-down ml-1 text-[10px]"></i></p>
+    </a>`
+    }).join('')}
+  </div>
+</nav>
+
+${STORIES.map((s, i) => {
+  const t = getTreatment(s.treatment)
+  const m = STORY_META[s.id]
+  const tone = chapterTone[i % chapterTone.length]
+  const [first, ...rest] = s.body
+  return `
+<section id="story-${s.id}" class="${tone.section} py-20 sm:py-28 relative overflow-hidden scroll-mt-24">
+  ${tone.glow ? '<div class="absolute -top-32 -right-32 w-[500px] h-[500px] rounded-full bg-navy-600/25 blur-[140px]" aria-hidden="true"></div><div class="absolute bottom-0 left-0 w-[380px] h-[380px] rounded-full bg-gold-500/10 blur-[110px]" aria-hidden="true"></div>' : ''}
+  <span class="absolute -top-6 right-2 sm:right-10 text-[160px] sm:text-[260px] font-extrabold leading-none select-none ${tone.num}" aria-hidden="true">${String(i + 1).padStart(2, '0')}</span>
+  <div class="max-w-3xl mx-auto px-5 relative">
+    <p class="reveal text-[11px] font-extrabold tracking-[0.35em] uppercase ${i === 0 ? 'text-gold-400' : 'text-gold-600'}">Chapter ${String(i + 1).padStart(2, '0')} — ${m?.chapterEn || 'Story'}</p>
+    ${t ? `<a href="/treatments/${t.slug}" class="reveal mt-5 inline-flex items-center gap-2 text-[11.5px] font-bold ${tone.chip} rounded-full px-3.5 py-1.5 tracking-wide"><i class="fas ${t.icon}"></i>${t.name}</a>` : ''}
+    <h2 class="reveal mt-5 text-3xl sm:text-5xl font-extrabold ${tone.title} tracking-tightest leading-[1.15]">${esc(s.title)}</h2>
+    ${m ? `<p class="reveal mt-6 font-disp text-lg sm:text-xl ${i === 0 ? 'text-gold-400' : 'text-gold-600'} leading-relaxed">${esc(m.lead)}</p>` : ''}
+
+    <div class="mt-10 space-y-5 ${tone.bodyTxt} leading-[1.95] text-[15.5px]">
+      <p class="story-lead reveal">${esc(first)}</p>
+      ${rest.slice(0, Math.ceil(rest.length / 2)).map((p) => `<p class="reveal">${esc(p)}</p>`).join('')}
+    </div>
+
+    ${m ? `
+    <blockquote class="reveal-scale my-10 rounded-3xl ${tone.quoteBg} border p-8 sm:p-9 relative overflow-hidden" data-tilt data-tilt-max="3">
+      <i class="fas fa-quote-left ${i === 0 ? 'text-gold-500/40' : 'text-gold-500/60'} text-2xl" aria-hidden="true"></i>
+      <p class="mt-4 font-disp text-xl sm:text-2xl ${tone.quoteTxt} leading-[1.6]">"${esc(m.quote)}"</p>
+      <footer class="mt-4 text-[12.5px] font-bold ${tone.quoteBy}">— ${esc(m.quoteBy)}</footer>
+    </blockquote>` : ''}
+
+    <div class="space-y-5 ${tone.bodyTxt} leading-[1.95] text-[15.5px]">
+      ${rest.slice(Math.ceil(rest.length / 2)).map((p) => `<p class="reveal">${esc(p)}</p>`).join('')}
+    </div>
+
+    ${m ? `
+    <div class="mt-10 grid grid-cols-3 gap-3" data-stagger>
+      ${m.facts.map((f) => `
+      <div class="rounded-2xl ${tone.factBg} border px-4 py-4 text-center">
+        <p class="text-[10.5px] font-bold tracking-widest uppercase ${tone.factLabel}">${esc(f.label)}</p>
+        <p class="mt-1.5 font-extrabold text-[13px] sm:text-[14.5px] ${tone.factValue} leading-snug">${esc(f.value)}</p>
+      </div>`).join('')}
+    </div>` : ''}
+
+    ${t ? `
+    <div class="reveal mt-10 flex flex-wrap items-center gap-3">
+      <a href="/treatments/${t.slug}" class="btn-3d px-7 py-3.5 rounded-full ${tone.cta} font-extrabold text-sm transition"><i class="fas ${t.icon} mr-2"></i>${t.name} 자세히 보기</a>
+      ${i < STORIES.length - 1 ? `<a href="#story-${STORIES[i + 1].id}" class="px-6 py-3.5 rounded-full border ${i === 0 ? 'border-white/25 text-white hover:bg-white/10' : 'border-ink/15 text-ink/70 hover:bg-ink/5'} font-bold text-sm transition">다음 이야기 <i class="fas fa-arrow-down ml-1 text-xs"></i></a>` : ''}
+    </div>` : ''}
+  </div>
 </section>`
+}).join('')}
+
+<!-- 클로징 -->
+<section id="stories-closing" class="max-w-6xl mx-auto px-5 py-20">
+  <div class="reveal-scale rounded-3xl bg-ink text-white p-9 sm:p-14 relative overflow-hidden text-center" data-tilt data-tilt-max="3">
+    <div class="absolute -top-20 left-1/2 -translate-x-1/2 w-[420px] h-[420px] rounded-full bg-gold-500/12 blur-[110px]" aria-hidden="true"></div>
+    <p class="relative text-gold-400 text-[11px] font-bold tracking-[0.35em] uppercase">Your Story Is Next</p>
+    <h2 class="relative mt-4 text-2xl sm:text-4xl font-extrabold tracking-tightest leading-tight">다음 이야기의 주인공은,<br>당신일 수 있습니다.</h2>
+    <p class="relative mt-4 text-white/50 text-[14.5px] max-w-xl mx-auto">과장 없이, 꼭 필요한 치료만 정직하게 말씀드립니다. 어떤 고민이든 편하게 들려주세요.</p>
+    <div class="relative mt-8 flex flex-wrap justify-center gap-3">
+      <a href="tel:${CLINIC.phone}" class="btn-3d px-8 py-4 rounded-full bg-gold-500 text-ink font-extrabold hover:bg-gold-400 transition"><i class="fas fa-phone mr-2"></i>${CLINIC.phone}</a>
+      <a href="/cases" class="px-8 py-4 rounded-full border border-white/25 font-bold hover:bg-white/10 transition">치료사례 보기</a>
+    </div>
+    <p class="relative mt-8 text-[11.5px] text-white/30">* 본 스토리는 실제 환자 사례를 바탕으로 하며, 치료 방법과 결과는 개인의 상태에 따라 다를 수 있습니다.</p>
+  </div>
+</section>
+
+<script>
+(function(){
+  var bar = document.getElementById('read-progress');
+  if (!bar) return;
+  function upd(){
+    var h = document.documentElement;
+    var max = h.scrollHeight - h.clientHeight;
+    bar.style.width = (max > 0 ? (h.scrollTop / max) * 100 : 0) + '%';
+  }
+  addEventListener('scroll', upd, { passive: true });
+  upd();
+})();
+</script>`
   return c.html(layout({ title: '치료스토리 — 환자와 원장의 진짜 이야기', desc: '검단퍼스트치과 치료스토리 — 아버지께 직접 심어드린 전악 임플란트 16개, 응급실에서 못 넣은 턱을 5초 만에 정복한 이야기, 정확한 진단이 바꾼 턱관절 치료까지 — 숫자가 아닌 사람의 이야기입니다.', path: '/stories' }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
 })
 

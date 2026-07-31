@@ -17,10 +17,10 @@ export function esc(s: string): string {
 
 const NAV = [
   { href: '/about', label: '병원소개' },
+  { href: '/stories', label: '스토리' },
   { href: '/treatments', label: '진료과목', children: TREATMENTS.map((t) => ({ href: `/treatments/${t.slug}`, label: t.name })) },
   { href: '/cases', label: '치료사례' },
   { href: '/pricing', label: '치료비용' },
-  { href: '/stories', label: '스토리' },
   { href: '/blog', label: '칼럼' },
   { href: '/faq', label: 'FAQ' },
   { href: '/location', label: '오시는길' },
