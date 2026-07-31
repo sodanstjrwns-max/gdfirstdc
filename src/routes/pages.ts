@@ -337,13 +337,31 @@ ${pageHero('About Us', '광고 대신,<br><span class="font-disp text-shine">진
     <h2 class="reveal mt-2 text-3xl sm:text-5xl font-extrabold text-ink tracking-tightest">오시기 전에,<br class="sm:hidden"> 미리 둘러보세요.</h2>
     <p class="reveal mt-4 text-ink/45 text-[15px]">긴장을 덜어드리는 공간 설계 — 실제 원내 모습 그대로입니다.</p>
   </header>
-  <figure class="reveal-scale rounded-3xl overflow-hidden bg-ink relative aspect-video sm:aspect-[21/9] min-h-[300px]">
-    <video class="absolute inset-0 w-full h-full object-cover" data-lazy muted loop playsinline preload="none" poster="/static/images/tour_poster.webp" aria-label="검단퍼스트치과 원내 소개 영상"><source data-src="/static/video/clinic_tour.mp4" type="video/mp4"></video>
-    <figcaption class="absolute bottom-0 inset-x-0 p-7 sm:p-9 bg-gradient-to-t from-ink/90 via-ink/30 to-transparent">
-      <p class="text-gold-400 text-[11px] font-bold tracking-[0.3em] uppercase">Inside First Dental Clinic</p>
-      <p class="mt-1.5 text-white font-extrabold text-xl sm:text-2xl tracking-tight">검단퍼스트치과 원내 둘러보기</p>
-    </figcaption>
-  </figure>
+  <div class="grid lg:grid-cols-[minmax(0,440px)_1fr] gap-8 items-center">
+    <figure class="reveal-scale rounded-3xl overflow-hidden bg-ink relative aspect-[9/16] w-full max-w-[440px] mx-auto shadow-2xl shadow-ink/15">
+      <video class="absolute inset-0 w-full h-full object-cover" data-lazy muted loop playsinline preload="none" poster="/static/images/tour_poster.webp" aria-label="검단퍼스트치과 원내 소개 영상"><source data-src="/static/video/clinic_tour.mp4" type="video/mp4"></video>
+      <figcaption class="absolute bottom-0 inset-x-0 p-6 bg-gradient-to-t from-ink/90 via-ink/30 to-transparent">
+        <p class="text-gold-400 text-[10.5px] font-bold tracking-[0.3em] uppercase">Inside First Dental Clinic</p>
+        <p class="mt-1 text-white font-extrabold text-lg tracking-tight">검단퍼스트치과 원내 둘러보기</p>
+      </figcaption>
+    </figure>
+    <div class="space-y-5">
+      <div class="grid sm:grid-cols-2 gap-3" data-stagger>
+        ${[
+          { icon: 'fa-couch', title: '넓은 대기실', desc: '긴장을 덜어드리는 여유로운 대기 공간과 턱관절센터' },
+          { icon: 'fa-comments', title: '독립 상담실', desc: '다른 환자분 눈치 없이 편하게 묻고 답하는 공간' },
+          { icon: 'fa-tooth', title: '진료실', desc: '프라이버시를 지키는 파티션형 진료 공간' },
+          { icon: 'fa-shield-halved', title: '소독 · 멸균 시스템', desc: '보이지 않는 곳까지 관리하는 감염관리 체계' },
+        ].map((g) => `
+        <article class="rounded-2xl bg-white border border-ink/8 p-5">
+          <span class="w-10 h-10 rounded-xl bg-ink/[0.04] text-ink flex items-center justify-center"><i class="fas ${g.icon}"></i></span>
+          <h3 class="mt-3 font-extrabold text-ink text-[14.5px]">${g.title}</h3>
+          <p class="mt-1.5 text-[12.5px] text-ink/50 leading-relaxed">${g.desc}</p>
+        </article>`).join('')}
+      </div>
+      <a href="#clinic-gallery" class="reveal inline-flex items-center gap-2 text-sm font-bold text-ink border-b border-gold-500 hover:text-gold-600 transition">원내 사진 갤러리 바로가기 <i class="fas fa-arrow-down text-xs"></i></a>
+    </div>
+  </div>
 </section>
 
 <section id="media" class="max-w-6xl mx-auto px-5 pb-20">
