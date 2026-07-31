@@ -21,12 +21,18 @@ export interface PriceRef {
   include?: string[] // 포함 필터 (이름에 이 문자열이 들어간 항목만)
   limit?: number
 }
+export interface CrossLink {
+  slug: string
+  text: string // 자연스러운 연결 문장
+}
 export interface TreatmentExtra {
   checklist: string[] // "이런 분께 필요합니다"
   doctorNote: string // 원장 한마디
   timeline: TimelineStep[]
   compare?: CompareTable
   priceRefs: PriceRef[]
+  bodyLocation?: string // MedicalProcedure 스키마용
+  crossLinks?: CrossLink[] // 과목 간 문맥 연결
 }
 
 export const TREATMENT_EXTRAS: Record<string, TreatmentExtra> = {
@@ -61,6 +67,11 @@ export const TREATMENT_EXTRAS: Record<string, TreatmentExtra> = {
       note: '개인의 구강 상태에 따라 적합한 치료가 다릅니다. 정밀진단 후 가장 합리적인 선택지를 안내해 드립니다.',
     },
     priceRefs: [{ category: 'implant' }],
+    bodyLocation: '상악·하악 치조골',
+    crossLinks: [
+      { slug: 'gum', text: '임플란트를 오래 쓰는 조건은 건강한 잇몸입니다. 식리씩 임플란트염 예방을 위한 잇몸관리를 함께 보세요.' },
+      { slug: 'prosthetics', text: '남은 치아가 충분하다면 임플란트 대신 브릿지·틀니가 답일 수도 있습니다. 보철치료 선택지도 확인해 보세요.' },
+    ],
   },
 
   luminate: {
@@ -93,6 +104,10 @@ export const TREATMENT_EXTRAS: Record<string, TreatmentExtra> = {
       note: '모든 치아가 무삭제로 가능한 것은 아닙니다. 정밀진단 후 가능 여부를 정직하게 말씀드립니다.',
     },
     priceRefs: [{ category: 'cosmetic', include: ['라미네이트', '미백'] }],
+    bodyLocation: '상악 전치부(앞니)',
+    crossLinks: [
+      { slug: 'aesthetic', text: '치아 색까지 함께 밝히고 싶다면 전문가 미백과의 병행을 고려해 보세요.' },
+    ],
   },
 
   tmj: {
@@ -124,6 +139,10 @@ export const TREATMENT_EXTRAS: Record<string, TreatmentExtra> = {
       note: '턱관절(TMJ)은 치아 교합과 직결된 치과 진료 영역입니다.',
     },
     priceRefs: [{ category: 'etc', include: ['체외충격파', 'PDRN', '프롤로'] }, { category: 'ortho', include: ['교합안정장치', '이갈이'] }],
+    bodyLocation: '측두하악관절(TMJ)·저작근',
+    crossLinks: [
+      { slug: 'botox', text: '이갈이·이 악물기가 턱관절 부담의 원인이라면 저작근 보톡스 병행이 도움이 될 수 있습니다.' },
+    ],
   },
 
   aesthetic: {
@@ -142,7 +161,23 @@ export const TREATMENT_EXTRAS: Record<string, TreatmentExtra> = {
       { title: '정밀 치료', desc: '3D 구강스캐너 디지털 인상 → 맞춤 세라믹 제작 → 부착.', duration: '2~3회 내원' },
       { title: '마무리 조율', desc: '색·형태·교합 미세 조정으로 자연스러움 완성.', duration: '1회 내원' },
     ],
+    compare: {
+      title: '심미보철 재료 비교',
+      headers: ['지르코니아', '올세라믹(이맥스)', '레진'],
+      rows: [
+        { label: '강도', cols: ['매우 높음', '중간', '낮음'] },
+        { label: '심미성(투명도)', cols: ['자연스러움', '가장 자연스러움', '보통'] },
+        { label: '적합 부위', cols: ['어금니·힘 받는 치아', '앞니 심미 부위', '부분 수복'] },
+        { label: '치료 기간', cols: ['1~2주', '1~2주', '당일'] },
+      ],
+      note: '치아 위치·교합력·심미 요구도에 따라 적합한 재료가 다릅니다. 진단 후 장단점을 투명하게 안내드립니다.',
+    },
     priceRefs: [{ category: 'cosmetic' }, { category: 'prosthetics', include: ['지르코니아', 'PFM'] }],
+    bodyLocation: '전치부·구치부 치아',
+    crossLinks: [
+      { slug: 'luminate', text: '치아 삭제를 최소화하는 앞니 심미치료를 찾으신다면 루미네이트를 먼저 확인해 보세요.' },
+      { slug: 'prosthetics', text: '어금니 크라운·브릿지 등 기능 중심의 보철은 보철치료 페이지에서 자세히 볼 수 있습니다.' },
+    ],
   },
 
   endo: {
@@ -161,7 +196,23 @@ export const TREATMENT_EXTRAS: Record<string, TreatmentExtra> = {
       { title: '근관 충전', desc: '빈 신경관을 밀폐 충전하여 재감염 차단.', duration: '1회 내원' },
       { title: '크라운 수복', desc: '신경치료 치아는 부러지기 쉬워 크라운으로 보호합니다.', duration: '1~2주' },
     ],
+    compare: {
+      title: '신경치료 vs 발치 후 임플란트',
+      headers: ['미세현미경 신경치료', '발치 후 임플란트'],
+      rows: [
+        { label: '내 치아 보존', cols: ['자연치아 유지', '상실'] },
+        { label: '치료 기간', cols: ['2~4주', '3~6개월'] },
+        { label: '치아 감각(씹는 느낌)', cols: ['자연치아 그대로', '자연치아와 다를 수 있음'] },
+        { label: '비용', cols: ['상당 부분 건강보험', '비급여 중심'] },
+      ],
+      note: '살릴 수 있는 치아는 살리는 것이 우선입니다. 다만 균열·파절 정도에 따라 발치가 불가피한 경우도 있으며, 진단 근거를 보여드리며 설명합니다.',
+    },
     priceRefs: [{ category: 'prosthetics', include: ['지르코니아', 'PFM', 'MTA', '코어'] }],
+    bodyLocation: '치수(치아 내부 신경)·근관',
+    crossLinks: [
+      { slug: 'cavity', text: '신경치료까지 가기 전, 충치를 조기에 발견하는 것이 최선입니다. 충치치료 페이지를 확인해 보세요.' },
+      { slug: 'prosthetics', text: '신경치료 후 크라운 수복은 보철치료 페이지에서 재료별 차이를 볼 수 있습니다.' },
+    ],
   },
 
   cavity: {
@@ -191,6 +242,11 @@ export const TREATMENT_EXTRAS: Record<string, TreatmentExtra> = {
       note: '초기에 발견할수록 치료는 작아집니다. 6개월 정기검진이 가장 저렴한 치료입니다.',
     },
     priceRefs: [{ category: 'conserve', include: ['레진', '인레이', '온레이'] }],
+    bodyLocation: '치아 법랑질·상아질',
+    crossLinks: [
+      { slug: 'endo', text: '충치가 신경까지 진행됐다면 미세현미경 신경치료로 치아를 살릴 수 있는지 먼저 확인합니다.' },
+      { slug: 'gum', text: '충치 예방의 기본은 정기 스케일링과 잇몸관리입니다.' },
+    ],
   },
 
   gum: {
@@ -209,7 +265,23 @@ export const TREATMENT_EXTRAS: Record<string, TreatmentExtra> = {
       { title: '심부 치주치료', desc: '필요시 치근활택술·치주소파술로 잇몸 속 치석까지 제거.', duration: '부위별 1~4회' },
       { title: '유지 관리', desc: '3~6개월 주기 정기 관리로 재발 방지.', duration: '지속' },
     ],
+    compare: {
+      title: '잇몸병 단계별 치료',
+      headers: ['치은염(초기)', '치주염(중등도)', '심한 치주염'],
+      rows: [
+        { label: '증상', cols: ['양치 시 출혈', '잇몸 붓기·구취', '치아 흔들림'] },
+        { label: '치료', cols: ['스케일링·칫솔질 교육', '치근활택술·소파술', '잇몸수술, 필요시 발치 계획'] },
+        { label: '치조골 회복', cols: ['완전 회복 가능', '진행 억제 중심', '상실 부위 회복 어려움'] },
+        { label: '보험 적용', cols: ['연 1회 스케일링 보험', '대부분 보험', '대부분 보험'] },
+      ],
+      note: '잇몸병은 되돌리는 치료보다 지키는 치료가 훨씬 쉽고 저렴합니다. 출혈 단계에서 오세요.',
+    },
     priceRefs: [{ category: 'etc', include: ['치주 PDRN'] }],
+    bodyLocation: '치은·치주조직·치조골',
+    crossLinks: [
+      { slug: 'implant', text: '치아를 잃은 뒤의 임플란트보다, 잇몸을 지켜 내 치아를 오래 쓰는 것이 먼저입니다.' },
+      { slug: 'wisdom', text: '사랑니 주변 잇몸이 반복적으로 붓는다면 사랑니 발치 검진을 받아보세요.' },
+    ],
   },
 
   prosthetics: {
@@ -228,7 +300,23 @@ export const TREATMENT_EXTRAS: Record<string, TreatmentExtra> = {
       { title: '맞춤 제작·시적', desc: '적합도·색상 확인 후 조정.', duration: '1~2주' },
       { title: '장착·교합 조정', desc: '씹는 균형까지 맞춰 마무리. 정기점검 안내.', duration: '1회 내원' },
     ],
+    compare: {
+      title: '치아 상실 부위 회복 방법 비교',
+      headers: ['브릿지', '부분틀니', '임플란트'],
+      rows: [
+        { label: '옆 치아 삭제', cols: ['필요(양옆 치아)', '불필요(걸이 장치)', '불필요'] },
+        { label: '수술 여부', cols: ['없음', '없음', '임플란트 식립'] },
+        { label: '치료 기간', cols: ['1~2주', '3~5주', '3~6개월'] },
+        { label: '보험 적용', cols: ['비급여', '만 65세↑ 보험(7년 주기)', '만 65세↑ 평생 2개 보험'] },
+      ],
+      note: '치아 상태·전신 건강·비용을 종합해 환자분께 유리한 방법을 권해 드립니다.',
+    },
     priceRefs: [{ category: 'prosthetics' }, { category: 'denture' }],
+    bodyLocation: '치아·치열·악궁',
+    crossLinks: [
+      { slug: 'implant', text: '틀니가 자꾸 헐거워진다면 임플란트 2~4개로 고정하는 임플란트 틀니도 있습니다.' },
+      { slug: 'endo', text: '크라운 전 신경치료가 필요한 경우, 미세현미경 신경치료 페이지를 확인해 보세요.' },
+    ],
   },
 
   wisdom: {
@@ -247,7 +335,22 @@ export const TREATMENT_EXTRAS: Record<string, TreatmentExtra> = {
       { title: '무통 발치', desc: '단계별 마취 후 최소 침습 발치.', duration: '10~40분' },
       { title: '회복 관리', desc: '주의사항 안내·소독·실밥 제거까지 관리.', duration: '1~2주' },
     ],
+    compare: {
+      title: '사랑니 유형별 발치 난이도',
+      headers: ['바로 난 사랑니', '부분 매복', '완전 매복(누운 사랑니)'],
+      rows: [
+        { label: '발치 시간', cols: ['5~10분', '15~30분', '20~40분'] },
+        { label: 'CT 진단', cols: ['필요시', '권장', '필수(신경관 확인)'] },
+        { label: '붓기·통증', cols: ['적음', '중간', '2~3일 붓기 가능'] },
+        { label: '당일 발치', cols: ['대부분 가능', '상태에 따라', '상태에 따라'] },
+      ],
+      note: '매복 정도와 신경관 거리에 따라 계획이 달라집니다. CT 확인 후 정직하게 안내드립니다.',
+    },
     priceRefs: [{ category: 'etc', include: ['트리톤', '큐탄'] }],
+    bodyLocation: '제3대구치(사랑니)·하치조신경 인접부',
+    crossLinks: [
+      { slug: 'gum', text: '사랑니 주변 염증이 반복되면 앞 치아 잇몸까지 상할 수 있습니다. 잇몸 상태도 함께 점검하세요.' },
+    ],
   },
 
   botox: {
@@ -266,7 +369,22 @@ export const TREATMENT_EXTRAS: Record<string, TreatmentExtra> = {
       { title: '효과 발현', desc: '2주 전후로 근육 이완 시작.', duration: '2주' },
       { title: '유지·재시술', desc: '보통 4~6개월 간격 유지. 스플린트 병행 시 치아 보호 효과 상승.', duration: '4~6개월 주기' },
     ],
+    compare: {
+      title: '이갈이·악물기 대응법 비교',
+      headers: ['저작근 보톡스', '교합안정장치(스플린트)', '병행'] ,
+      rows: [
+        { label: '작용', cols: ['근육 과긴장 완화', '치아·턱관절 보호', '원인+보호 동시'] },
+        { label: '효과 지속', cols: ['평균 3~6개월', '착용 기간 내', '상호 보완'] },
+        { label: '사각턱 개선', cols: ['기대 가능(개인차)', '해당 없음', '보톡스 몲'] },
+        { label: '관리', cols: ['주기적 재시술', '야간 착용·세척', '둘 다'] },
+      ],
+      note: '증상·근육 발달 정도에 따라 단독 또는 병행을 권해 드립니다. 효과·유지 기간에는 개인차가 있습니다.',
+    },
     priceRefs: [{ category: 'cosmetic', include: ['보톡스'] }, { category: 'ortho', include: ['이갈이'] }],
+    bodyLocation: '교근·측두근(저작근)',
+    crossLinks: [
+      { slug: 'tmj', text: '턱에서 소리가 나거나 입이 잘 안 벌어진다면 턱관절 치료를 먼저 받는 것이 순서입니다.' },
+    ],
   },
 }
 

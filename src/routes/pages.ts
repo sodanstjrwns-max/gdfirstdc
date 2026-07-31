@@ -513,6 +513,7 @@ pages.get('/treatments/:slug', async (c) => {
     alternateName: t.nameEn,
     description: t.metaDesc,
     procedureType: 'https://schema.org/NoninvasiveProcedure',
+    bodyLocation: ex?.bodyLocation,
     howPerformed: ex ? ex.timeline.map((s, i) => `${i + 1}. ${s.title}: ${s.desc}`).join(' ') : undefined,
     followup: '정기검진을 통한 유지관리',
     provider: { '@id': `${CLINIC.siteUrl}/#clinic` },
@@ -577,6 +578,20 @@ ${ex ? `
   ${s.list ? `<ul>${s.list.map((li) => `<li>${esc(li)}</li>`).join('')}</ul>` : ''}
   `).join('')}
 </article>
+
+${ex?.crossLinks?.length ? `
+<!-- 과목 간 문맥 연결 -->
+<aside id="cross-links" class="max-w-3xl mx-auto px-5 pb-4">
+  <div class="rounded-2xl border border-gold-200 bg-gold-50/50 p-6 sm:p-7">
+    <h2 class="text-[13px] font-bold text-gold-700 tracking-[0.2em] uppercase"><i class="fas fa-link mr-2" aria-hidden="true"></i>함께 보면 좋은 진료</h2>
+    <ul class="mt-4 space-y-3">
+      ${ex.crossLinks.map((cl) => {
+        const ct = getTreatment(cl.slug)
+        return ct ? `<li class="text-[14.5px] text-ink/65 leading-relaxed">${esc(cl.text)} <a href="/treatments/${ct.slug}" class="font-bold text-royal hover:underline whitespace-nowrap">${ct.name} 보기 →</a></li>` : ''
+      }).join('')}
+    </ul>
+  </div>
+</aside>` : ''}
 
 ${ex ? `
 <!-- 치료 과정 타임라인 -->
