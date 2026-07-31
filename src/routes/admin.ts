@@ -165,6 +165,71 @@ admin.get('/api/regions', (c) => {
   return c.json({ results: searchRegions(q) })
 })
 
+// ===== 에디터 인라인 이미지 업로드 API (드래그·붙여넣기 지원) =====
+admin.post('/admin/api/upload-image', async (c) => {
+  const form = await c.req.parseBody()
+  const key = await uploadImage(c, form.image, 'editor')
+  if (!key) return c.json({ error: '이미지 업로드에 실패했습니다. (8MB 이하 이미지 파일만 가능)' }, 400)
+  return c.json({ url: `/images/${key}` })
+})
+
+// ===== 최고수준 WYSIWYG 에디터 (Toast UI Editor — 한국어 UI) =====
+function editorField(initialHtml: string): string {
+  return `
+<div>
+  <label class="block text-sm font-bold mb-1">본문 *</label>
+  <textarea name="content_html" id="content-html-field" class="hidden" aria-hidden="true">${esc(initialHtml)}</textarea>
+  <div id="tui-editor" class="rounded-xl overflow-hidden border border-slate-300 bg-white"></div>
+  <p class="mt-2 text-xs text-slate-400"><i class="fas fa-circle-info mr-1"></i>이미지는 본문에 바로 드래그하거나 붙여넣으면 자동 업로드됩니다. 네이버 블로그처럼 제목·굵기·목록·표·링크를 툴바에서 바로 쓰시면 됩니다.</p>
+</div>
+<link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css">
+<script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+<script src="https://uicdn.toast.com/editor/latest/i18n/ko-kr.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const field = document.getElementById('content-html-field')
+  const form = field.closest('form')
+  const editor = new toastui.Editor({
+    el: document.getElementById('tui-editor'),
+    height: '560px',
+    initialEditType: 'wysiwyg',
+    hideModeSwitch: false,
+    language: 'ko-KR',
+    usageStatistics: false,
+    autofocus: false,
+    placeholder: '여기에 본문을 작성하세요. 사진은 드래그하거나 복사-붙여넣기 하면 됩니다.',
+    toolbarItems: [
+      ['heading', 'bold', 'italic', 'strike'],
+      ['hr', 'quote'],
+      ['ul', 'ol', 'indent', 'outdent'],
+      ['table', 'image', 'link'],
+      ['scrollSync'],
+    ],
+    hooks: {
+      addImageBlobHook: async (blob, callback) => {
+        try {
+          const fd = new FormData()
+          fd.append('image', blob, blob.name || 'image-' + Date.now() + '.png')
+          const res = await fetch('/admin/api/upload-image', { method: 'POST', body: fd })
+          const data = await res.json()
+          if (data.url) callback(data.url, '이미지')
+          else alert(data.error || '이미지 업로드 실패')
+        } catch (e) { alert('이미지 업로드 중 오류가 발생했습니다.') }
+      },
+    },
+  })
+  if (field.value.trim()) editor.setHTML(field.value)
+  form.addEventListener('submit', (e) => {
+    const html = editor.getHTML()
+    const text = html.replace(/<[^>]*>/g, '').trim()
+    const hasMedia = /<(img|table|iframe)/i.test(html)
+    if (!text && !hasMedia) { e.preventDefault(); alert('본문을 입력해 주세요.'); return }
+    field.value = html
+  })
+})
+</script>`
+}
+
 // =========================================================
 // 치료사례 관리
 // =========================================================
@@ -222,7 +287,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const imgField = (name: string, label: string, currentKey?: string | null) => `
 <div>
   <label class="block text-sm font-bold mb-1">${label}</label>
-  ${currentKey ? `<img src="/images/${currentKey}" alt="${label}" class="w-32 rounded-lg border mb-2">` : ''}
+  ${currentKey ? `<img src="/images/${currentKey}" alt="${label}" class="w-32 rounded-lg border mb-1"><label class="flex items-center gap-1.5 text-xs text-red-500 font-bold mb-2"><input type="checkbox" name="remove_${name}" value="1"> 현재 이미지 삭제</label>` : ''}
   <input type="file" name="${name}" accept="image/*" class="block w-full text-sm text-slate-500 file:mr-3 file:px-4 file:py-2 file:rounded-lg file:border-0 file:bg-navy-50 file:text-navy-700 file:font-bold file:text-sm">
 </div>`
   return `
@@ -293,7 +358,12 @@ admin.post('/admin/cases/:id/edit', async (c) => {
   const old = await c.env.DB.prepare('SELECT * FROM before_after WHERE id = ?').bind(id).first<any>()
   if (!old) return c.notFound()
   const form = await c.req.parseBody()
-  const keyOf = async (field: string, oldKey: string | null) => (await uploadImage(c, form[field], 'cases')) || oldKey
+  const keyOf = async (field: string, oldKey: string | null) => {
+    const uploaded = await uploadImage(c, form[field], 'cases')
+    if (uploaded) return uploaded
+    if (form[`remove_${field}`] === '1') return null
+    return oldKey
+  }
   await c.env.DB.prepare(
     `UPDATE before_after SET title=?, description=?, age_group=?, gender=?, category=?, region=?, duration=?,
      intra_before_key=?, intra_after_key=?, pano_before_key=?, pano_after_key=?, published=?, updated_at=CURRENT_TIMESTAMP WHERE id=?`
@@ -350,7 +420,7 @@ function blogForm(action: string, r?: any): string {
     <div><label class="block text-sm font-bold mb-1">썸네일 이미지</label>${r?.thumbnail_key ? `<img src="/images/${r.thumbnail_key}" class="w-24 rounded-lg border mb-1" alt="썸네일">` : ''}<input type="file" name="thumbnail" accept="image/*" class="block w-full text-sm text-slate-500 file:mr-3 file:px-4 file:py-2 file:rounded-lg file:border-0 file:bg-navy-50 file:text-navy-700 file:font-bold file:text-sm"></div>
   </div>
   <div><label class="block text-sm font-bold mb-1">요약 (목록/검색 노출)</label><textarea name="excerpt" rows="2" maxlength="200" class="${inputCls}">${esc(r?.excerpt || '')}</textarea></div>
-  <div><label class="block text-sm font-bold mb-1">본문 (HTML 사용 가능: &lt;h2&gt;, &lt;p&gt;, &lt;ul&gt; 등)</label><textarea name="content_html" rows="16" required class="${inputCls} font-mono text-xs">${esc(r?.content_html || '')}</textarea></div>
+  ${editorField(r?.content_html || '')}
   <label class="flex items-center gap-2 text-sm font-bold"><input type="checkbox" name="published" value="1" ${!r || r.published ? 'checked' : ''}> 홈페이지에 게시</label>
   <div class="flex gap-2">
     <button class="px-6 py-3 rounded-xl bg-navy-800 text-white font-bold text-sm">저장</button>
@@ -437,8 +507,9 @@ function noticeForm(action: string, r?: any): string {
   return `
 <form method="POST" action="${action}" enctype="multipart/form-data" class="space-y-5 max-w-2xl">
   <div><label class="block text-sm font-bold mb-1">제목 *</label><input name="title" required maxlength="150" value="${esc(r?.title || '')}" class="${inputCls}"></div>
-  <div><label class="block text-sm font-bold mb-1">본문 (HTML 사용 가능)</label><textarea name="content_html" rows="10" required class="${inputCls} font-mono text-xs">${esc(r?.content_html || '')}</textarea></div>
-  <div><label class="block text-sm font-bold mb-1">이미지 첨부 (최대 3개)</label>
+  ${editorField(r?.content_html || '')}
+  ${(() => { let ks: string[] = []; try { ks = r?.image_keys ? JSON.parse(r.image_keys) : [] } catch { /* noop */ } return ks.length ? `<div><label class="block text-sm font-bold mb-1">첨부된 이미지</label><div class="flex flex-wrap gap-3">${ks.map((k, i) => `<div class="text-center"><img src="/images/${k}" alt="첨부 이미지 ${i + 1}" class="w-24 h-24 object-cover rounded-lg border"><label class="flex items-center justify-center gap-1 text-xs text-red-500 font-bold mt-1"><input type="checkbox" name="remove_image_${i}" value="1"> 삭제</label></div>`).join('')}</div></div>` : '' })()}
+  <div><label class="block text-sm font-bold mb-1">이미지 첨부 (최대 3개 — 본문 아래 자동 표시)</label>
     <input type="file" name="image1" accept="image/*" class="block w-full text-sm text-slate-500 file:mr-3 file:px-4 file:py-2 file:rounded-lg file:border-0 file:bg-navy-50 file:text-navy-700 file:font-bold file:text-sm mb-2">
     <input type="file" name="image2" accept="image/*" class="block w-full text-sm text-slate-500 file:mr-3 file:px-4 file:py-2 file:rounded-lg file:border-0 file:bg-navy-50 file:text-navy-700 file:font-bold file:text-sm mb-2">
     <input type="file" name="image3" accept="image/*" class="block w-full text-sm text-slate-500 file:mr-3 file:px-4 file:py-2 file:rounded-lg file:border-0 file:bg-navy-50 file:text-navy-700 file:font-bold file:text-sm">
@@ -484,6 +555,7 @@ admin.post('/admin/notice/:id/edit', async (c) => {
   const form = await c.req.parseBody()
   let keys: string[] = []
   try { keys = old.image_keys ? JSON.parse(old.image_keys) : [] } catch { /* noop */ }
+  keys = keys.filter((_, i) => form[`remove_image_${i}`] !== '1')
   for (const f of ['image1', 'image2', 'image3']) {
     const k = await uploadImage(c, form[f], 'notice')
     if (k) keys.push(k)
