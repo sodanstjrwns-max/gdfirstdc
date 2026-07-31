@@ -161,14 +161,7 @@ pages.get('/', (c) => {
     <p class="reveal text-gold-600 text-xs font-bold tracking-[0.3em] uppercase">Media & Clinic</p>
     <h2 class="reveal mt-2 text-3xl sm:text-5xl font-extrabold text-ink tracking-tightest">방송이 먼저<br class="sm:hidden"> 찾은 치과.</h2>
   </header>
-  <div class="grid lg:grid-cols-3 gap-4">
-    <figure class="bento reveal-scale lg:col-span-1 rounded-3xl overflow-hidden bg-ink relative min-h-[420px]">
-      <video class="absolute inset-0 w-full h-full object-cover" data-lazy muted loop playsinline preload="none" poster="/static/images/tour_poster.webp" aria-label="검단퍼스트치과 원내 소개 영상"><source data-src="/static/video/clinic_tour.mp4" type="video/mp4"></video>
-      <figcaption class="absolute bottom-0 inset-x-0 p-6 bg-gradient-to-t from-ink to-transparent">
-        <p class="text-gold-400 text-[11px] font-bold tracking-[0.25em] uppercase">Clinic Tour</p>
-        <p class="mt-1 text-white font-extrabold text-lg">검단퍼스트치과 둘러보기</p>
-      </figcaption>
-    </figure>
+  <div class="grid md:grid-cols-2 gap-4">
     <article class="bento reveal-scale rounded-3xl bg-white border border-ink/8 overflow-hidden flex flex-col">
       <div class="relative h-52 overflow-hidden">
         <img src="/static/images/doctor_study.webp" alt="수료증과 인증서 앞에서 임상 서적을 연구하는 김희수 원장" class="w-full h-full object-cover" loading="lazy" decoding="async">
