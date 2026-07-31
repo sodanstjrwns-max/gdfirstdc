@@ -133,9 +133,9 @@ pages.get('/', (c) => {
       </div>
       <div class="reveal-scale">
         <div class="rounded-3xl bg-white/[0.06] border border-white/10 backdrop-blur overflow-hidden" data-tilt data-tilt-max="7">
-          <div class="relative h-56 sm:h-64 overflow-hidden">
-            <img src="/static/images/doctor_lobby.webp" alt="검단퍼스트치과 김희수 대표원장" class="w-full h-full object-cover object-top" loading="lazy" decoding="async">
-            <div class="absolute inset-0 bg-gradient-to-t from-ink/80 to-transparent" aria-hidden="true"></div>
+          <div class="relative h-64 sm:h-80 overflow-hidden">
+            <img src="/static/images/doctor_portrait.webp" alt="검단퍼스트치과 김희수 대표원장" class="w-full h-full object-cover object-top" width="1280" height="852" loading="lazy" decoding="async">
+            <div class="absolute inset-0 bg-gradient-to-t from-ink/80 via-transparent to-transparent" aria-hidden="true"></div>
           </div>
           <div class="p-8 pt-6">
           <div class="flex items-center gap-4 pb-6 border-b border-white/10">
