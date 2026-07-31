@@ -7,6 +7,7 @@ import { FAQS } from '../data/faqs'
 import { SEO_REGIONS, REGION_GROUPS, type SeoRegion } from '../data/regions'
 import { PRICING, fmtPrice, PRICING_UPDATED } from '../data/pricing'
 import { getExtras } from '../data/treatment_extras'
+import { interactiveSection } from '../lib/interactive'
 import type { AppEnv } from '../types'
 
 const pages = new Hono<AppEnv>()
@@ -543,15 +544,21 @@ ${ex ? `
   <div class="rounded-3xl bg-white border border-ink/8 shadow-xl shadow-ink/5 p-7 sm:p-9">
     <header class="flex flex-wrap items-baseline justify-between gap-3 mb-6">
       <h2 class="text-xl sm:text-2xl font-extrabold text-ink tracking-tight"><i class="fas fa-clipboard-check text-gold-600 mr-2"></i>이런 분께 필요한 치료입니다</h2>
-      <p class="text-[12.5px] text-ink/40 font-semibold">하나라도 해당되면 검진을 권해드립니다</p>
+      <p class="text-[12.5px] text-ink/40 font-semibold">해당되는 항목을 직접 눌러 체크해 보세요</p>
     </header>
-    <ul class="grid sm:grid-cols-2 gap-2.5" data-stagger>
-      ${ex.checklist.map((item) => `
-      <li class="flex items-start gap-3 rounded-2xl bg-cream border border-ink/5 px-5 py-4">
-        <span class="mt-0.5 w-5 h-5 rounded-md bg-ink text-gold-400 flex items-center justify-center shrink-0 text-[10px]"><i class="fas fa-check"></i></span>
-        <span class="text-[14px] text-ink/75 font-medium leading-snug">${esc(item)}</span>
-      </li>`).join('')}
-    </ul>
+    <div data-selfcheck data-t0="해당되는 항목을 눌러 체크해 보세요." data-t1="해당 증상이 있으시군요. 편하게 검진 상담을 받아보시는 것을 권해드립니다." data-t3="여러 항목이 해당됩니다. 가까운 시일 내에 검진을 받아보시길 권해드립니다.">
+      <ul class="grid sm:grid-cols-2 gap-2.5" data-stagger>
+        ${ex.checklist.map((item) => `
+        <li class="sc-item flex items-start gap-3 rounded-2xl bg-cream border border-ink/5 px-5 py-4" role="checkbox" aria-checked="false" tabindex="0">
+          <span class="sc-box" aria-hidden="true"></span>
+          <span class="sc-txt text-[14px] text-ink/75 font-medium leading-snug">${esc(item)}</span>
+        </li>`).join('')}
+      </ul>
+      <footer class="mt-5 flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-ink/[0.03] border border-ink/8 px-5 py-3.5" aria-live="polite">
+        <p class="text-[13px] font-bold text-ink/70">체크한 항목 <span class="text-royal text-lg font-extrabold" data-sc-count>0</span>개</p>
+        <p class="text-[12.5px] text-ink/50 font-medium" data-sc-msg>해당되는 항목을 눌러 체크해 보세요.</p>
+      </footer>
+    </div>
   </div>
 </section>
 
@@ -570,6 +577,8 @@ ${ex ? `
     </figcaption>
   </figure>
 </section>` : ''}
+
+${interactiveSection(t.slug)}
 
 <article class="max-w-3xl mx-auto px-5 py-14 prose-clinic">
   ${t.sections.map((s) => `
@@ -740,7 +749,9 @@ ${relCases.length || relPosts.length ? `
   <p class="flex flex-wrap gap-x-1.5 gap-y-2 text-[12.5px] leading-none">
     ${SEO_REGIONS.slice(0, 12).map((r) => `<a href="/region/${r.slug}" class="px-3.5 py-2 rounded-full bg-white border border-ink/8 text-ink/50 hover:text-ink hover:border-ink/25 transition whitespace-nowrap">${r.name} ${t.name.replace(/ LumiNate$/, '')}</a>`).join('')}
   </p>
-</nav>`
+</nav>
+
+<script src="/static/treatment.js" defer></script>`
   return c.html(layout({ title: `${t.name} — 인천 검단신도시 치과`, desc: t.metaDesc, path: `/treatments/${t.slug}`, jsonLd }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
 })
 
