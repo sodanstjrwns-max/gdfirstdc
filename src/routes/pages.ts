@@ -173,8 +173,8 @@ pages.get('/', (c) => {
     <h2 class="reveal mt-2 text-3xl sm:text-5xl font-extrabold text-ink tracking-tightest">방송이 먼저<br class="sm:hidden"> 찾은 치과.</h2>
   </header>
   <div class="grid md:grid-cols-2 gap-4">
-    <article class="bento reveal-scale rounded-3xl bg-white border border-ink/8 overflow-hidden flex flex-col">
-      <div class="relative h-52 overflow-hidden">
+    <article class="bento reveal-scale rounded-3xl bg-white border border-ink/8 overflow-hidden flex flex-col h-full">
+      <div class="relative h-52 shrink-0 overflow-hidden">
         <img src="/static/images/doctor_study.webp" alt="수료증과 인증서 앞에서 임상 서적을 연구하는 김희수 원장" class="w-full h-full object-cover" loading="lazy" decoding="async">
       </div>
       <div class="p-7 flex-1 flex flex-col">
@@ -184,10 +184,10 @@ pages.get('/', (c) => {
         <a href="/about" class="mt-4 inline-flex items-center gap-2 text-sm font-bold text-ink">원장 이력 전체 보기 <i class="fas fa-arrow-right text-xs"></i></a>
       </div>
     </article>
-    <article class="bento reveal-scale rounded-3xl bg-ink text-white overflow-hidden flex flex-col">
-      <div class="relative h-52 overflow-hidden">
-        <img src="/static/images/news_article.webp" alt="메디컬투데이 — 검단퍼스트치과 김희수 원장 한국경제TV 건강매거진 출연 기사" class="w-full h-full object-cover object-top" width="340" height="1024" loading="lazy" decoding="async">
-        <div class="absolute inset-0 bg-gradient-to-t from-ink/70 to-transparent" aria-hidden="true"></div>
+    <article class="bento reveal-scale rounded-3xl bg-ink text-white overflow-hidden flex flex-col h-full">
+      <div class="relative h-52 shrink-0 overflow-hidden bg-[#8ec5e8]">
+        <img src="/static/images/news_tv_still.webp" alt="한국경제TV 건강매거진 — 부작용 줄이는 디지털 임플란트, 김희수 원장 생방송 출연 장면" class="w-full h-full object-cover object-bottom" loading="lazy" decoding="async">
+        <div class="absolute top-4 left-4 rounded-full bg-ink/80 backdrop-blur px-3.5 py-1.5 text-[11px] font-bold text-white/90"><i class="fas fa-tv text-gold-400 mr-1.5"></i>한국경제TV 생방송 출연</div>
       </div>
       <div class="p-7 flex-1 flex flex-col">
         <p class="text-gold-400 text-[11px] font-bold tracking-[0.25em] uppercase">Press · TV</p>
