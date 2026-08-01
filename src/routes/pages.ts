@@ -284,11 +284,11 @@ pages.get('/', (c) => {
       <p class="text-gold-400 text-xs font-bold tracking-[0.3em] uppercase">Reservation</p>
       <h2 class="mt-3 text-3xl sm:text-4xl font-extrabold tracking-tightest leading-tight">다른 병원 견적,<br>들고 오셔도 됩니다.</h2>
       <p class="mt-4 text-white/50 text-[15px] leading-relaxed max-w-md">"다른 병원도 다녀오세요. 그럼 저희의 가치를 더 느끼실 수 있습니다." — 비교하고 오셔도 정직하게만 말씀드립니다.</p>
-      <div class="mt-8 flex flex-wrap gap-3 relative">
-        <a href="/reserve" class="btn-3d px-7 py-4 rounded-full bg-gold-500 text-ink font-extrabold hover:bg-gold-400 transition"><i class="fas fa-calendar-check mr-2"></i>예약·상담 신청</a>
-        <a href="tel:${CLINIC.phone}" class="px-7 py-4 rounded-full border border-white/25 font-bold hover:bg-white/10 transition"><i class="fas fa-phone mr-2 text-gold-400"></i>${CLINIC.phone}</a>
-        <a href="${CLINIC.naverBooking}" target="_blank" rel="noopener" class="px-6 py-4 rounded-full bg-[#03c75a] text-white font-extrabold hover:brightness-110 transition"><span class="inline-flex w-5 h-5 rounded bg-white text-[#03c75a] items-center justify-center font-black text-[11px] mr-2 align-[-3px]">N</span>네이버 예약</a>
-        <a href="${CLINIC.kakao}" target="_blank" rel="noopener" class="px-6 py-4 rounded-full bg-[#fee500] text-[#191919] font-extrabold hover:brightness-105 transition"><i class="fas fa-comment mr-2"></i>카톡 상담</a>
+      <div class="mt-8 relative grid grid-cols-2 gap-3 max-w-md">
+        <a href="/reserve" class="btn-3d flex items-center justify-center gap-2 py-4 rounded-2xl bg-gold-500 text-ink font-extrabold hover:bg-gold-400 transition whitespace-nowrap"><i class="fas fa-calendar-check"></i>예약·상담 신청</a>
+        <a href="tel:${CLINIC.phone}" class="flex items-center justify-center gap-2 py-4 rounded-2xl border border-white/25 font-bold hover:bg-white/10 transition whitespace-nowrap"><i class="fas fa-phone text-gold-400"></i>${CLINIC.phone}</a>
+        <a href="${CLINIC.naverBooking}" target="_blank" rel="noopener" class="flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-white/[0.06] border border-white/10 font-bold text-white/85 hover:bg-white/[0.12] transition whitespace-nowrap text-[14.5px]"><span class="inline-flex w-5 h-5 rounded bg-[#03c75a] text-white items-center justify-center font-black text-[11px]">N</span>네이버 예약</a>
+        <a href="${CLINIC.kakao}" target="_blank" rel="noopener" class="flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-white/[0.06] border border-white/10 font-bold text-white/85 hover:bg-white/[0.12] transition whitespace-nowrap text-[14.5px]"><i class="fas fa-comment text-[#fee500]"></i>카톡 상담</a>
       </div>
     </div>
     <div class="reveal-scale lg:col-span-2 rounded-3xl bg-white border border-ink/8 p-8" data-tilt data-tilt-max="5">
