@@ -256,6 +256,18 @@ pages.get('/about', (c) => {
   const body = `
 ${pageHero('About Us', '광고 대신,<br><span class="font-disp text-shine">진단</span>으로 승부합니다.', '검단신도시에서 가장 오래된 치과, 그 이름의 무게를 압니다.')}
 
+<!-- ===== 대표원장 대형 포토 ===== -->
+<section id="doctor-hero-photo" class="max-w-6xl mx-auto px-5 pt-14 sm:pt-16">
+  <figure class="reveal-scale relative rounded-3xl overflow-hidden border border-ink/8 shadow-2xl shadow-ink/15">
+    <img src="/static/images/doctor_lobby_hero.webp" alt="검단퍼스트치과 로비에서의 김희수 대표원장" class="w-full h-auto" width="1920" height="1278" fetchpriority="high" decoding="async">
+    <figcaption class="absolute bottom-0 inset-x-0 p-6 sm:p-9 bg-gradient-to-t from-ink/85 via-ink/35 to-transparent">
+      <p class="text-gold-400 text-[10.5px] sm:text-xs font-bold tracking-[0.3em] uppercase">First Dental Clinic</p>
+      <p class="mt-1.5 text-white font-extrabold text-xl sm:text-3xl tracking-tight">대표원장 ${DOCTOR.name}</p>
+      <p class="mt-1 text-white/65 text-[12.5px] sm:text-sm">보건복지부 인증 통합치의학 전문의 · 대한치과보철학회 우수보철의사</p>
+    </figcaption>
+  </figure>
+</section>
+
 <section id="philosophy" class="max-w-6xl mx-auto px-5 py-20">
   <div class="grid lg:grid-cols-2 gap-10 items-start">
     <h2 class="reveal text-2xl sm:text-4xl font-extrabold text-ink tracking-tightest leading-[1.25] lg:sticky lg:top-28">"다른 병원도 다녀오세요.<br>그럼 저희의 가치를<br>더 느끼실 수 있습니다."</h2>
@@ -292,16 +304,11 @@ ${pageHero('About Us', '광고 대신,<br><span class="font-disp text-shine">진
 <section id="doctor-profile" class="bg-ink text-white py-20 sm:py-24 relative overflow-hidden">
   <div class="absolute top-0 left-1/3 w-[500px] h-[500px] rounded-full bg-navy-600/20 blur-[140px]" aria-hidden="true"></div>
   <div class="max-w-6xl mx-auto px-5 relative">
-    <div class="grid lg:grid-cols-[1fr_360px] gap-10 items-end mb-12">
-      <header>
-        <p class="reveal text-gold-400 text-xs font-bold tracking-[0.3em] uppercase">Doctor Profile</p>
-        <h2 class="reveal mt-3 text-3xl sm:text-5xl font-extrabold tracking-tightest">대표원장 ${DOCTOR.name}</h2>
-        <p class="reveal mt-3 text-white/45">보건복지부 인증 통합치의학 전문의 · 대한치과보철학회 우수보철의사</p>
-      </header>
-      <figure class="reveal-scale rounded-3xl overflow-hidden border border-white/10" data-tilt data-tilt-max="6">
-        <img src="/static/images/doctor_lobby.webp" alt="검단퍼스트치과 로비에서의 김희수 대표원장" class="w-full h-auto" width="640" height="426" loading="lazy" decoding="async">
-      </figure>
-    </div>
+    <header class="mb-12">
+      <p class="reveal text-gold-400 text-xs font-bold tracking-[0.3em] uppercase">Doctor Profile</p>
+      <h2 class="reveal mt-3 text-3xl sm:text-5xl font-extrabold tracking-tightest">대표원장 ${DOCTOR.name}</h2>
+      <p class="reveal mt-3 text-white/45">보건복지부 인증 통합치의학 전문의 · 대한치과보철학회 우수보철의사</p>
+    </header>
     <div class="grid lg:grid-cols-2 gap-4 mb-10 items-stretch">
       <blockquote class="reveal-scale rounded-3xl bg-white/[0.06] border border-white/10 p-8" data-tilt data-tilt-max="6">
         <i class="fas fa-quote-left text-gold-400 text-xl"></i>
@@ -369,6 +376,18 @@ ${pageHero('About Us', '광고 대신,<br><span class="font-disp text-shine">진
     <p class="reveal text-gold-600 text-xs font-bold tracking-[0.3em] uppercase">Press &amp; Broadcast</p>
     <h2 class="reveal mt-2 text-3xl sm:text-4xl font-extrabold text-ink tracking-tightest">방송 · 언론보도</h2>
   </header>
+  <figure class="reveal-scale rounded-3xl overflow-hidden bg-black border border-ink/8 shadow-2xl shadow-ink/15 mb-6">
+    <video class="w-full h-auto aspect-video" controls preload="none" poster="/static/images/broadcast_poster.webp" aria-label="한국경제TV 건강매거진 — 김희수 원장 임플란트 구조와 식립 과정 설명 하이라이트">
+      <source src="/static/video/broadcast_clip.mp4" type="video/mp4">
+    </video>
+    <figcaption class="bg-ink px-6 sm:px-8 py-5 flex flex-wrap items-center justify-between gap-3">
+      <div>
+        <p class="text-gold-400 text-[10.5px] font-bold tracking-[0.25em] uppercase">On Air Highlight</p>
+        <p class="mt-1 text-white font-extrabold text-[15px] sm:text-base">김희수 원장이 직접 설명하는 임플란트 구조와 식립 과정 (1분 49초)</p>
+      </div>
+      <p class="text-white/35 text-[11px]">영상 출처: 한국경제TV 「건강매거진」</p>
+    </figcaption>
+  </figure>
   <article class="bento reveal-scale rounded-3xl bg-white border border-ink/8 overflow-hidden flex flex-col sm:flex-row">
     <img src="/static/images/news_article.webp" alt="메디컬투데이 기사 — 검단퍼스트치과 김희수 원장 건강매거진 출연" class="sm:w-56 h-56 sm:h-auto object-cover object-top shrink-0" loading="lazy" decoding="async">
     <div class="p-7 sm:p-9">
