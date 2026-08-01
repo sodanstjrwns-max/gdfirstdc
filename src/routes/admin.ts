@@ -20,6 +20,7 @@ async function isAdminReq(c: any): Promise<boolean> {
 function adminShell(title: string, inner: string, active: string): string {
   const menu = [
     { href: '/admin', key: 'home', label: '대시보드', icon: 'fa-gauge' },
+    { href: '/admin/reservations', key: 'reservations', label: '예약 문의', icon: 'fa-calendar-check' },
     { href: '/admin/cases', key: 'cases', label: '치료사례', icon: 'fa-images' },
     { href: '/admin/blog', key: 'blog', label: '건강칼럼', icon: 'fa-pen-nib' },
     { href: '/admin/notice', key: 'notice', label: '공지사항', icon: 'fa-bullhorn' },
@@ -95,31 +96,108 @@ admin.use('/admin/*', async (c, next) => {
 
 // ===== 대시보드 =====
 admin.get('/admin', async (c) => {
-  const [ba, blog, notice, users] = await Promise.all([
+  const [ba, blog, notice, users, resv, resvNew] = await Promise.all([
     c.env.DB.prepare('SELECT COUNT(*) AS n FROM before_after').first<{ n: number }>(),
     c.env.DB.prepare('SELECT COUNT(*) AS n FROM blog_posts').first<{ n: number }>(),
     c.env.DB.prepare('SELECT COUNT(*) AS n FROM notices').first<{ n: number }>(),
     c.env.DB.prepare('SELECT COUNT(*) AS n FROM users').first<{ n: number }>(),
+    c.env.DB.prepare('SELECT COUNT(*) AS n FROM reservations').first<{ n: number }>(),
+    c.env.DB.prepare("SELECT COUNT(*) AS n FROM reservations WHERE status = 'new'").first<{ n: number }>(),
   ])
+  const newN = resvNew?.n || 0
   const stats = [
+    { label: '예약 문의', n: resv?.n || 0, href: '/admin/reservations', icon: 'fa-calendar-check', badge: newN },
     { label: '치료사례', n: ba?.n || 0, href: '/admin/cases', icon: 'fa-images' },
     { label: '건강칼럼', n: blog?.n || 0, href: '/admin/blog', icon: 'fa-pen-nib' },
     { label: '공지사항', n: notice?.n || 0, href: '/admin/notice', icon: 'fa-bullhorn' },
     { label: '회원 수', n: users?.n || 0, href: '#', icon: 'fa-users' },
   ]
   const inner = `
-<div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-  ${stats.map((s) => `<a href="${s.href}" class="rounded-2xl border border-slate-200 p-5 hover:shadow-lg transition"><i class="fas ${s.icon} text-gold-600 text-xl"></i><p class="mt-2 text-3xl font-extrabold text-navy-900">${s.n}</p><p class="text-sm text-slate-500">${s.label}</p></a>`).join('')}
+<div class="grid grid-cols-2 lg:grid-cols-5 gap-4">
+  ${stats.map((s: any) => `<a href="${s.href}" class="relative rounded-2xl border border-slate-200 p-5 hover:shadow-lg transition"><i class="fas ${s.icon} text-gold-600 text-xl"></i><p class="mt-2 text-3xl font-extrabold text-navy-900">${s.n}</p><p class="text-sm text-slate-500">${s.label}</p>${s.badge ? `<span class="absolute top-4 right-4 min-w-[26px] h-[26px] px-1.5 rounded-full bg-red-500 text-white text-xs font-extrabold flex items-center justify-center animate-pulse">${s.badge}</span>` : ''}</a>`).join('')}
 </div>
 <div class="mt-8 rounded-2xl bg-navy-50 p-6 text-sm text-slate-600 leading-relaxed">
   <p class="font-bold text-navy-900 mb-2"><i class="fas fa-circle-info text-gold-600 mr-1"></i>안내</p>
   <ul class="list-disc pl-5 space-y-1">
+    <li>홈페이지 [예약·상담 신청]으로 들어온 문의는 [예약 문의] 메뉴에서 확인하고, 연락 후 상태를 변경해 주세요.</li>
     <li>치료사례는 파노라마/구내포토 전·후 이미지를 업로드하면 홈페이지에 비교 슬라이더로 표시됩니다.</li>
     <li>지역 입력란은 자동완성을 지원합니다 (예: "원당" 입력 → 인천시 서구 원당동).</li>
     <li>초기 관리자 비밀번호는 반드시 [비밀번호 변경] 메뉴에서 변경해 주세요.</li>
   </ul>
 </div>`
   return c.html(layout({ title: '관리자', desc: '관리자', path: '/admin', noindex: true }, adminShell('대시보드', inner, 'home')))
+})
+
+// =========================================================
+// 예약 문의 관리
+// =========================================================
+const RESV_STATUS: Record<string, { label: string; cls: string }> = {
+  new: { label: '신규', cls: 'bg-red-100 text-red-600' },
+  contacted: { label: '연락완료', cls: 'bg-blue-100 text-blue-700' },
+  confirmed: { label: '예약확정', cls: 'bg-green-100 text-green-700' },
+  cancelled: { label: '취소', cls: 'bg-slate-100 text-slate-400' },
+}
+
+admin.get('/admin/reservations', async (c) => {
+  const filter = c.req.query('status') || ''
+  const q = filter && RESV_STATUS[filter]
+    ? c.env.DB.prepare('SELECT * FROM reservations WHERE status = ? ORDER BY created_at DESC LIMIT 200').bind(filter)
+    : c.env.DB.prepare("SELECT * FROM reservations ORDER BY CASE WHEN status = 'new' THEN 0 ELSE 1 END, created_at DESC LIMIT 200")
+  const rows = (await q.all<any>()).results
+  const counts = (await c.env.DB.prepare('SELECT status, COUNT(*) AS n FROM reservations GROUP BY status').all<any>()).results
+  const countOf = (k: string) => counts.find((r: any) => r.status === k)?.n || 0
+  const total = counts.reduce((a: number, r: any) => a + r.n, 0)
+  const tabs = [
+    { key: '', label: `전체 ${total}` },
+    ...Object.entries(RESV_STATUS).map(([k, v]) => ({ key: k, label: `${v.label} ${countOf(k)}` })),
+  ]
+  const inner = `
+<div class="flex flex-wrap gap-2 mb-5">
+  ${tabs.map((t) => `<a href="/admin/reservations${t.key ? `?status=${t.key}` : ''}" class="px-4 py-2 rounded-full text-sm font-bold ${filter === t.key ? 'bg-navy-800 text-white' : 'bg-white border border-slate-200 text-slate-600 hover:bg-navy-50'}">${t.label}</a>`).join('')}
+</div>
+${rows.length === 0 ? '<p class="text-slate-400 py-10 text-center">예약 문의가 없습니다.</p>' : `
+<div class="space-y-3">
+  ${rows.map((r: any) => {
+    const st = RESV_STATUS[r.status] || RESV_STATUS.new
+    return `<div class="rounded-2xl border ${r.status === 'new' ? 'border-red-200 bg-red-50/40' : 'border-slate-200 bg-white'} p-5">
+    <div class="flex flex-wrap items-center gap-x-3 gap-y-2">
+      <span class="px-2.5 py-1 rounded-full text-xs font-extrabold ${st.cls}">${st.label}</span>
+      <strong class="text-navy-900 text-[15px]">${esc(r.name)}</strong>
+      <a href="tel:${esc(r.phone)}" class="font-bold text-royal hover:underline"><i class="fas fa-phone text-[11px] mr-1"></i>${esc(r.phone)}</a>
+      <span class="text-xs text-slate-400 ml-auto">${(r.created_at || '').replace('T', ' ').slice(0, 16)}</span>
+    </div>
+    <div class="mt-2.5 flex flex-wrap gap-x-5 gap-y-1 text-sm text-slate-600">
+      ${r.category ? `<span><i class="fas fa-tooth text-gold-600 mr-1"></i>${esc(r.category)}</span>` : ''}
+      ${r.preferred_at ? `<span><i class="fas fa-clock text-gold-600 mr-1"></i>희망: ${esc(r.preferred_at)}</span>` : ''}
+    </div>
+    ${r.message ? `<p class="mt-2 text-sm text-slate-500 leading-relaxed whitespace-pre-line rounded-xl bg-slate-50 px-4 py-3">${esc(r.message)}</p>` : ''}
+    <div class="mt-3 flex flex-wrap items-center gap-2">
+      <form method="POST" action="/admin/reservations/${r.id}/status" class="flex items-center gap-2">
+        <select name="status" class="rounded-lg border border-slate-300 px-2.5 py-1.5 text-sm font-bold">
+          ${Object.entries(RESV_STATUS).map(([k, v]) => `<option value="${k}" ${r.status === k ? 'selected' : ''}>${v.label}</option>`).join('')}
+        </select>
+        <button class="px-4 py-1.5 rounded-lg bg-navy-800 text-white text-sm font-bold">상태 변경</button>
+      </form>
+      <form method="POST" action="/admin/reservations/${r.id}/delete" class="ml-auto" onsubmit="return confirm('이 예약 문의를 삭제하시겠습니까?')"><button class="px-4 py-1.5 rounded-lg text-red-500 text-sm font-bold hover:bg-red-50">삭제</button></form>
+    </div>
+  </div>`
+  }).join('')}
+</div>`}`
+  return c.html(layout({ title: '예약 문의 관리', desc: '관리자', path: '/admin/reservations', noindex: true }, adminShell('예약 문의 관리', inner, 'reservations')))
+})
+
+admin.post('/admin/reservations/:id/status', async (c) => {
+  const form = await c.req.parseBody()
+  const status = String(form.status || 'new')
+  if (RESV_STATUS[status]) {
+    await c.env.DB.prepare('UPDATE reservations SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?').bind(status, parseInt(c.req.param('id'))).run()
+  }
+  return c.redirect('/admin/reservations')
+})
+
+admin.post('/admin/reservations/:id/delete', async (c) => {
+  await c.env.DB.prepare('DELETE FROM reservations WHERE id = ?').bind(parseInt(c.req.param('id'))).run()
+  return c.redirect('/admin/reservations')
 })
 
 // ===== 비밀번호 변경 =====

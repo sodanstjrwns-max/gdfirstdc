@@ -107,6 +107,7 @@ const PATH_LABELS: Record<string, string> = {
   location: '오시는길',
   notice: '공지사항',
   region: '진료 지역 안내',
+  reserve: '예약·상담 신청',
 }
 TREATMENTS.forEach((t) => { PATH_LABELS[t.slug] = t.name })
 SEO_REGIONS.forEach((r) => { PATH_LABELS[r.slug] = `${r.name} 치과` })
@@ -215,6 +216,9 @@ ${meta.path === '/' ? '<div id="curtain" aria-hidden="true"><span class="curtain
       ).join('')}
     </nav>
     <div class="flex items-center gap-2">
+      <a href="/reserve" class="hidden md:inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full bg-gold-500 text-ink text-sm font-extrabold hover:bg-gold-400 transition">
+        <i class="fas fa-calendar-check text-[12px]"></i>예약·상담
+      </a>
       <a href="tel:${CLINIC.phone}" class="hidden md:inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-ink text-white text-sm font-bold hover:bg-navy-800 transition group">
         <span class="w-1.5 h-1.5 rounded-full bg-gold-400 group-hover:animate-ping"></span>${CLINIC.phone}
       </a>
@@ -241,26 +245,54 @@ ${meta.path === '/' ? '<div id="curtain" aria-hidden="true"><span class="curtain
     <div class="mt-8 flex flex-wrap gap-2">
       ${TREATMENTS.slice(0, 6).map((t) => `<a href="/treatments/${t.slug}" data-tilt data-tilt-max="14" class="px-4 py-2 rounded-full border border-white/20 text-white/70 text-sm">${t.name}</a>`).join('')}
     </div>
-    <div class="mt-auto pt-10 flex gap-3 text-sm">
+    <div class="mt-8 grid grid-cols-2 gap-2.5">
+      <a href="/reserve" class="flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-gold-500 text-ink font-extrabold text-sm"><i class="fas fa-calendar-check"></i>예약·상담 신청</a>
+      <a href="tel:${CLINIC.phone}" class="flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-white/10 text-white font-bold text-sm"><i class="fas fa-phone text-gold-400"></i>전화하기</a>
+      <a href="${CLINIC.naverBooking}" target="_blank" rel="noopener" class="flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-[#03c75a] text-white font-extrabold text-sm"><span class="inline-flex w-5 h-5 rounded bg-white text-[#03c75a] items-center justify-center font-black text-[11px]">N</span>네이버 예약</a>
+      <a href="${CLINIC.kakao}" target="_blank" rel="noopener" class="flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-[#fee500] text-[#191919] font-extrabold text-sm"><i class="fas fa-comment"></i>카톡 상담</a>
+    </div>
+    <div class="mt-auto pt-8 flex gap-3 text-sm">
       ${userName ? `<span class="text-gold-400 py-3">${esc(userName)}님</span><a href="/logout" class="text-white/60 py-3">로그아웃</a>` : `<a href="/login" class="text-white/60 py-3">로그인</a><a href="/signup" class="text-white/60 py-3">회원가입</a>`}
-      <a href="tel:${CLINIC.phone}" class="ml-auto px-6 py-3 rounded-full bg-gold-500 text-ink font-bold"><i class="fas fa-phone mr-2"></i>전화하기</a>
     </div>
   </div>
 </div>
 
 <main id="main-content">${body}</main>
 
+<!-- 데스크톱 우하단 플로팅 퀵버튼 -->
+<nav id="quick-connect" class="hidden md:flex fixed bottom-6 right-6 z-40 flex-col items-end gap-2.5" aria-label="빠른 예약·상담 채널">
+  <a href="${CLINIC.naverBooking}" target="_blank" rel="noopener" class="quick-btn group flex items-center gap-0 rounded-full bg-[#03c75a] text-white shadow-lg shadow-ink/20 hover:pr-5 transition-all" aria-label="네이버 예약">
+    <span class="hidden group-hover:inline pl-5 text-sm font-extrabold whitespace-nowrap">네이버 예약</span>
+    <span class="w-12 h-12 flex items-center justify-center"><span class="inline-flex w-6 h-6 rounded bg-white text-[#03c75a] items-center justify-center font-black text-[13px]">N</span></span>
+  </a>
+  <a href="${CLINIC.kakao}" target="_blank" rel="noopener" class="quick-btn group flex items-center gap-0 rounded-full bg-[#fee500] text-[#191919] shadow-lg shadow-ink/20 hover:pr-5 transition-all" aria-label="카카오톡 상담">
+    <span class="hidden group-hover:inline pl-5 text-sm font-extrabold whitespace-nowrap">카톡 상담</span>
+    <span class="w-12 h-12 flex items-center justify-center"><i class="fas fa-comment text-[19px]"></i></span>
+  </a>
+  <a href="tel:${CLINIC.phone}" class="quick-btn group flex items-center gap-0 rounded-full bg-white text-ink border border-ink/10 shadow-lg shadow-ink/15 hover:pr-5 transition-all" aria-label="전화 걸기">
+    <span class="hidden group-hover:inline pl-5 text-sm font-extrabold whitespace-nowrap">${CLINIC.phone}</span>
+    <span class="w-12 h-12 flex items-center justify-center"><i class="fas fa-phone text-[17px] text-gold-600"></i></span>
+  </a>
+  <a href="/reserve" class="quick-btn group flex items-center gap-0 rounded-full bg-ink text-white shadow-xl shadow-ink/30 hover:pr-5 transition-all" aria-label="예약·상담 신청">
+    <span class="hidden group-hover:inline pl-5 text-sm font-extrabold whitespace-nowrap">예약·상담 신청</span>
+    <span class="w-14 h-14 flex items-center justify-center"><i class="fas fa-calendar-check text-[20px] text-gold-400"></i></span>
+  </a>
+</nav>
+
 <!-- 모바일 하단 액션바 -->
-<nav id="mobile-actionbar" class="fixed bottom-0 inset-x-0 z-40 md:hidden bg-ink/95 backdrop-blur-lg border-t border-white/10 transition-transform duration-300" aria-label="빠른 연락 메뉴">
-  <div class="grid grid-cols-3">
+<nav id="mobile-actionbar" class="fixed bottom-0 inset-x-0 z-40 md:hidden bg-ink/95 backdrop-blur-lg border-t border-white/10 transition-transform duration-300" aria-label="빠른 예약·상담 메뉴">
+  <div class="grid grid-cols-4">
     <a href="tel:${CLINIC.phone}" class="flex flex-col items-center gap-1 py-3 text-gold-400 active:bg-white/5" aria-label="전화 예약">
-      <i class="fas fa-phone text-[17px]"></i><span class="text-[10.5px] font-bold text-white/85">전화예약</span>
+      <i class="fas fa-phone text-[17px]"></i><span class="text-[10.5px] font-bold text-white/85">전화</span>
     </a>
-    <a href="/location" class="flex flex-col items-center gap-1 py-3 text-white/70 active:bg-white/5 border-x border-white/10" aria-label="오시는 길">
-      <i class="fas fa-location-dot text-[17px]"></i><span class="text-[10.5px] font-bold text-white/85">오시는길</span>
+    <a href="${CLINIC.naverBooking}" target="_blank" rel="noopener" class="flex flex-col items-center gap-1 py-3 active:bg-white/5 border-l border-white/10" aria-label="네이버 예약">
+      <span class="inline-flex w-[19px] h-[19px] rounded bg-[#03c75a] text-white items-center justify-center font-black text-[11px]">N</span><span class="text-[10.5px] font-bold text-white/85">네이버예약</span>
     </a>
-    <a href="/faq" class="flex flex-col items-center gap-1 py-3 text-white/70 active:bg-white/5" aria-label="자주 묻는 질문">
-      <i class="fas fa-circle-question text-[17px]"></i><span class="text-[10.5px] font-bold text-white/85">FAQ</span>
+    <a href="${CLINIC.kakao}" target="_blank" rel="noopener" class="flex flex-col items-center gap-1 py-3 text-[#fee500] active:bg-white/5 border-l border-white/10" aria-label="카카오톡 상담">
+      <i class="fas fa-comment text-[17px]"></i><span class="text-[10.5px] font-bold text-white/85">카톡상담</span>
+    </a>
+    <a href="/reserve" class="flex flex-col items-center gap-1 py-3 bg-gold-500/95 text-ink active:bg-gold-400" aria-label="예약·상담 신청">
+      <i class="fas fa-calendar-check text-[17px]"></i><span class="text-[10.5px] font-extrabold">예약신청</span>
     </a>
   </div>
 </nav>
@@ -275,8 +307,10 @@ ${meta.path === '/' ? '<div id="curtain" aria-hidden="true"><span class="curtain
         <p class="mt-3 text-3xl sm:text-5xl font-extrabold text-white tracking-tightest leading-[1.15]">정직한 진료,<br>그거면 됩니다.</p>
       </div>
       <div class="flex flex-wrap gap-3">
-        <a href="tel:${CLINIC.phone}" class="btn-3d px-7 py-4 rounded-full bg-gold-500 text-ink font-extrabold hover:bg-gold-400 transition"><i class="fas fa-phone mr-2"></i>${CLINIC.phone}</a>
-        <a href="/location" class="px-7 py-4 rounded-full border border-white/25 text-white font-bold hover:bg-white/10 transition">오시는 길</a>
+        <a href="/reserve" class="btn-3d px-7 py-4 rounded-full bg-gold-500 text-ink font-extrabold hover:bg-gold-400 transition"><i class="fas fa-calendar-check mr-2"></i>예약·상담 신청</a>
+        <a href="tel:${CLINIC.phone}" class="px-7 py-4 rounded-full border border-white/25 text-white font-bold hover:bg-white/10 transition"><i class="fas fa-phone mr-2 text-gold-400"></i>${CLINIC.phone}</a>
+        <a href="${CLINIC.naverBooking}" target="_blank" rel="noopener" class="px-6 py-4 rounded-full bg-[#03c75a] text-white font-extrabold hover:brightness-110 transition"><span class="inline-flex w-5 h-5 rounded bg-white text-[#03c75a] items-center justify-center font-black text-[11px] mr-2 align-[-3px]">N</span>네이버 예약</a>
+        <a href="${CLINIC.kakao}" target="_blank" rel="noopener" class="px-6 py-4 rounded-full bg-[#fee500] text-[#191919] font-extrabold hover:brightness-105 transition"><i class="fas fa-comment mr-2"></i>카톡 상담</a>
       </div>
     </div>
     <div class="grid sm:grid-cols-2 lg:grid-cols-5 gap-8 py-10 text-[13.5px]">
@@ -317,7 +351,7 @@ ${meta.path === '/' ? '<div id="curtain" aria-hidden="true"><span class="curtain
         <h2 class="text-white/90 font-bold mb-3 text-xs tracking-[0.2em] uppercase">Menu</h2>
         <ul class="space-y-1">
           ${NAV.map((n) => `<li><a href="${n.href}" class="hover:text-gold-400 transition">${n.label}</a></li>`).join('')}
-          <li><a href="/notice" class="hover:text-gold-400 transition">공지사항</a></li>
+          <li><a href="/reserve" class="text-gold-400 font-bold hover:text-gold-300 transition">예약·상담 신청</a></li>
           <li><a href="/region" class="hover:text-gold-400 transition">진료 지역 안내</a></li>
           <li><a href="${CLINIC.blog}" target="_blank" rel="noopener" class="hover:text-gold-400 transition">네이버 블로그 <i class="fas fa-arrow-up-right-from-square text-[9px]"></i></a></li>
           ${userName ? `<li class="text-gold-400/80">${esc(userName)}님 · <a href="/logout" class="hover:text-gold-400">로그아웃</a></li>` : `<li><a href="/login" class="hover:text-gold-400 transition">로그인</a> · <a href="/signup" class="hover:text-gold-400 transition">회원가입</a></li>`}

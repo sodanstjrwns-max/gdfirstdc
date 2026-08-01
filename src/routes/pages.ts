@@ -246,8 +246,10 @@ pages.get('/', (c) => {
       <h2 class="mt-3 text-3xl sm:text-4xl font-extrabold tracking-tightest leading-tight">다른 병원 견적,<br>들고 오셔도 됩니다.</h2>
       <p class="mt-4 text-white/50 text-[15px] leading-relaxed max-w-md">"다른 병원도 다녀오세요. 그럼 저희의 가치를 더 느끼실 수 있습니다." — 비교하고 오셔도 정직하게만 말씀드립니다.</p>
       <div class="mt-8 flex flex-wrap gap-3 relative">
-        <a href="tel:${CLINIC.phone}" class="btn-3d px-7 py-4 rounded-full bg-gold-500 text-ink font-extrabold hover:bg-gold-400 transition"><i class="fas fa-phone mr-2"></i>${CLINIC.phone}</a>
-        <a href="/location" class="px-7 py-4 rounded-full border border-white/25 font-bold hover:bg-white/10 transition">오시는 길</a>
+        <a href="/reserve" class="btn-3d px-7 py-4 rounded-full bg-gold-500 text-ink font-extrabold hover:bg-gold-400 transition"><i class="fas fa-calendar-check mr-2"></i>예약·상담 신청</a>
+        <a href="tel:${CLINIC.phone}" class="px-7 py-4 rounded-full border border-white/25 font-bold hover:bg-white/10 transition"><i class="fas fa-phone mr-2 text-gold-400"></i>${CLINIC.phone}</a>
+        <a href="${CLINIC.naverBooking}" target="_blank" rel="noopener" class="px-6 py-4 rounded-full bg-[#03c75a] text-white font-extrabold hover:brightness-110 transition"><span class="inline-flex w-5 h-5 rounded bg-white text-[#03c75a] items-center justify-center font-black text-[11px] mr-2 align-[-3px]">N</span>네이버 예약</a>
+        <a href="${CLINIC.kakao}" target="_blank" rel="noopener" class="px-6 py-4 rounded-full bg-[#fee500] text-[#191919] font-extrabold hover:brightness-105 transition"><i class="fas fa-comment mr-2"></i>카톡 상담</a>
       </div>
     </div>
     <div class="reveal-scale lg:col-span-2 rounded-3xl bg-white border border-ink/8 p-8" data-tilt data-tilt-max="5">
@@ -804,8 +806,9 @@ ${faqs.length ? `
         <p class="mt-3 text-white/50 text-[14.5px]">다른 병원 견적을 들고 오셔도 좋습니다. 꼭 필요한 치료만 말씀드립니다.</p>
       </div>
       <div class="flex flex-wrap gap-3 shrink-0">
-        <a href="tel:${CLINIC.phone}" class="btn-3d px-7 py-4 rounded-full bg-gold-500 text-ink font-extrabold hover:bg-gold-400 transition"><i class="fas fa-phone mr-2"></i>${CLINIC.phone}</a>
-        <a href="/location" class="px-7 py-4 rounded-full border border-white/25 font-bold hover:bg-white/10 transition">오시는 길</a>
+        <a href="/reserve" class="btn-3d px-7 py-4 rounded-full bg-gold-500 text-ink font-extrabold hover:bg-gold-400 transition"><i class="fas fa-calendar-check mr-2"></i>예약·상담 신청</a>
+        <a href="tel:${CLINIC.phone}" class="px-7 py-4 rounded-full border border-white/25 font-bold hover:bg-white/10 transition"><i class="fas fa-phone mr-2 text-gold-400"></i>${CLINIC.phone}</a>
+        <a href="${CLINIC.naverBooking}" target="_blank" rel="noopener" class="px-6 py-4 rounded-full bg-[#03c75a] text-white font-extrabold hover:brightness-110 transition"><span class="inline-flex w-5 h-5 rounded bg-white text-[#03c75a] items-center justify-center font-black text-[11px] mr-2 align-[-3px]">N</span>네이버 예약</a>
       </div>
     </div>
   </div>
@@ -1254,8 +1257,9 @@ ${pageHero('Service Areas', '어디에 사시든,<br><span class="font-disp text
         <p class="mt-3 text-white/50 text-[14.5px]">${CLINIC.address} — 어디서 오시든 같은 진료, 같은 정직함입니다.</p>
       </div>
       <div class="flex flex-wrap gap-3 shrink-0">
-        <a href="tel:${CLINIC.phone}" class="btn-3d px-7 py-4 rounded-full bg-gold-500 text-ink font-extrabold hover:bg-gold-400 transition"><i class="fas fa-phone mr-2"></i>${CLINIC.phone}</a>
-        <a href="/location" class="px-7 py-4 rounded-full border border-white/25 font-bold hover:bg-white/10 transition">오시는 길</a>
+        <a href="/reserve" class="btn-3d px-7 py-4 rounded-full bg-gold-500 text-ink font-extrabold hover:bg-gold-400 transition"><i class="fas fa-calendar-check mr-2"></i>예약·상담 신청</a>
+        <a href="tel:${CLINIC.phone}" class="px-7 py-4 rounded-full border border-white/25 font-bold hover:bg-white/10 transition"><i class="fas fa-phone mr-2 text-gold-400"></i>${CLINIC.phone}</a>
+        <a href="${CLINIC.naverBooking}" target="_blank" rel="noopener" class="px-6 py-4 rounded-full bg-[#03c75a] text-white font-extrabold hover:brightness-110 transition"><span class="inline-flex w-5 h-5 rounded bg-white text-[#03c75a] items-center justify-center font-black text-[11px] mr-2 align-[-3px]">N</span>네이버 예약</a>
       </div>
     </div>
   </div>

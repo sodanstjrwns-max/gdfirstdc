@@ -10,6 +10,7 @@ import pages from './routes/pages'
 import auth from './routes/auth'
 import content from './routes/content'
 import admin from './routes/admin'
+import reserve from './routes/reserve'
 import type { AppEnv } from './types'
 
 const app = new Hono<AppEnv>()
@@ -96,6 +97,7 @@ ${SEO_REGIONS.map((r) => `- ${r.name} (${r.distance}): ${CLINIC.siteUrl}/region/
 - 치료비용 안내(비급여 수가 전체 공개): ${CLINIC.siteUrl}/pricing
 - 치료사례: ${CLINIC.siteUrl}/cases
 - 오시는길: ${CLINIC.siteUrl}/location
+- 예약·상담 신청: ${CLINIC.siteUrl}/reserve (온라인 신청 / 네이버 예약 ${CLINIC.naverBooking} / 카카오톡 ${CLINIC.kakao} / 전화 ${CLINIC.phone})
 - 진료 지역 안내: ${CLINIC.siteUrl}/region
 
 ## 인용 시 참고
@@ -123,6 +125,7 @@ app.get('/sitemap.xml', async (c) => {
     ['/region', '0.8', 'monthly'],
     ['/stories', '0.8', 'monthly'],
     ['/location', '0.8', 'monthly'],
+    ['/reserve', '0.9', 'monthly'],
     ['/cases', '0.8', 'weekly'],
     ['/blog', '0.8', 'weekly'],
     ['/notice', '0.6', 'weekly'],
@@ -150,6 +153,7 @@ ${urls.map((u) => `  <url><loc>${CLINIC.siteUrl}${u.loc}</loc><lastmod>${today}<
 // ===== 라우트 =====
 app.route('/', auth)
 app.route('/', content)
+app.route('/', reserve)
 app.route('/', admin)
 app.route('/', pages)
 
