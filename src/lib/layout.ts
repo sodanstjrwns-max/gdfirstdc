@@ -22,6 +22,7 @@ const NAV = [
   { href: '/cases', label: '치료사례' },
   { href: '/pricing', label: '치료비용' },
   { href: '/blog', label: '칼럼' },
+  { href: '/notice', label: '공지사항' },
   { href: '/faq', label: 'FAQ' },
   { href: '/location', label: '오시는길' },
 ]
