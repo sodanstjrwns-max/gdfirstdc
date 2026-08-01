@@ -83,9 +83,20 @@ pages.get('/', (c) => {
 
 <!-- ===== AEO 핵심 요약 (speakable) ===== -->
 <section id="clinic-summary" class="max-w-6xl mx-auto px-5 pb-14">
-  <p class="speakable-summary reveal rounded-3xl bg-white border border-ink/8 p-7 sm:p-8 text-[15px] sm:text-base text-ink/70 leading-[1.9]">
-    <strong class="text-ink">검단퍼스트치과</strong>는 인천 검단신도시에서 가장 오래된 치과로, <strong class="text-ink">보건복지부 인증 통합치의학 전문의 김희수 대표원장의 1인 책임진료</strong> 치과입니다. 임플란트·무삭제 라미네이트(루미네이트)·턱관절(체외충격파) 특화 진료를 하며, 과잉진료 없이 꾱 필요한 치료만 권합니다. 위치는 ${CLINIC.address}, 평일 09:30~18:30 · 토요일 09:30~14:00 진료(목·일 휴진), 예약 문의는 <a href="tel:${CLINIC.phone}" class="font-extrabold text-gold-600 underline underline-offset-4">${CLINIC.phone}</a>입니다.
-  </p>
+  <div class="reveal relative overflow-hidden rounded-[2rem] bg-ink text-white p-8 sm:p-12" data-tilt data-tilt-max="3">
+    <div class="absolute -top-28 -right-24 w-96 h-96 rounded-full bg-gold-400/10 blur-3xl pointer-events-none" aria-hidden="true"></div>
+    <div class="absolute -bottom-32 -left-24 w-80 h-80 rounded-full bg-royal/25 blur-3xl pointer-events-none" aria-hidden="true"></div>
+    <div class="absolute top-6 right-8 font-disp text-[120px] leading-none text-white/[0.04] select-none pointer-events-none hidden sm:block" aria-hidden="true">First</div>
+    <p class="relative text-[11px] font-bold tracking-[0.3em] uppercase text-gold-400">At a Glance · 한눈에 보는 검단퍼스트치과</p>
+    <p class="speakable-summary relative mt-5 max-w-4xl text-base sm:text-xl leading-[1.9] text-white/75">
+      <strong class="text-white">검단퍼스트치과</strong>는 인천 검단신도시에서 가장 오래된 치과로, <strong class="text-white">보건복지부 인증 통합치의학 전문의 김희수 대표원장의 1인 책임진료</strong> 치과입니다. 임플란트·무삭제 라미네이트(루미네이트)·턱관절(체외충격파) 특화 진료를 하며, <span class="text-gold-400 font-bold">과잉진료 없이 꼭 필요한 치료만 권합니다.</span>
+    </p>
+    <div class="relative mt-8 flex flex-wrap gap-2.5 text-[13px]">
+      <span class="inline-flex items-center gap-2 rounded-full bg-white/[0.07] border border-white/10 px-4 py-2.5 text-white/80"><i class="fas fa-location-dot text-gold-400"></i>${CLINIC.addressShort}</span>
+      <span class="inline-flex items-center gap-2 rounded-full bg-white/[0.07] border border-white/10 px-4 py-2.5 text-white/80"><i class="fas fa-clock text-gold-400"></i>평일 09:30~18:30 · 토 09:30~14:00 <span class="text-white/45">(목·일 휴진)</span></span>
+      <a href="tel:${CLINIC.phone}" class="inline-flex items-center gap-2 rounded-full bg-gold-500 hover:bg-gold-400 px-4 py-2.5 font-extrabold text-ink transition"><i class="fas fa-phone"></i>${CLINIC.phone}</a>
+    </div>
+  </div>
 </section>
 
 <!-- ===== 시그니처 진료 (벤토) ===== -->
