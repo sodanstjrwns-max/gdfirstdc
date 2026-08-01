@@ -216,11 +216,8 @@ ${meta.path === '/' ? '<div id="curtain" aria-hidden="true"><span class="curtain
       ).join('')}
     </nav>
     <div class="flex items-center gap-2">
-      <a href="/reserve" class="hidden md:inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full bg-gold-500 text-ink text-sm font-extrabold hover:bg-gold-400 transition">
-        <i class="fas fa-calendar-check text-[12px]"></i>예약·상담
-      </a>
-      <a href="tel:${CLINIC.phone}" class="hidden md:inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-ink text-white text-sm font-bold hover:bg-navy-800 transition group">
-        <span class="w-1.5 h-1.5 rounded-full bg-gold-400 group-hover:animate-ping"></span>${CLINIC.phone}
+      <a href="/reserve" class="hidden md:inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-ink text-white text-sm font-bold hover:bg-navy-800 transition group">
+        <span class="w-1.5 h-1.5 rounded-full bg-gold-400 group-hover:animate-ping"></span>예약·상담
       </a>
       ${opts?.admin ? '<a href="/admin" class="hidden md:inline-flex px-3 py-2.5 rounded-full text-xs font-bold text-gold-600 hover:bg-gold-500/10">ADMIN</a>' : ''}
       <button id="mobile-menu-btn" class="lg:hidden w-10 h-10 rounded-xl bg-ink/5 flex items-center justify-center text-ink" aria-label="메뉴 열기"><i class="fas fa-bars-staggered"></i></button>
