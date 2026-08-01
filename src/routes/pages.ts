@@ -37,30 +37,69 @@ pages.get('/', (c) => {
   <div class="absolute bottom-[-30%] left-[-15%] w-[50vw] h-[50vw] max-w-[600px] max-h-[600px] rounded-full bg-gold-500/12 blur-[130px]" aria-hidden="true"></div>
   <div class="absolute inset-0 opacity-[0.05]" style="background-image:linear-gradient(rgba(255,255,255,.6) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.6) 1px,transparent 1px);background-size:72px 72px" aria-hidden="true"></div>
 
-  <div class="relative max-w-6xl mx-auto px-5 w-full pt-40 pb-16 sm:pb-20">
-    <div class="flex items-center gap-3 mb-8">
-      <span class="flex h-2.5 w-2.5 relative"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-gold-400 opacity-60"></span><span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-gold-400"></span></span>
-      <p class="text-white/50 text-[13px] font-semibold tracking-wide">인천 검단신도시 · 오늘 정상진료</p>
+  <div class="relative max-w-6xl mx-auto px-5 w-full pt-36 sm:pt-40 pb-12 sm:pb-14">
+
+    <!-- 공식 인증 배지 라인 -->
+    <div class="flex flex-wrap items-center gap-2.5 mb-8">
+      <span class="inline-flex items-center gap-2 rounded-full border border-gold-400/40 bg-gold-400/[0.08] px-4 py-2 text-[12px] font-bold text-gold-400 tracking-wide backdrop-blur-sm"><i class="fas fa-shield-halved"></i>보건복지부 인증 통합치의학 전문의</span>
+      <span class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.06] px-4 py-2 text-[12px] font-bold text-white/75 tracking-wide backdrop-blur-sm"><i class="fas fa-award text-gold-400"></i>대한치과보철학회 우수보철의사</span>
+      <span class="inline-flex items-center gap-2 text-[12px] font-semibold text-white/45 ml-1"><span class="flex h-2 w-2 relative"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-gold-400 opacity-60"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-gold-400"></span></span>인천 검단신도시 · 오늘 정상진료</span>
     </div>
-    <h1 class="relative z-[2] text-[13vw] sm:text-7xl lg:text-[92px] font-extrabold tracking-tightest leading-[0.98]">
-      <span data-split data-split-delay="0.55">치과는</span><br>
-      <span data-split data-split-delay="0.72">정직이</span>
-      <span class="hero-word"><span style="--d:.95s" class="text-shine text-3d font-disp">실력</span></span><span data-split data-split-delay="1.05">입니다.</span>
-    </h1>
-    <div class="mt-10 flex flex-col sm:flex-row sm:items-end justify-between gap-8">
-      <p class="text-white/55 max-w-md leading-relaxed text-[15px]">
-        상담한 원장이 치료하고, 치료한 원장이 끝까지 관리합니다.<br>
-        검단에서 가장 오래된 치과의 1인 대표원장 책임진료 — <strong class="text-white">하지 않아도 될 치료는, 하지 않아도 된다고 말씀드립니다.</strong>
-      </p>
-      <div class="relative z-[2] flex flex-wrap gap-3 shrink-0">
-        <a href="tel:${CLINIC.phone}" class="btn-3d group px-8 py-4 rounded-full bg-gold-500 text-ink font-extrabold hover:bg-gold-400 transition flex items-center gap-2">
-          <i class="fas fa-phone"></i>${CLINIC.phone}
-        </a>
-        <a href="/treatments" class="px-8 py-4 rounded-full border border-white/25 font-bold hover:bg-white/10 transition">진료 보기 <i class="fas fa-arrow-right ml-1 text-sm"></i></a>
+
+    <div class="grid lg:grid-cols-12 gap-10 lg:gap-8 items-end">
+      <!-- 좌: 헤드라인 -->
+      <div class="lg:col-span-7">
+        <h1 class="relative z-[2] text-[13vw] sm:text-7xl lg:text-[88px] font-extrabold tracking-tightest leading-[0.98]">
+          <span data-split data-split-delay="0.55">치과는</span><br>
+          <span data-split data-split-delay="0.72">정직이</span>
+          <span class="hero-word"><span style="--d:.95s" class="text-shine text-3d font-disp">실력</span></span><span data-split data-split-delay="1.05">입니다.</span>
+        </h1>
+        <p class="mt-8 text-white/55 max-w-md leading-relaxed text-[15px]">
+          상담한 원장이 치료하고, 치료한 원장이 끝까지 관리합니다.<br>
+          검단에서 가장 오래된 치과의 1인 대표원장 책임진료 — <strong class="text-white">하지 않아도 될 치료는, 하지 않아도 된다고 말씀드립니다.</strong>
+        </p>
+        <div class="relative z-[2] mt-8 flex flex-wrap gap-3">
+          <a href="/reserve" class="btn-3d px-8 py-4 rounded-full bg-gold-500 text-ink font-extrabold hover:bg-gold-400 transition flex items-center gap-2">
+            <i class="fas fa-calendar-check"></i>예약·상담 신청
+          </a>
+          <a href="tel:${CLINIC.phone}" class="px-8 py-4 rounded-full border border-white/25 font-bold hover:bg-white/10 transition flex items-center gap-2">
+            <i class="fas fa-phone text-gold-400"></i>${CLINIC.phone}
+          </a>
+        </div>
       </div>
+
+      <!-- 우: 전문의 크리덴셜 카드 -->
+      <aside id="hero-credential-card" class="lg:col-span-5 relative z-[2]">
+        <div class="relative rounded-[1.75rem] bg-white/[0.06] backdrop-blur-xl border border-white/[0.12] p-6 sm:p-7 shadow-2xl overflow-hidden">
+          <div class="absolute -top-16 -right-16 w-48 h-48 rounded-full bg-gold-400/10 blur-3xl pointer-events-none" aria-hidden="true"></div>
+          <p class="absolute top-5 right-6 text-[10px] font-bold tracking-[0.35em] uppercase text-gold-400/60 select-none" aria-hidden="true">Specialist</p>
+          <div class="flex items-center gap-4">
+            <img src="/static/images/doctor_portrait.webp" alt="검단퍼스트치과 김희수 대표원장" class="w-16 h-16 rounded-2xl object-cover object-top border border-white/15" width="1280" height="852" loading="eager" decoding="async">
+            <div>
+              <p class="font-extrabold text-lg text-white">김희수 <span class="text-white/50 text-sm font-bold">대표원장</span></p>
+              <p class="text-[12.5px] text-gold-400 font-bold mt-0.5">통합치의학 전문의 · 대학병원 정식 수련</p>
+            </div>
+          </div>
+          <ul class="mt-5 pt-5 border-t border-white/10 space-y-3 text-[13.5px] leading-snug">
+            <li class="flex items-start gap-3 text-white/75"><i class="fas fa-graduation-cap text-gold-400 mt-0.5 w-4 text-center shrink-0"></i><span>Harvard Implant CE · NYU 무삭제 라미네이트 · 서울대 Perio/Implant 연수</span></li>
+            <li class="flex items-start gap-3 text-white/75"><i class="fas fa-user-doctor text-gold-400 mt-0.5 w-4 text-center shrink-0"></i><span>가톨릭대 부천성모병원 통합치의학과 레지던트 수료</span></li>
+            <li class="flex items-start gap-3 text-white/75"><i class="fas fa-handshake text-gold-400 mt-0.5 w-4 text-center shrink-0"></i><span>오스템·덴티스 임플란트 <strong class="text-white">임상자문연구위원</strong></span></li>
+            <li class="flex items-start gap-3 text-white/75"><i class="fas fa-book-open text-gold-400 mt-0.5 w-4 text-center shrink-0"></i><span>학술지 논문 2편 · 우수포스터상 · 한국경제TV 출연</span></li>
+          </ul>
+          <a href="/about" class="mt-5 flex items-center justify-between rounded-xl bg-white/[0.06] hover:bg-gold-500 hover:text-ink border border-white/10 px-4 py-3 text-[13px] font-bold text-white/80 transition group">
+            <span>원장 이력 전체 보기 — 연수·고급과정 12+</span>
+            <i class="fas fa-arrow-right text-xs group-hover:translate-x-1 transition-transform"></i>
+          </a>
+        </div>
+      </aside>
+    </div>
+
+    <!-- 수련·인증 기관 스트립 -->
+    <div class="relative z-[2] mt-12 pt-6 border-t border-white/10 flex flex-wrap items-center gap-x-7 gap-y-3">
+      <span class="text-[10px] font-bold tracking-[0.3em] uppercase text-gold-400/70 mr-1">Trained &amp; Certified</span>
+      ${['HARVARD SDM', 'NYU DENTISTRY', 'SNU DENTAL', '부천성모병원 수련', 'AAID', 'ICOI', 'OSSTEM', 'DENTIS'].map((n) => `<span class="text-[12px] font-bold tracking-[0.18em] uppercase text-white/40 hover:text-white/70 transition whitespace-nowrap">${n}</span>`).join('<span class="w-1 h-1 rounded-full bg-gold-500/50" aria-hidden="true"></span>')}
     </div>
   </div>
-  <div class="absolute right-6 bottom-24 hidden lg:block z-[2]" aria-hidden="true"><div class="scroll-hint"><span>Scroll</span><span class="scroll-line"></span></div></div>
   ${marquee()}
 </section>
 
