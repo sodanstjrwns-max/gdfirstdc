@@ -173,27 +173,28 @@ pages.get('/', (c) => {
     <h2 class="reveal mt-2 text-3xl sm:text-5xl font-extrabold text-ink tracking-tightest">방송이 먼저<br class="sm:hidden"> 찾은 치과.</h2>
   </header>
   <div class="grid md:grid-cols-2 gap-4">
-    <article class="bento reveal-scale rounded-3xl bg-white border border-ink/8 overflow-hidden flex flex-col h-full">
-      <div class="relative h-52 shrink-0 overflow-hidden">
+    <article class="bento reveal rounded-3xl bg-white border border-ink/8 overflow-hidden flex flex-col h-full min-h-[540px] sm:min-h-[600px]">
+      <div class="relative h-72 sm:h-80 shrink-0 overflow-hidden">
         <img src="/static/images/doctor_study.webp" alt="수료증과 인증서 앞에서 임상 서적을 연구하는 김희수 원장" class="w-full h-full object-cover" loading="lazy" decoding="async">
       </div>
-      <div class="p-7 flex-1 flex flex-col">
+      <div class="p-8 sm:p-9 flex-1 flex flex-col">
         <p class="text-gold-600 text-[11px] font-bold tracking-[0.25em] uppercase">Endless Study</p>
-        <h3 class="mt-2 text-xl font-extrabold text-ink tracking-tight">벽면을 채운 수료증은<br>거들 뿐입니다.</h3>
-        <p class="mt-3 text-[13.5px] text-ink/50 leading-relaxed flex-1">Harvard·NYU·서울대 — 12개가 넘는 연수·고급과정. 지금도 진료가 없는 시간엔 임상 서적을 폅니다.</p>
-        <a href="/about" class="mt-4 inline-flex items-center gap-2 text-sm font-bold text-ink">원장 이력 전체 보기 <i class="fas fa-arrow-right text-xs"></i></a>
+        <h3 class="mt-3 text-2xl sm:text-[28px] font-extrabold text-ink tracking-tight leading-snug">벽면을 채운 수료증은<br>거들 뿐입니다.</h3>
+        <p class="mt-4 text-[14.5px] text-ink/50 leading-[1.85] flex-1">Harvard·NYU·서울대 — 12개가 넘는 연수·고급과정. 지금도 진료가 없는 시간엔 임상 서적을 폅니다. 보건복지부 인증 통합치의학 전문의로서 임플란트부터 턱관절까지 전 영역을 한 사람의 원장이 직접 진료합니다.</p>
+        <a href="/about" class="mt-6 inline-flex items-center gap-2 text-sm font-bold text-ink group">원장 이력 전체 보기 <i class="fas fa-arrow-right text-xs group-hover:translate-x-1 transition-transform"></i></a>
       </div>
     </article>
-    <article class="bento reveal-scale rounded-3xl bg-ink text-white overflow-hidden flex flex-col h-full">
-      <div class="relative h-52 shrink-0 overflow-hidden bg-[#8ec5e8]">
-        <img src="/static/images/news_tv_still.webp" alt="한국경제TV 건강매거진 — 부작용 줄이는 디지털 임플란트, 김희수 원장 생방송 출연 장면" class="w-full h-full object-cover object-bottom" loading="lazy" decoding="async">
+    <article class="bento reveal rounded-3xl bg-ink text-white overflow-hidden flex flex-col h-full min-h-[540px] sm:min-h-[600px]">
+      <div class="relative h-72 sm:h-80 shrink-0 overflow-hidden">
+        <img src="/static/images/news_tv_still.webp" alt="" aria-hidden="true" class="absolute inset-0 w-full h-full object-cover blur-2xl scale-125 opacity-80" loading="lazy" decoding="async">
+        <img src="/static/images/news_tv_still.webp" alt="한국경제TV 건강매거진 — 부작용 줄이는 디지털 임플란트, 김희수 원장 생방송 출연 장면" class="relative w-full h-full object-contain" loading="lazy" decoding="async">
         <div class="absolute top-4 left-4 rounded-full bg-ink/80 backdrop-blur px-3.5 py-1.5 text-[11px] font-bold text-white/90"><i class="fas fa-tv text-gold-400 mr-1.5"></i>한국경제TV 생방송 출연</div>
       </div>
-      <div class="p-7 flex-1 flex flex-col">
+      <div class="p-8 sm:p-9 flex-1 flex flex-col">
         <p class="text-gold-400 text-[11px] font-bold tracking-[0.25em] uppercase">Press · TV</p>
-        <h3 class="mt-2 text-xl font-extrabold tracking-tight">한국경제TV<br>「건강매거진」 출연</h3>
-        <p class="mt-3 text-[13.5px] text-white/50 leading-relaxed flex-1">"부작용 줄이는 디지털 임플란트" — 김희수 원장이 생방송에서 임플란트 패러다임 변화를 소개하고 시청자 1:1 전화상담을 진행했습니다. (메디컬투데이 보도)</p>
-        <a href="/about#media" class="mt-4 inline-flex items-center gap-2 text-sm font-bold text-gold-400">방송·언론 보기 <i class="fas fa-arrow-right text-xs"></i></a>
+        <h3 class="mt-3 text-2xl sm:text-[28px] font-extrabold tracking-tight leading-snug">한국경제TV<br>「건강매거진」 출연</h3>
+        <p class="mt-4 text-[14.5px] text-white/50 leading-[1.85] flex-1">"부작용 줄이는 디지털 임플란트" — 김희수 원장이 생방송에서 임플란트 패러다임 변화를 소개하고 시청자 1:1 전화상담을 진행했습니다. 방송 하이라이트 클립은 임플란트·잇몸치료·보철 페이지의 '방송에서 답하다' 섹션에서 보실 수 있습니다. (메디컬투데이 보도)</p>
+        <a href="/about#media" class="mt-6 inline-flex items-center gap-2 text-sm font-bold text-gold-400 group">방송·언론 보기 <i class="fas fa-arrow-right text-xs group-hover:translate-x-1 transition-transform"></i></a>
       </div>
     </article>
   </div>
