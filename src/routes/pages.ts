@@ -52,7 +52,7 @@ pages.get('/', (c) => {
         <h1 class="relative z-[2] text-[13vw] sm:text-7xl lg:text-[88px] font-extrabold tracking-tightest leading-[0.98]">
           <span data-split data-split-delay="0.55">치과는</span><br>
           <span data-split data-split-delay="0.72">정직이</span>
-          <span class="hero-word"><span style="--d:.95s" class="text-shine text-3d font-disp">실력</span></span><span data-split data-split-delay="1.05">입니다.</span>
+          <span class="hero-word"><span style="--d:.95s" class="text-lux font-disp font-extrabold">실력</span></span><span data-split data-split-delay="1.05">입니다.</span>
         </h1>
         <p class="mt-8 text-white/55 max-w-md leading-relaxed text-[15px]">
           상담한 원장이 치료하고, 치료한 원장이 끝까지 관리합니다.<br>

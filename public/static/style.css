@@ -57,7 +57,7 @@ html { scroll-behavior: smooth; }
 .btn-3d-dark:active { box-shadow: 0 3px 0 -2px rgba(0,0,0,.55), 0 8px 16px -8px rgba(10,22,40,.5); }
 
 /* ===== 3D 텍스트 (레이어드 섀도) ===== */
-.text-3d { text-shadow: 0 1px 0 rgba(201,162,39,.45), 0 2px 0 rgba(201,162,39,.35), 0 3px 0 rgba(201,162,39,.25), 0 5px 0 rgba(201,162,39,.14), 0 12px 24px rgba(0,0,0,.45); }
+.text-lux { background: linear-gradient(115deg, #fdf3d8 0%, #ecd9a0 28%, #d4af37 52%, #f3e3b2 76%, #fdf3d8 100%); background-size: 200% auto; -webkit-background-clip: text; background-clip: text; color: transparent; animation: shine 6s linear infinite; filter: drop-shadow(0 4px 16px rgba(212,175,55,.38)); }
 
 /* ===== 플로팅 3D 오브젝트 ===== */
 @keyframes float3d { 0%,100% { transform: translateY(0) rotateX(0) rotateY(0); } 33% { transform: translateY(-14px) rotateX(6deg) rotateY(-8deg); } 66% { transform: translateY(-5px) rotateX(-5deg) rotateY(9deg); } }
