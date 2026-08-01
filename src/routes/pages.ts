@@ -504,6 +504,55 @@ ${pageHero('Treatments', '필요한 치료만,<br><span class="font-disp text-sh
   return c.html(layout({ title: '진료과목 — 임플란트·라미네이트·턱관절 치료', desc: '검단퍼스트치과 진료과목 — 임플란트, 루미네이트(라미네이트), 턱관절치료, 심미보철, 신경치료, 충치치료, 잇몸치료, 보철, 사랑니 발치, 치과 보톡스.', path: '/treatments' }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
 })
 
+// ============ 방송 클립 (한국경제TV 건강매거진 — 김희수 원장 출연분) ============
+const TV_CLIPS: Record<string, { file: string; q: string; a: string; dur: string }[]> = {
+  gum: [
+    { file: 'tv_gum_perio', q: '치주질환이 감기처럼 흔하다던데, 왜 치아 건강을 망치나요?', a: '치은염과 치주염의 차이, 스케일링으로 예방 가능한 단계와 이미 뼈가 녹기 시작한 단계를 엑스레이로 구분해 설명합니다.', dur: '2:34' },
+    { file: 'tv_gum_extract_qa', q: '치주염으로 발치하라는데 별로 안 아파요. 꼭 빼야 하나요?', a: '"아프고 안 아프고보다 뼈를 얼마나 녹이고 있느냐가 중요합니다" — 시청자 전화 사연에 대한 원장의 답변입니다.', dur: '2:15' },
+  ],
+  prosthetics: [
+    { file: 'tv_prosth_compare', q: '틀니, 브릿지, 임플란트 — 뭐가 어떻게 다른가요?', a: '가철성 틀니의 한계, 양옆 치아를 깎는 브릿지의 부담, 그리고 각 치료의 수명과 특징을 비교해 설명합니다.', dur: '1:37' },
+  ],
+  implant: [
+    { file: 'tv_implant_chronic', q: '당뇨·고혈압·심장질환이 있어도 임플란트 할 수 있나요?', a: '만성질환별 주의점 — 혈당 조절, 아스피린 복용, 골다공증 약물까지. 내과 협진이 필요한 경우를 짚어드립니다.', dur: '2:55' },
+    { file: 'tv_implant_immediate', q: '임플란트 치료, 좀 빨리 끝낼 수 있나요?', a: '뼈 상태가 좋다면 발치 즉시 식립으로 3~6개월의 치료 기간을 단축할 수 있는 원리를 설명합니다.', dur: '1:01' },
+    { file: 'tv_implant_care', q: '임플란트는 치료보다 관리가 더 중요하다던데요?', a: '치주인대가 없는 임플란트가 염증에 취약한 이유, 정기검진 주기(1개월→6개월→연 1회)와 치간칫솔·워터픽 관리법.', dur: '1:50' },
+  ],
+}
+
+const tvSection = (slug: string): string => {
+  const clips = TV_CLIPS[slug]
+  if (!clips?.length) return ''
+  return `
+<!-- 방송에서 답하다 -->
+<section id="tv-qna" class="bg-ink text-white py-16 sm:py-20 relative overflow-hidden mt-14">
+  <div class="absolute -top-24 left-1/4 w-[460px] h-[460px] rounded-full bg-navy-600/20 blur-[130px]" aria-hidden="true"></div>
+  <div class="max-w-5xl mx-auto px-5 relative">
+    <header class="mb-10">
+      <p class="reveal text-gold-400 text-xs font-bold tracking-[0.3em] uppercase"><i class="fas fa-tv mr-2" aria-hidden="true"></i>On Air — 방송에서 답하다</p>
+      <h2 class="reveal mt-2 text-2xl sm:text-4xl font-extrabold tracking-tightest">한국경제TV 「건강매거진」,<br class="sm:hidden"> 김희수 원장의 답변</h2>
+      <p class="reveal mt-3 text-white/45 text-[14px]">생방송에서 실제 시청자들이 물었던 질문 — 원장이 직접 답한 그대로 보여드립니다.</p>
+    </header>
+    <div class="grid ${clips.length > 1 ? 'md:grid-cols-2' : ''} gap-5" data-stagger>
+      ${clips.map((cl) => `
+      <article class="reveal-scale rounded-3xl bg-white/[0.05] border border-white/10 overflow-hidden flex flex-col">
+        <div class="relative">
+          <video class="w-full h-auto aspect-video bg-black" controls preload="none" poster="/static/images/${cl.file}.webp" aria-label="${esc(cl.q)}">
+            <source src="/static/video/${cl.file}.mp4" type="video/mp4">
+          </video>
+          <span class="absolute top-3 right-3 rounded-full bg-ink/80 text-white/85 text-[11px] font-bold px-2.5 py-1 pointer-events-none"><i class="far fa-clock mr-1"></i>${cl.dur}</span>
+        </div>
+        <div class="p-6 sm:p-7 flex-1 flex flex-col">
+          <h3 class="font-extrabold text-white text-[16px] leading-snug"><span class="text-gold-400 font-mono mr-1.5">Q.</span>${esc(cl.q)}</h3>
+          <p class="mt-3 text-[13.5px] text-white/50 leading-relaxed flex-1">${esc(cl.a)}</p>
+        </div>
+      </article>`).join('')}
+    </div>
+    <p class="mt-7 text-[11.5px] text-white/30 leading-relaxed">영상 출처: 한국경제TV 「건강매거진」 (김희수 원장 출연분) · 방송 내용은 일반적인 의학 정보이며, 치료 방법과 결과는 개인의 구강 상태에 따라 달라질 수 있습니다. 정확한 진단은 내원 상담을 통해 받으시기 바랍니다.</p>
+  </div>
+</section>`
+}
+
 // ============ 진료과목 상세 ============
 pages.get('/treatments/:slug', async (c) => {
   const t = getTreatment(c.req.param('slug'))
@@ -615,6 +664,8 @@ ${ex ? `
     </figcaption>
   </figure>
 </section>` : ''}
+
+${tvSection(t.slug)}
 
 ${interactiveSection(t.slug)}
 
