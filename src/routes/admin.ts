@@ -4,6 +4,7 @@ import { getCookie, setCookie, deleteCookie } from 'hono/cookie'
 import { layout, esc } from '../lib/layout'
 import { hashPassword, verifyPassword, createSession, readSession } from '../lib/auth'
 import { TREATMENTS } from '../data/treatments'
+import { PRICING } from '../data/pricing'
 import { searchRegions } from '../data/regions'
 import type { AppEnv } from '../types'
 
@@ -24,6 +25,7 @@ function adminShell(title: string, inner: string, active: string): string {
     { href: '/admin/cases', key: 'cases', label: '치료사례', icon: 'fa-images' },
     { href: '/admin/blog', key: 'blog', label: '건강칼럼', icon: 'fa-pen-nib' },
     { href: '/admin/notice', key: 'notice', label: '공지사항', icon: 'fa-bullhorn' },
+    { href: '/admin/pricing', key: 'pricing', label: '수가표', icon: 'fa-won-sign' },
     { href: '/admin/password', key: 'password', label: '비밀번호 변경', icon: 'fa-key' },
   ]
   return `
@@ -122,6 +124,7 @@ admin.get('/admin', async (c) => {
     <li>홈페이지 [예약·상담 신청]으로 들어온 문의는 [예약 문의] 메뉴에서 확인하고, 연락 후 상태를 변경해 주세요.</li>
     <li>치료사례는 파노라마/구내포토 전·후 이미지를 업로드하면 홈페이지에 비교 슬라이더로 표시됩니다.</li>
     <li>지역 입력란은 자동완성을 지원합니다 (예: "원당" 입력 → 인천시 서구 원당동).</li>
+    <li>진료 비용이 바뀌면 [수가표] 메뉴에서 수정하세요 — 홈페이지 치료비용 페이지와 각 진료 페이지에 즉시 반영됩니다.</li>
     <li>초기 관리자 비밀번호는 반드시 [비밀번호 변경] 메뉴에서 변경해 주세요.</li>
   </ul>
 </div>`
@@ -198,6 +201,100 @@ admin.post('/admin/reservations/:id/status', async (c) => {
 admin.post('/admin/reservations/:id/delete', async (c) => {
   await c.env.DB.prepare('DELETE FROM reservations WHERE id = ?').bind(parseInt(c.req.param('id'))).run()
   return c.redirect('/admin/reservations')
+})
+
+// =========================================================
+// 수가표 관리 (비급여 진료비용)
+// =========================================================
+admin.get('/admin/pricing', async (c) => {
+  const catKey = c.req.query('cat') || 'implant'
+  const cat = PRICING.find((p) => p.key === catKey) || PRICING[1]
+  const [rows, counts, upd] = await Promise.all([
+    c.env.DB.prepare('SELECT id, name, price, note, sort FROM price_items WHERE category_key = ? ORDER BY sort, id').bind(cat.key).all<any>(),
+    c.env.DB.prepare('SELECT category_key, COUNT(*) AS n FROM price_items GROUP BY category_key').all<any>(),
+    c.env.DB.prepare("SELECT value FROM settings WHERE key = 'pricing_updated'").first<{ value: string }>(),
+  ])
+  const countOf = (k: string) => counts.results.find((r: any) => r.category_key === k)?.n || 0
+  const msg = c.req.query('msg')
+  const inner = `
+${msg ? `<p class="mb-4 rounded-xl bg-green-50 text-green-700 text-sm font-bold px-4 py-3"><i class="fas fa-check mr-1"></i>${esc(msg)}</p>` : ''}
+<div class="flex flex-wrap items-center gap-3 mb-5">
+  <form method="POST" action="/admin/pricing/updated" class="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5">
+    <span class="text-sm font-bold text-slate-500">고지 기준월</span>
+    <input name="value" value="${esc(upd?.value || '')}" required pattern="[0-9]{4}-[0-9]{2}" placeholder="2026-07" class="w-24 rounded-lg border border-slate-300 px-2.5 py-1.5 text-sm font-bold text-center">
+    <button class="px-3 py-1.5 rounded-lg bg-navy-800 text-white text-sm font-bold">저장</button>
+  </form>
+  <p class="text-xs text-slate-400">수정 즉시 홈페이지 <a href="/pricing" target="_blank" class="text-royal font-bold underline">치료비용 페이지</a>와 각 진료 페이지에 반영됩니다.</p>
+</div>
+<div class="flex flex-wrap gap-2 mb-6">
+  ${PRICING.map((p) => `<a href="/admin/pricing?cat=${p.key}" class="px-4 py-2 rounded-full text-sm font-bold ${cat.key === p.key ? 'bg-navy-800 text-white' : 'bg-white border border-slate-200 text-slate-600 hover:bg-navy-50'}"><i class="fas ${p.icon} mr-1.5 ${cat.key === p.key ? 'text-gold-400' : 'text-gold-600'}"></i>${p.label} ${countOf(p.key)}</a>`).join('')}
+</div>
+
+<form method="POST" action="/admin/pricing/add" class="mb-6 rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50/60 p-4 flex flex-wrap items-end gap-3">
+  <input type="hidden" name="category_key" value="${cat.key}">
+  <label class="flex-1 min-w-[180px]"><span class="block text-xs font-bold text-slate-500 mb-1">새 항목명 *</span><input name="name" required class="${inputCls}" placeholder="예: 오스템임플란트"></label>
+  <label class="w-32"><span class="block text-xs font-bold text-slate-500 mb-1">비용(원)</span><input name="price" type="number" min="0" step="1000" value="0" class="${inputCls}"></label>
+  <label class="w-36"><span class="block text-xs font-bold text-slate-500 mb-1">비고</span><input name="note" class="${inputCls}" placeholder="선택"></label>
+  <button class="px-5 py-2.5 rounded-lg bg-gold-500 hover:bg-gold-400 text-navy-900 text-sm font-extrabold"><i class="fas fa-plus mr-1"></i>${cat.label}에 추가</button>
+  <p class="w-full text-[11px] text-slate-400 mt-1">비용 0원 = "보험 적용"으로 표시됩니다${cat.insured ? ' (보험 항목은 0원이 기본)' : ''}.</p>
+</form>
+
+<div class="rounded-2xl border border-slate-200 bg-white overflow-hidden">
+  <div class="hidden sm:grid grid-cols-[1fr_130px_140px_150px] gap-3 px-5 py-3 bg-slate-50 text-[11px] font-bold text-slate-400 uppercase tracking-wider"><span>항목명</span><span>비용(원)</span><span>비고</span><span class="text-right">동작</span></div>
+  ${rows.results.length === 0 ? '<p class="text-slate-400 py-10 text-center">항목이 없습니다. 위에서 추가하세요.</p>' : rows.results.map((r: any, i: number) => `
+  <form method="POST" action="/admin/pricing/${r.id}/update" class="grid sm:grid-cols-[1fr_130px_140px_150px] gap-2 sm:gap-3 items-center px-5 py-3 ${i % 2 ? 'bg-slate-50/50' : ''} border-t border-slate-100">
+    <input type="hidden" name="cat" value="${cat.key}">
+    <input name="name" value="${esc(r.name)}" required class="rounded-lg border border-slate-200 px-3 py-2 text-sm font-medium focus:border-navy-600 focus:outline-none">
+    <input name="price" type="number" min="0" step="1000" value="${r.price}" class="rounded-lg border border-slate-200 px-3 py-2 text-sm font-bold text-right focus:border-navy-600 focus:outline-none">
+    <input name="note" value="${esc(r.note || '')}" placeholder="비고" class="rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-navy-600 focus:outline-none">
+    <div class="flex items-center justify-end gap-1.5">
+      <button class="px-3.5 py-2 rounded-lg bg-navy-800 hover:bg-navy-700 text-white text-xs font-bold">저장</button>
+      <button formaction="/admin/pricing/${r.id}/delete" formnovalidate onclick="return confirm('[${esc(r.name)}] 항목을 삭제하시겠습니까?')" class="px-3 py-2 rounded-lg text-red-500 text-xs font-bold hover:bg-red-50">삭제</button>
+    </div>
+  </form>`).join('')}
+</div>`
+  return c.html(layout({ title: '수가표 관리', desc: '관리자', path: '/admin/pricing', noindex: true }, adminShell('수가표 관리', inner, 'pricing')))
+})
+
+admin.post('/admin/pricing/updated', async (c) => {
+  const form = await c.req.parseBody()
+  const v = String(form.value || '').trim()
+  if (/^[0-9]{4}-[0-9]{2}$/.test(v)) {
+    await c.env.DB.prepare("INSERT INTO settings (key, value) VALUES ('pricing_updated', ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value").bind(v).run()
+  }
+  return c.redirect('/admin/pricing?msg=' + encodeURIComponent('고지 기준월이 저장되었습니다.'))
+})
+
+admin.post('/admin/pricing/add', async (c) => {
+  const form = await c.req.parseBody()
+  const catKey = String(form.category_key || '')
+  const name = String(form.name || '').trim()
+  const price = Math.max(0, parseInt(String(form.price || '0')) || 0)
+  const note = String(form.note || '').trim() || null
+  if (name && PRICING.some((p) => p.key === catKey)) {
+    const mx = await c.env.DB.prepare('SELECT COALESCE(MAX(sort), 0) AS m FROM price_items WHERE category_key = ?').bind(catKey).first<{ m: number }>()
+    await c.env.DB.prepare('INSERT INTO price_items (category_key, name, price, note, sort) VALUES (?, ?, ?, ?, ?)').bind(catKey, name, price, note, (mx?.m || 0) + 10).run()
+  }
+  return c.redirect(`/admin/pricing?cat=${catKey}&msg=` + encodeURIComponent('항목이 추가되었습니다.'))
+})
+
+admin.post('/admin/pricing/:id/update', async (c) => {
+  const form = await c.req.parseBody()
+  const name = String(form.name || '').trim()
+  const price = Math.max(0, parseInt(String(form.price || '0')) || 0)
+  const note = String(form.note || '').trim() || null
+  const cat = String(form.cat || 'implant')
+  if (name) {
+    await c.env.DB.prepare('UPDATE price_items SET name = ?, price = ?, note = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?').bind(name, price, note, parseInt(c.req.param('id'))).run()
+  }
+  return c.redirect(`/admin/pricing?cat=${cat}&msg=` + encodeURIComponent('저장되었습니다.'))
+})
+
+admin.post('/admin/pricing/:id/delete', async (c) => {
+  const form = await c.req.parseBody()
+  const cat = String(form.cat || 'implant')
+  await c.env.DB.prepare('DELETE FROM price_items WHERE id = ?').bind(parseInt(c.req.param('id'))).run()
+  return c.redirect(`/admin/pricing?cat=${cat}&msg=` + encodeURIComponent('삭제되었습니다.'))
 })
 
 // ===== 비밀번호 변경 =====

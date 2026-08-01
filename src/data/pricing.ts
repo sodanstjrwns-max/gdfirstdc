@@ -198,3 +198,27 @@ export const PRICING: PriceCategory[] = [
 
 export const fmtPrice = (p: number): string => p === 0 ? '보험 적용' : p.toLocaleString('ko-KR') + '원'
 export const PRICING_UPDATED = '2026-07'
+
+// ===== D1 동적 수가 로더 (관리자 수정 반영 / 실패 시 정적 폴백) =====
+export interface PriceItemRow extends PriceItem { id: number; category_key: string; sort: number }
+
+export async function getPricing(db?: D1Database): Promise<{ pricing: PriceCategory[]; updated: string }> {
+  if (db) {
+    try {
+      const [rows, upd] = await Promise.all([
+        db.prepare('SELECT id, category_key, name, price, note, sort FROM price_items ORDER BY sort, id').all<PriceItemRow>(),
+        db.prepare("SELECT value FROM settings WHERE key = 'pricing_updated'").first<{ value: string }>(),
+      ])
+      if (rows.results && rows.results.length > 0) {
+        const pricing: PriceCategory[] = PRICING.map((cat) => ({
+          ...cat,
+          items: rows.results
+            .filter((r) => r.category_key === cat.key)
+            .map((r) => ({ name: r.name, price: r.price, note: r.note || undefined })),
+        })).filter((cat) => cat.items.length > 0)
+        return { pricing, updated: upd?.value || PRICING_UPDATED }
+      }
+    } catch { /* D1 미연결 → 정적 폴백 */ }
+  }
+  return { pricing: PRICING, updated: PRICING_UPDATED }
+}

@@ -5,7 +5,7 @@ import { CLINIC, DOCTOR, EQUIPMENT, STORIES } from '../data/clinic'
 import { TREATMENTS, getTreatment } from '../data/treatments'
 import { FAQS } from '../data/faqs'
 import { SEO_REGIONS, REGION_GROUPS, type SeoRegion } from '../data/regions'
-import { PRICING, fmtPrice, PRICING_UPDATED } from '../data/pricing'
+import { PRICING, fmtPrice, PRICING_UPDATED, getPricing } from '../data/pricing'
 import { getExtras } from '../data/treatment_extras'
 import { interactiveSection } from '../lib/interactive'
 import type { AppEnv } from '../types'
@@ -626,11 +626,12 @@ pages.get('/treatments/:slug', async (c) => {
     relPosts = ps.results
   } catch { /* D1 미연결 환경 대비 */ }
 
-  // 수가 모듈: extras의 priceRefs 기준으로 pricing.ts에서 자동 추출
+  // 수가 모듈: extras의 priceRefs 기준 — D1 수가(관리자 수정 반영) 우선, 정적 폴백
+  const { pricing: livePricing, updated: pricingUpdated } = await getPricing(c.env.DB)
   const priceRows: { name: string; price: number; note?: string }[] = []
   if (ex) {
     for (const ref of ex.priceRefs) {
-      const cat = PRICING.find((p) => p.key === ref.category)
+      const cat = livePricing.find((p) => p.key === ref.category)
       if (!cat) continue
       let items = cat.items.filter((i) => i.price > 0)
       if (ref.include) items = items.filter((i) => ref.include!.some((k) => i.name.includes(k)))
@@ -801,7 +802,7 @@ ${priceView.length ? `
         <p class="text-gold-600 text-xs font-bold tracking-[0.3em] uppercase">Pricing</p>
         <h2 class="mt-2 text-xl sm:text-2xl font-extrabold text-ink tracking-tight">${t.name} 비용, 숨기지 않습니다</h2>
       </div>
-      <p class="text-[11.5px] text-ink/35">의료법 제45조 비급여 진료비용 고지 · ${PRICING_UPDATED} 기준</p>
+      <p class="text-[11.5px] text-ink/35">의료법 제45조 비급여 진료비용 고지 · ${pricingUpdated} 기준</p>
     </header>
     <ul class="grid sm:grid-cols-2 gap-x-8 gap-y-1">
       ${priceView.map((p) => `
@@ -1111,19 +1112,20 @@ ${pageHero('Location', '검단 한복판,<br><span class="font-disp text-shine">
 })
 
 // ============ 치료비용 안내 (비급여 수가표) ============
-pages.get('/pricing', (c) => {
-  const nonInsured = PRICING.filter((p) => !p.insured)
-  const insured = PRICING.find((p) => p.insured)
-  const totalItems = PRICING.reduce((n, p) => n + p.items.length, 0)
+pages.get('/pricing', async (c) => {
+  const { pricing: PLIST, updated: PUPD } = await getPricing(c.env.DB)
+  const nonInsured = PLIST.filter((p) => !p.insured)
+  const insured = PLIST.find((p) => p.insured)
+  const totalItems = PLIST.reduce((n, p) => n + p.items.length, 0)
   const body = `
 ${pageHero('Pricing', '비용까지,<br><span class="font-disp text-shine">투명하게.</span>', `의료법 제45조에 따라 비급여 진료비용을 모두 공개합니다. 총 ${totalItems}개 항목 — 숨기는 비용은 없습니다.`)}
 
 <section id="pricing-summary" class="max-w-6xl mx-auto px-5 pt-14">
   <div class="speakable-summary rounded-3xl bg-white border border-ink/8 p-7 sm:p-8">
-    <p class="text-[14.5px] text-ink/65 leading-[1.9]"><strong class="text-ink">검단퍼스트치과 대표 비급여 수가</strong> — 임플란트(덴티스) 90만원·(오스템) 100만원, 지르코니아 크라운 50만원부터, 라미네이트 55만원, 세라믹인레이 30만원부터, 전문가미백 1회 14만원. 만 65세 이상 임플란트·틀니는 건강보험 적용이 가능합니다. 정확한 비용은 정밀진단 후 안내드리며, 진단 없이 부풀리거나 깎아 부르는 일은 없습니다. (기준: ${PRICING_UPDATED})</p>
+    <p class="text-[14.5px] text-ink/65 leading-[1.9]"><strong class="text-ink">검단퍼스트치과 대표 비급여 수가</strong> — 임플란트(덴티스) 90만원·(오스템) 100만원, 지르코니아 크라운 50만원부터, 라미네이트 55만원, 세라믹인레이 30만원부터, 전문가미백 1회 14만원. 만 65세 이상 임플란트·틀니는 건강보험 적용이 가능합니다. 정확한 비용은 정밀진단 후 안내드리며, 진단 없이 부풀리거나 깎아 부르는 일은 없습니다. (기준: ${PUPD})</p>
   </div>
   <nav class="mt-8 flex flex-wrap gap-2" aria-label="비용 카테고리">
-    ${PRICING.map((p) => `<a href="#price-${p.key}" class="px-4 py-2 rounded-full bg-white border border-ink/10 text-[13px] font-semibold text-ink/60 hover:bg-ink hover:text-white transition"><i class="fas ${p.icon} mr-1.5 text-gold-600"></i>${p.label}</a>`).join('')}
+    ${PLIST.map((p) => `<a href="#price-${p.key}" class="px-4 py-2 rounded-full bg-white border border-ink/10 text-[13px] font-semibold text-ink/60 hover:bg-ink hover:text-white transition"><i class="fas ${p.icon} mr-1.5 text-gold-600"></i>${p.label}</a>`).join('')}
   </nav>
 </section>
 
@@ -1165,7 +1167,7 @@ ${pageHero('Pricing', '비용까지,<br><span class="font-disp text-shine">투�
       <div>
         <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tightest">견적이 다르다고요?<br>들고 오셔도 됩니다.</h2>
         <p class="mt-3 text-white/50 text-[14.5px] leading-relaxed max-w-xl">치아 상태에 따라 실제 비용은 달라질 수 있습니다. 정밀진단 후 필요한 치료와 필요 없는 치료를 구분해 정확한 견적을 드립니다. 상담은 강요 없이, 결정은 환자분이.</p>
-        <p class="mt-4 text-[11.5px] text-white/30">* 본 수가표는 의료법 제45조에 따른 비급여 진료비용 고지이며, ${PRICING_UPDATED} 기준입니다. 세부 항목은 원내 게시물과 상담을 통해 확인하실 수 있습니다.</p>
+        <p class="mt-4 text-[11.5px] text-white/30">* 본 수가표는 의료법 제45조에 따른 비급여 진료비용 고지이며, ${PUPD} 기준입니다. 세부 항목은 원내 게시물과 상담을 통해 확인하실 수 있습니다.</p>
       </div>
       <div class="flex flex-wrap lg:flex-col gap-3 shrink-0">
         <a href="tel:${CLINIC.phone}" class="btn-3d px-7 py-4 rounded-full bg-gold-500 text-ink font-extrabold hover:bg-gold-400 transition text-center"><i class="fas fa-phone mr-2"></i>${CLINIC.phone}</a>
