@@ -33,7 +33,7 @@ function adminShell(title: string, inner: string, active: string): string {
   <aside id="admin-sidebar" class="md:sticky md:top-20 h-fit rounded-2xl border border-slate-200 p-3">
     <p class="px-3 py-2 text-xs font-bold text-slate-400 uppercase tracking-widest">Admin</p>
     <nav class="space-y-1">
-      ${menu.map((m) => `<a href="${m.href}" class="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-bold ${active === m.key ? 'bg-navy-800 text-white' : 'text-slate-600 hover:bg-navy-50'}"><i class="fas ${m.icon} w-4"></i>${m.label}</a>`).join('')}
+      ${menu.map((m) => `<a href="${m.href}" class="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-bold ${active === m.key ? 'bg-navy-800 text-white' : 'text-slate-600 hover:bg-navy-50'}"><i class="fas ${m.icon} w-4"></i>${m.label}${m.key === 'reservations' ? '<span id="resv-badge" class="hidden ml-auto min-w-[22px] h-[22px] px-1.5 rounded-full bg-red-500 text-white text-[11px] font-extrabold items-center justify-center animate-pulse"></span>' : ''}</a>`).join('')}
       <a href="/admin/logout" class="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-bold text-red-500 hover:bg-red-50"><i class="fas fa-right-from-bracket w-4"></i>관리자 로그아웃</a>
     </nav>
   </aside>
@@ -41,7 +41,15 @@ function adminShell(title: string, inner: string, active: string): string {
     <h1 class="text-2xl font-extrabold text-navy-900 mb-6">${title}</h1>
     ${inner}
   </section>
-</div>`
+</div>
+<script>
+(function(){
+  fetch('/admin/api/new-reservations').then(function(r){ return r.json() }).then(function(d){
+    var b = document.getElementById('resv-badge');
+    if (b && d && d.n > 0) { b.textContent = d.n > 99 ? '99+' : d.n; b.classList.remove('hidden'); b.classList.add('inline-flex'); }
+  }).catch(function(){});
+})();
+</script>`
 }
 
 // ===== 관리자 로그인 =====
@@ -295,6 +303,12 @@ admin.post('/admin/pricing/:id/delete', async (c) => {
   const cat = String(form.cat || 'implant')
   await c.env.DB.prepare('DELETE FROM price_items WHERE id = ?').bind(parseInt(c.req.param('id'))).run()
   return c.redirect(`/admin/pricing?cat=${cat}&msg=` + encodeURIComponent('삭제되었습니다.'))
+})
+
+// ===== 신규 예약 카운트 API (사이드메뉴 빨간 뱃지용) =====
+admin.get('/admin/api/new-reservations', async (c) => {
+  const row = await c.env.DB.prepare("SELECT COUNT(*) AS n FROM reservations WHERE status = 'new'").first<{ n: number }>()
+  return c.json({ n: row?.n || 0 })
 })
 
 // ===== 비밀번호 변경 =====

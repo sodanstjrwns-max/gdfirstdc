@@ -128,7 +128,7 @@ pages.get('/', (c) => {
     <div class="absolute top-6 right-8 font-disp text-[120px] leading-none text-white/[0.04] select-none pointer-events-none hidden sm:block" aria-hidden="true">First</div>
     <p class="relative text-[11px] font-bold tracking-[0.3em] uppercase text-gold-400">At a Glance · 한눈에 보는 검단퍼스트치과</p>
     <p class="speakable-summary relative mt-5 max-w-4xl text-base sm:text-xl leading-[1.9] text-white/75">
-      <strong class="text-white">검단퍼스트치과</strong>는 인천 검단신도시에서 가장 오래된 치과로, <strong class="text-white">보건복지부 인증 통합치의학 전문의 김희수 대표원장의 1인 책임진료</strong> 치과입니다. 임플란트·무삭제 라미네이트(루미네이트)·턱관절(체외충격파) 특화 진료를 하며, <span class="text-gold-400 font-bold">과잉진료 없이 꼭 필요한 치료만 권합니다.</span>
+      <strong class="text-white">검단퍼스트치과</strong>는 인천 검단신도시에서 가장 오래된 치과로, <strong class="text-white">보건복지부 인증 통합치의학 전문의 김희수 대표원장의 1인 책임진료</strong> 치과입니다. 임플란트·무삭제 라미네이트(블룸네이트)·턱관절(체외충격파) 특화 진료를 하며, <span class="text-gold-400 font-bold">과잉진료 없이 꼭 필요한 치료만 권합니다.</span>
     </p>
     <div class="relative mt-8 flex flex-wrap gap-2.5 text-[13px]">
       <span class="inline-flex items-center gap-2 rounded-full bg-white/[0.07] border border-white/10 px-4 py-2.5 text-white/80"><i class="fas fa-location-dot text-gold-400"></i>${CLINIC.addressShort}</span>
@@ -288,7 +288,7 @@ pages.get('/', (c) => {
         <a href="/reserve" class="btn-3d flex items-center justify-center gap-2 py-4 rounded-2xl bg-gold-500 text-ink font-extrabold hover:bg-gold-400 transition whitespace-nowrap"><i class="fas fa-calendar-check"></i>예약·상담 신청</a>
         <a href="tel:${CLINIC.phone}" class="flex items-center justify-center gap-2 py-4 rounded-2xl border border-white/25 font-bold hover:bg-white/10 transition whitespace-nowrap"><i class="fas fa-phone text-gold-400"></i>${CLINIC.phone}</a>
         <a href="${CLINIC.naverBooking}" target="_blank" rel="noopener" class="flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-white/[0.06] border border-white/10 font-bold text-white/85 hover:bg-white/[0.12] transition whitespace-nowrap text-[14.5px]"><span class="inline-flex w-5 h-5 rounded bg-[#03c75a] text-white items-center justify-center font-black text-[11px]">N</span>네이버 예약</a>
-        <a href="${CLINIC.kakao}" target="_blank" rel="noopener" class="flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-white/[0.06] border border-white/10 font-bold text-white/85 hover:bg-white/[0.12] transition whitespace-nowrap text-[14.5px]"><i class="fas fa-comment text-[#fee500]"></i>카톡 상담</a>
+        <a href="${CLINIC.naverTalk}" target="_blank" rel="noopener" class="flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-white/[0.06] border border-white/10 font-bold text-white/85 hover:bg-white/[0.12] transition whitespace-nowrap text-[14.5px]"><i class="fas fa-comment-dots text-[#03c75a]"></i>톡톡 상담</a>
       </div>
     </div>
     <div class="reveal-scale lg:col-span-2 rounded-3xl bg-white border border-ink/8 p-8" data-tilt data-tilt-max="5">
@@ -521,7 +521,8 @@ ${pageHero('About Us', '광고 대신,<br><span class="font-disp text-shine">진
     worksFor: { '@id': `${CLINIC.siteUrl}/#clinic` },
     image: `${CLINIC.siteUrl}/static/images/doctor_lobby.webp`,
     alumniOf: [
-      { '@type': 'CollegeOrUniversity', name: '경희대학교 치의학전문대학원' },
+      { '@type': 'CollegeOrUniversity', name: '경희대학교' },
+      { '@type': 'CollegeOrUniversity', name: '전북대학교 치의학전문대학원' },
       { '@type': 'CollegeOrUniversity', name: '가톨릭대학교 부천성모병원 통합치의학과 (레지던트)' },
     ],
     hasCredential: [
@@ -554,7 +555,7 @@ ${pageHero('Treatments', '필요한 치료만,<br><span class="font-disp text-sh
     </a>`).join('')}
   </div>
 </section>`
-  return c.html(layout({ title: '진료과목 — 임플란트·라미네이트·턱관절 치료', desc: '검단퍼스트치과 진료과목 — 임플란트, 루미네이트(라미네이트), 턱관절치료, 심미보철, 신경치료, 충치치료, 잇몸치료, 보철, 사랑니 발치, 치과 보톡스.', path: '/treatments' }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
+  return c.html(layout({ title: '진료과목 — 임플란트·라미네이트·턱관절 치료', desc: '검단퍼스트치과 진료과목 — 임플란트, 블룸네이트(라미네이트), 턱관절치료, 심미보철, 신경치료, 충치치료, 잇몸치료, 보철, 사랑니 발치, 치과 보톡스.', path: '/treatments' }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
 })
 
 // ============ 방송 클립 (한국경제TV 건강매거진 — 김희수 원장 출연분) ============
@@ -607,6 +608,9 @@ const tvSection = (slug: string): string => {
 }
 
 // ============ 진료과목 상세 ============
+// 구 브랜드 slug 리다이렉트 (루미네이트 → 블룸네이트)
+pages.get('/treatments/luminate', (c) => c.redirect('/treatments/bloomnate', 301))
+
 pages.get('/treatments/:slug', async (c) => {
   const t = getTreatment(c.req.param('slug'))
   if (!t) return c.notFound()
@@ -891,7 +895,7 @@ ${relCases.length || relPosts.length ? `
 <nav id="region-chips" class="max-w-6xl mx-auto px-5 pb-20" aria-label="지역별 ${t.name} 안내">
   <p class="text-[11px] font-bold tracking-[0.25em] uppercase text-ink/30 mb-3">지역별 안내 — ${t.name}</p>
   <p class="flex flex-wrap gap-x-1.5 gap-y-2 text-[12.5px] leading-none">
-    ${SEO_REGIONS.slice(0, 12).map((r) => `<a href="/region/${r.slug}" class="px-3.5 py-2 rounded-full bg-white border border-ink/8 text-ink/50 hover:text-ink hover:border-ink/25 transition whitespace-nowrap">${r.name} ${t.name.replace(/ LumiNate$/, '')}</a>`).join('')}
+    ${SEO_REGIONS.slice(0, 12).map((r) => `<a href="/region/${r.slug}" class="px-3.5 py-2 rounded-full bg-white border border-ink/8 text-ink/50 hover:text-ink hover:border-ink/25 transition whitespace-nowrap">${r.name} ${t.name.replace(/ BloomNate$/, '')}</a>`).join('')}
   </p>
 </nav>
 
@@ -1049,7 +1053,10 @@ pages.get('/location', (c) => {
 ${pageHero('Location', '검단 한복판,<br><span class="font-disp text-shine">3층</span>입니다.', CLINIC.addressShort)}
 <section class="max-w-6xl mx-auto px-5 py-14 grid lg:grid-cols-5 gap-4">
   <div id="map-section" class="reveal-scale lg:col-span-3 rounded-3xl overflow-hidden border border-ink/8 bg-white">
-    <iframe title="검단퍼스트치과 지도" src="https://www.openstreetmap.org/export/embed.html?bbox=${CLINIC.lng - 0.008}%2C${CLINIC.lat - 0.005}%2C${CLINIC.lng + 0.008}%2C${CLINIC.lat + 0.005}&layer=mapnik&marker=${CLINIC.lat}%2C${CLINIC.lng}" class="w-full h-[380px] border-0"></iframe>
+    <a href="https://map.naver.com/p/entry/place/1391225343" target="_blank" rel="noopener" class="group relative block" aria-label="네이버지도에서 검단퍼스트치과 보기">
+      <img src="/static/images/map_naver.webp" alt="검단퍼스트치과 위치 — 네이버지도 (인천 검단구 이음5로 80 검단퍼스트프라자 3층, 아라역 1번 출구 도보 5분)" class="w-full h-[380px] object-cover" loading="lazy" decoding="async">
+      <span class="absolute bottom-3 right-3 inline-flex items-center gap-1.5 rounded-full bg-[#03c75a] text-white text-[12px] font-extrabold px-3.5 py-2 shadow-lg group-hover:brightness-110 transition"><span class="inline-flex w-4 h-4 rounded-[4px] bg-white text-[#03c75a] items-center justify-center font-black text-[10px]">N</span>네이버지도에서 크게 보기</span>
+    </a>
     <div class="p-4 flex flex-wrap gap-2">
       <a href="https://map.naver.com/p/search/${encodeURIComponent('검단퍼스트치과')}" target="_blank" rel="noopener" class="flex-1 min-w-[120px] text-center px-4 py-3 rounded-xl bg-[#03c75a] text-white text-sm font-bold">네이버지도</a>
       <a href="https://map.kakao.com/?q=${encodeURIComponent('검단퍼스트치과')}" target="_blank" rel="noopener" class="flex-1 min-w-[120px] text-center px-4 py-3 rounded-xl bg-[#fee500] text-ink text-sm font-bold">카카오맵</a>
@@ -1065,8 +1072,8 @@ ${pageHero('Location', '검단 한복판,<br><span class="font-disp text-shine">
     <article class="rounded-3xl bg-white border border-ink/8 p-7" data-tilt data-tilt-max="7">
       <h2 class="font-extrabold text-ink flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-gold-500"></span>주차 · 교통</h2>
       <ul class="mt-3 text-[14px] text-ink/60 space-y-2">
-        <li class="flex gap-2.5"><i class="fas fa-square-parking text-ink/30 mt-0.5"></i>건물 내 주차장 이용 가능</li>
-        <li class="flex gap-2.5"><i class="fas fa-train-subway text-ink/30 mt-0.5"></i>인천 1호선 검단연장선 아라역·마전역 인근</li>
+        <li class="flex gap-2.5"><i class="fas fa-square-parking text-ink/30 mt-0.5"></i>건물 내 지하 주차장 이용 가능. 만차 시 대각선 유성타워 지상주차장 이용 가능</li>
+        <li class="flex gap-2.5"><i class="fas fa-train-subway text-ink/30 mt-0.5"></i>인천 1호선 검단 아라역 1번출구 도보 5분거리</li>
         <li class="flex gap-2.5"><i class="fas fa-bus text-ink/30 mt-0.5"></i>검단신도시 중심상가 정류장 도보권</li>
       </ul>
     </article>
@@ -1262,7 +1269,7 @@ function regionFaqs(r: SeoRegion): { q: string; a: string }[] {
     { q: `${r.name}에서 검단퍼스트치과까지 어떻게 가나요?`, a: `${r.transport} 주소는 ${CLINIC.address}입니다.` },
     { q: `${r.name}에서 임플란트 잘하는 치과를 찾고 있어요.`, a: `검단퍼스트치과는 ${r.name}에서 ${r.distance} 거리로, 보건복지부 인증 통합치의학 전문의이자 우수보철의사인 김희수 원장이 상담·수술·보철·사후관리를 모두 직접 진행합니다. Harvard Implant CE 과정을 수료했으며 오스템·덴티스 임상자문연구위원으로 활동 중입니다. 만 65세 이상은 임플란트 건강보험(평생 2개, 본인부담 30%) 적용이 가능합니다.` },
     { q: `${r.name} 근처에 턱관절(TMJ) 치료하는 치과가 있나요?`, a: `검단퍼스트치과는 ${r.name}에서 ${r.distance} 거리에 있는 턱관절 특화 치과입니다. 아시안 턱관절 포럼 Advanced Course를 수료한 원장이 정확한 진단 후 스플린트·체외충격파(ESWT)·PDRN 인대강화주사 등으로 치료하며, 턱 탈구 응급 정복도 가능합니다.` },
-    { q: `${r.name}에서 라미네이트 상담을 받고 싶은데 치아 삭제가 걱정돼요.`, a: `검단퍼스트치과의 루미네이트(LumiNate)는 미국 뉴욕대 무삭제 라미네이트 과정을 수료한 원장이 무삭제(Non-prep)·최소삭제 원칙으로 진행합니다. RAY 페이스 스캐너로 얼굴 전체와 조화로운 미소를 디자인하며, 무삭제 가능 여부를 정밀진단 후 정직하게 알려드립니다. ${r.name}에서 ${r.distance}면 도착합니다.` },
+    { q: `${r.name}에서 라미네이트 상담을 받고 싶은데 치아 삭제가 걱정돼요.`, a: `검단퍼스트치과의 블룸네이트(BloomNate)는 미국 뉴욕대 무삭제 라미네이트 과정을 수료한 원장이 무삭제(Non-prep)·최소삭제 원칙으로 진행합니다. RAY 페이스 스캐너로 얼굴 전체와 조화로운 미소를 디자인하며, 무삭제 가능 여부를 정밀진단 후 정직하게 알려드립니다. ${r.name}에서 ${r.distance}면 도착합니다.` },
     { q: `진료시간과 예약 방법이 궁금해요.`, a: `평일(월·화·수·금) 09:30~18:30, 토요일 09:30~14:00(점심시간 없이 진료), 목·일·공휴일은 휴진입니다(공휴일이 있는 주 목요일은 정상진료). 예약 및 상담은 ${CLINIC.phone}로 전화 주시면 됩니다.` },
     { q: `다른 치과에서 받은 견적을 들고 가서 상담만 받아도 되나요?`, a: `물론입니다. 검단퍼스트치과는 "다른 병원도 다녀오세요. 그럼 저희의 가치를 더 느끼실 수 있습니다"를 원칙으로, 과잉진료 없이 꼭 필요한 치료만 말씀드립니다. 세컨드 오피니언 상담을 환영합니다.` },
   ]
@@ -1271,7 +1278,7 @@ function regionFaqs(r: SeoRegion): { q: string; a: string }[] {
 // /region 인덱스 허브
 pages.get('/region', (c) => {
   const body = `
-${pageHero('Service Areas', '어디에 사시든,<br><span class="font-disp text-shine">가까운 정직함.</span>', `검단퍼스트치과는 인천 서구·계양·김포 생활권 전역에서 찾아주시는 치과입니다. 우리 동네에서 오시는 길을 확인해 보세요.`)}
+${pageHero('Service Areas', '어디에 사시든,<br><span class="font-disp text-shine">가까운 정직함.</span>', `검단퍼스트치과는 인천 검단구·서구·계양·김포 생활권 전역에서 찾아주시는 치과입니다. 우리 동네에서 오시는 길을 확인해 보세요.`)}
 <section id="region-index" class="max-w-6xl mx-auto px-5 py-16">
   ${REGION_GROUPS.map((g) => {
     const list = SEO_REGIONS.filter((r) => r.group === g)
@@ -1313,7 +1320,7 @@ ${pageHero('Service Areas', '어디에 사시든,<br><span class="font-disp text
       { '@type': 'ListItem', position: 2, name: '진료 지역 안내', item: `${CLINIC.siteUrl}/region` },
     ],
   }]
-  return c.html(layout({ title: '진료 지역 안내 — 검단·김포·청라·계양', desc: '검단퍼스트치과 진료 지역 안내 — 검단신도시·원당동·당하동·마전동·아라동·김포 풍무동·한강신도시·청라·계양 등 인천 서구와 김포 전역에서 찾아오시는 길과 진료 정보를 확인하세요.', path: '/region', jsonLd }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
+  return c.html(layout({ title: '진료 지역 안내 — 검단·김포·청라·계양', desc: '검단퍼스트치과 진료 지역 안내 — 검단신도시·원당동·당하동·마전동·아라동·김포 풍무동·한강신도시·청라·계양 등 인천 검단구·서구와 김포 전역에서 찾아오시는 길과 진료 정보를 확인하세요.', path: '/region', jsonLd }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
 })
 
 // 지역 상세 페이지

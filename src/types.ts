@@ -30,6 +30,8 @@ export type Bindings = {
   DB: D1Database
   R2: R2Bucket
   SESSION_SECRET?: string
+  RESEND_API_KEY?: string
+  NOTIFY_EMAIL?: string
 }
 
 export type Variables = {

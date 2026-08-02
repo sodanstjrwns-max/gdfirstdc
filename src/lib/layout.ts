@@ -45,25 +45,25 @@ export function clinicJsonLd(): object {
     address: {
       '@type': 'PostalAddress',
       streetAddress: '이음5로 80, 검단퍼스트프라자 3층 303~305호',
-      addressLocality: '서구',
+      addressLocality: '검단구',
       addressRegion: '인천광역시',
       addressCountry: 'KR',
     },
     geo: { '@type': 'GeoCoordinates', latitude: CLINIC.lat, longitude: CLINIC.lng },
     hasMap: 'https://map.naver.com/p/search/' + encodeURIComponent('검단퍼스트치과'),
-    sameAs: [CLINIC.blog, 'https://map.naver.com/p/search/' + encodeURIComponent('검단퍼스트치과')],
+    sameAs: [CLINIC.blog, CLINIC.youtube, 'https://map.naver.com/p/search/' + encodeURIComponent('검단퍼스트치과')],
     openingHoursSpecification: [
       { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Friday'], opens: '09:30', closes: '18:30' },
       { '@type': 'OpeningHoursSpecification', dayOfWeek: 'Saturday', opens: '09:30', closes: '14:00' },
     ],
     areaServed: [
-      '검단신도시', '인천 서구', '원당동', '당하동', '마전동', '불로동', '대곡동', '금곡동', '오류동', '왕길동', '아라동', '검암동',
+      '검단신도시', '인천 검단구', '인천 서구', '원당동', '당하동', '마전동', '불로동', '대곡동', '금곡동', '오류동', '왕길동', '아라동', '검암동',
       '청라국제도시', '루원시티', '가정동', '석남동', '인천 계양구', '계산동', '작전동',
       '김포시', '풍무동', '사우동', '장기동', '구래동', '운양동', '통진읍', '한강신도시',
     ].map((n) => ({ '@type': 'Place', name: n })),
     availableService: [
       { '@type': 'MedicalProcedure', name: '임플란트', description: '뼈이식·상악동거상술 포함 전악 임플란트, 만 65세 이상 건강보험 적용(평생 2개)' },
-      { '@type': 'MedicalProcedure', name: '무삭제 라미네이트(루미네이트)', description: '뉴욕대 Non-prep Veneer 과정 수료 원장의 페이스스캐너 기반 미소 디자인' },
+      { '@type': 'MedicalProcedure', name: '무삭제 라미네이트(블룸네이트)', description: '뉴욕대 Non-prep Veneer 과정 수료 원장의 페이스스캐너 기반 미소 디자인' },
       { '@type': 'MedicalProcedure', name: '턱관절(TMJ) 치료', description: '스플린트·체외충격파(ESWT)·PDRN 인대강화주사, 턱 탈구 응급 정복' },
       { '@type': 'MedicalProcedure', name: '미세현미경 신경치료', description: 'ZEISS 독일 미세현미경 25배율 정밀 근관치료, 플라즈마 엔도 살균' },
       { '@type': 'MedicalProcedure', name: '충치·잇몸치료', description: 'Q-ray 형광검사 기반 조기 진단, 미온수 스케일링' },
@@ -74,7 +74,7 @@ export function clinicJsonLd(): object {
       name: CLINIC.doctor,
       jobTitle: '대표원장',
       description: '보건복지부 인증 통합치의학 전문의, 대한치과보철학회 인증 우수보철의사, Harvard Implant CE 수료, 오스템·덴티스 임상자문연구위원',
-      alumniOf: '경희대학교 치의학전문대학원',
+      alumniOf: ['경희대학교', '전북대학교 치의학전문대학원'],
     },
     medicalSpecialty: 'Dentistry',
     isAcceptingNewPatients: true,
@@ -246,7 +246,7 @@ ${meta.path === '/' ? '<div id="curtain" aria-hidden="true"><span class="curtain
       <a href="/reserve" class="flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-gold-500 text-ink font-extrabold text-sm"><i class="fas fa-calendar-check"></i>예약·상담 신청</a>
       <a href="tel:${CLINIC.phone}" class="flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-white/10 text-white font-bold text-sm"><i class="fas fa-phone text-gold-400"></i>전화하기</a>
       <a href="${CLINIC.naverBooking}" target="_blank" rel="noopener" class="flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-[#03c75a] text-white font-extrabold text-sm"><span class="inline-flex w-5 h-5 rounded bg-white text-[#03c75a] items-center justify-center font-black text-[11px]">N</span>네이버 예약</a>
-      <a href="${CLINIC.kakao}" target="_blank" rel="noopener" class="flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-[#fee500] text-[#191919] font-extrabold text-sm"><i class="fas fa-comment"></i>카톡 상담</a>
+      <a href="${CLINIC.naverTalk}" target="_blank" rel="noopener" class="flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-white text-[#03c75a] font-extrabold text-sm"><i class="fas fa-comment-dots"></i>톡톡 상담</a>
     </div>
     <div class="mt-auto pt-8 flex gap-3 text-sm">
       ${userName ? `<span class="text-gold-400 py-3">${esc(userName)}님</span><a href="/logout" class="text-white/60 py-3">로그아웃</a>` : `<a href="/login" class="text-white/60 py-3">로그인</a><a href="/signup" class="text-white/60 py-3">회원가입</a>`}
@@ -262,9 +262,9 @@ ${meta.path === '/' ? '<div id="curtain" aria-hidden="true"><span class="curtain
     <span class="hidden group-hover:inline pl-5 text-sm font-extrabold whitespace-nowrap">네이버 예약</span>
     <span class="w-12 h-12 flex items-center justify-center"><span class="inline-flex w-6 h-6 rounded bg-white text-[#03c75a] items-center justify-center font-black text-[13px]">N</span></span>
   </a>
-  <a href="${CLINIC.kakao}" target="_blank" rel="noopener" class="quick-btn group flex items-center gap-0 rounded-full bg-[#fee500] text-[#191919] shadow-lg shadow-ink/20 hover:pr-5 transition-all" aria-label="카카오톡 상담">
-    <span class="hidden group-hover:inline pl-5 text-sm font-extrabold whitespace-nowrap">카톡 상담</span>
-    <span class="w-12 h-12 flex items-center justify-center"><i class="fas fa-comment text-[19px]"></i></span>
+  <a href="${CLINIC.naverTalk}" target="_blank" rel="noopener" class="quick-btn group flex items-center gap-0 rounded-full bg-white text-[#03c75a] border border-[#03c75a]/25 shadow-lg shadow-ink/20 hover:pr-5 transition-all" aria-label="네이버 톡톡 상담">
+    <span class="hidden group-hover:inline pl-5 text-sm font-extrabold whitespace-nowrap">톡톡 상담</span>
+    <span class="w-12 h-12 flex items-center justify-center"><i class="fas fa-comment-dots text-[19px]"></i></span>
   </a>
   <a href="tel:${CLINIC.phone}" class="quick-btn group flex items-center gap-0 rounded-full bg-white text-ink border border-ink/10 shadow-lg shadow-ink/15 hover:pr-5 transition-all" aria-label="전화 걸기">
     <span class="hidden group-hover:inline pl-5 text-sm font-extrabold whitespace-nowrap">${CLINIC.phone}</span>
@@ -285,8 +285,8 @@ ${meta.path === '/' ? '<div id="curtain" aria-hidden="true"><span class="curtain
     <a href="${CLINIC.naverBooking}" target="_blank" rel="noopener" class="flex flex-col items-center gap-1 py-3 active:bg-white/5 border-l border-white/10" aria-label="네이버 예약">
       <span class="inline-flex w-[19px] h-[19px] rounded bg-[#03c75a] text-white items-center justify-center font-black text-[11px]">N</span><span class="text-[10.5px] font-bold text-white/85">네이버예약</span>
     </a>
-    <a href="${CLINIC.kakao}" target="_blank" rel="noopener" class="flex flex-col items-center gap-1 py-3 text-[#fee500] active:bg-white/5 border-l border-white/10" aria-label="카카오톡 상담">
-      <i class="fas fa-comment text-[17px]"></i><span class="text-[10.5px] font-bold text-white/85">카톡상담</span>
+    <a href="${CLINIC.naverTalk}" target="_blank" rel="noopener" class="flex flex-col items-center gap-1 py-3 text-[#03c75a] active:bg-white/5 border-l border-white/10" aria-label="네이버 톡톡 상담">
+      <i class="fas fa-comment-dots text-[17px]"></i><span class="text-[10.5px] font-bold text-white/85">톡톡상담</span>
     </a>
     <a href="/reserve" class="flex flex-col items-center gap-1 py-3 bg-gold-500/95 text-ink active:bg-gold-400" aria-label="예약·상담 신청">
       <i class="fas fa-calendar-check text-[17px]"></i><span class="text-[10.5px] font-extrabold">예약신청</span>
@@ -307,7 +307,7 @@ ${meta.path === '/' ? '<div id="curtain" aria-hidden="true"><span class="curtain
         <a href="/reserve" class="btn-3d px-7 py-4 rounded-full bg-gold-500 text-ink font-extrabold hover:bg-gold-400 transition"><i class="fas fa-calendar-check mr-2"></i>예약·상담 신청</a>
         <a href="tel:${CLINIC.phone}" class="px-7 py-4 rounded-full border border-white/25 text-white font-bold hover:bg-white/10 transition"><i class="fas fa-phone mr-2 text-gold-400"></i>${CLINIC.phone}</a>
         <a href="${CLINIC.naverBooking}" target="_blank" rel="noopener" class="px-6 py-4 rounded-full bg-[#03c75a] text-white font-extrabold hover:brightness-110 transition"><span class="inline-flex w-5 h-5 rounded bg-white text-[#03c75a] items-center justify-center font-black text-[11px] mr-2 align-[-3px]">N</span>네이버 예약</a>
-        <a href="${CLINIC.kakao}" target="_blank" rel="noopener" class="px-6 py-4 rounded-full bg-[#fee500] text-[#191919] font-extrabold hover:brightness-105 transition"><i class="fas fa-comment mr-2"></i>카톡 상담</a>
+        <a href="${CLINIC.naverTalk}" target="_blank" rel="noopener" class="px-6 py-4 rounded-full bg-white text-[#03c75a] font-extrabold hover:brightness-95 transition"><i class="fas fa-comment-dots mr-2"></i>톡톡 상담</a>
       </div>
     </div>
     <div class="grid sm:grid-cols-2 lg:grid-cols-5 gap-8 py-10 text-[13.5px]">
@@ -341,7 +341,7 @@ ${meta.path === '/' ? '<div id="curtain" aria-hidden="true"><span class="curtain
       <section>
         <h2 class="text-white/90 font-bold mb-3 text-xs tracking-[0.2em] uppercase">Treatments</h2>
         <ul class="grid grid-cols-2 gap-1">
-          ${TREATMENTS.map((t) => `<li><a href="/treatments/${t.slug}" class="hover:text-gold-400 transition">${t.name}</a></li>`).join('')}
+          ${TREATMENTS.map((t) => `<li><a href="/treatments/${t.slug}" class="hover:text-gold-400 transition break-keep">${t.name}</a></li>`).join('')}
         </ul>
       </section>
       <section>
@@ -351,6 +351,7 @@ ${meta.path === '/' ? '<div id="curtain" aria-hidden="true"><span class="curtain
           <li><a href="/reserve" class="text-gold-400 font-bold hover:text-gold-300 transition">예약·상담 신청</a></li>
           <li><a href="/region" class="hover:text-gold-400 transition">진료 지역 안내</a></li>
           <li><a href="${CLINIC.blog}" target="_blank" rel="noopener" class="hover:text-gold-400 transition">네이버 블로그 <i class="fas fa-arrow-up-right-from-square text-[9px]"></i></a></li>
+          <li><a href="${CLINIC.youtube}" target="_blank" rel="noopener" class="hover:text-gold-400 transition"><i class="fab fa-youtube text-[#ff0000] mr-1"></i>유튜브 「치과아빠」 <i class="fas fa-arrow-up-right-from-square text-[9px]"></i></a></li>
           ${userName ? `<li class="text-gold-400/80">${esc(userName)}님 · <a href="/logout" class="hover:text-gold-400">로그아웃</a></li>` : `<li><a href="/login" class="hover:text-gold-400 transition">로그인</a> · <a href="/signup" class="hover:text-gold-400 transition">회원가입</a></li>`}
         </ul>
       </section>

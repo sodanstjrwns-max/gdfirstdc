@@ -74,7 +74,7 @@ export const TREATMENT_EXTRAS: Record<string, TreatmentExtra> = {
     ],
   },
 
-  luminate: {
+  bloomnate: {
     checklist: [
       '앞니 색·모양·틈 때문에 웃을 때 입을 가리게 된다',
       '결혼식·면접 등 중요한 날을 앞두고 있다',
@@ -92,8 +92,8 @@ export const TREATMENT_EXTRAS: Record<string, TreatmentExtra> = {
       { title: '교합 체크·완성', desc: '물림과 발음 확인 후 최종 마무리. 관리법 안내.', duration: '1회 내원' },
     ],
     compare: {
-      title: '루미네이트(무삭제) vs 일반 라미네이트 vs 크라운',
-      headers: ['루미네이트(무삭제)', '일반 라미네이트', '올세라믹 크라운'],
+      title: '블룸네이트(무삭제) vs 일반 라미네이트 vs 크라운',
+      headers: ['블룸네이트(무삭제)', '일반 라미네이트', '올세라믹 크라운'],
       rows: [
         { label: '치아 삭제량', cols: ['없음~최소', '0.3~0.7mm', '전체 삭제(1.5~2mm)'] },
         { label: '마취', cols: ['대부분 불필요', '필요한 경우 있음', '필요'] },
@@ -175,7 +175,7 @@ export const TREATMENT_EXTRAS: Record<string, TreatmentExtra> = {
     priceRefs: [{ category: 'cosmetic' }, { category: 'prosthetics', include: ['지르코니아', 'PFM'] }],
     bodyLocation: '전치부·구치부 치아',
     crossLinks: [
-      { slug: 'luminate', text: '치아 삭제를 최소화하는 앞니 심미치료를 찾으신다면 루미네이트를 먼저 확인해 보세요.' },
+      { slug: 'bloomnate', text: '치아 삭제를 최소화하는 앞니 심미치료를 찾으신다면 블룸네이트를 먼저 확인해 보세요.' },
       { slug: 'prosthetics', text: '어금니 크라운·브릿지 등 기능 중심의 보철은 보철치료 페이지에서 자세히 볼 수 있습니다.' },
     ],
   },

@@ -5,16 +5,18 @@ export const CLINIC = {
   nameEn: 'Geomdan First Dental Clinic',
   doctor: '김희수',
   phone: '032-563-2872',
-  address: '인천광역시 서구 이음5로 80, 검단퍼스트프라자 3층 303~305호 (원당동)',
-  addressShort: '인천 서구 이음5로 80, 검단퍼스트프라자 3층',
+  address: '인천광역시 검단구 이음5로 80, 검단퍼스트프라자 3층 303~305호 (원당동)',
+  addressShort: '인천 검단구 이음5로 80, 검단퍼스트프라자 3층',
   region: '검단신도시',
-  lat: 37.6023,
-  lng: 126.6788,
+  lat: 37.5952858,
+  lng: 126.7163087,
   bizNo: '141-59-00634',
   email: 'khs831009@naver.com',
   blog: 'https://blog.naver.com/gdfirstdental',
   naverBooking: 'https://naver.me/G4GOgKMQ', // 네이버 예약
-  kakao: 'http://pf.kakao.com/_xoUQjX', // 카카오톡 채널
+  kakao: 'http://pf.kakao.com/_xoUQjX', // 카카오톡 채널 (미사용 — 원장 요청으로 톡톡 전환)
+  naverTalk: 'https://talk.naver.com/w486v7', // 네이버 톡톡 상담
+  youtube: 'https://www.youtube.com/@gdfirstdc', // 유튜브 「치과아빠」
   siteUrl: 'https://gdfirstdc.kr', // 공식 도메인 (가비아 등록, Cloudflare DNS)
   hours: [
     { day: '월요일', time: 'AM 09:30 ~ PM 18:30' },
@@ -27,7 +29,7 @@ export const CLINIC = {
   ],
   lunch: 'PM 13:00 ~ PM 14:00 (평일)',
   mission: '미소에 자신감을 더하는, 검단에서 가장 정직한 치과',
-  missionEn: 'Make Luminate, More Attractive',
+  missionEn: 'Make BloomNate, More Attractive',
   // 원장님이 직접 작성하신 비전·가치·슬로건 (제작 신청서 원문)
   vision: '자연스러운 심미와 정밀한 진료로 오래 신뢰받는 치과',
   coreValue: '사람에 대한 진심과 배려',
@@ -51,7 +53,8 @@ export const DOCTOR = {
   career: [
     '휘문고등학교 졸업',
     '육군 수도기계화보병사단(맹호부대) 기갑수색대대 만기 제대',
-    '경희대학교 학사 · 치의학전문대학원 석사',
+    '경희대학교 학사',
+    '전북대학교 치의학전문대학원 석사',
     '가톨릭대학교 부천성모병원 통합치의학과 레지던트 과정 수료',
     '필리핀 카푸친 수녀원 해외봉사단 치과 진료팀',
     '미국 Harvard School of Dental Medicine Implant Dentistry CE',
@@ -68,6 +71,7 @@ export const DOCTOR = {
     '고려대학교 가철성보철 고급과정',
     '아시안 턱관절 포럼 Advanced Course',
     '미국 뉴욕대 심미과 「무삭제 라미네이트」 고급과정 (Non-prep Veneer Academy)',
+    '강남 Blanche 치과 최소삭제 라미네이트 과정 수료',
     'Noble Medical 보톡스 Course',
     'Shockwave Regenerative Medicine Training Program (체외충격파)',
   ],
@@ -89,7 +93,7 @@ export const DOCTOR = {
   media: [
     '한국경제TV 「건강매거진」 백세시대 건강장수 돕는 임플란트 치료편 출연',
   ],
-  bestAt: ['implant', 'luminate', 'tmj'],
+  bestAt: ['implant', 'bloomnate', 'tmj'],
 }
 
 export const EQUIPMENT = [

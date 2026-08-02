@@ -75,7 +75,7 @@ function implantWidget(): string {
   </div>`)
 }
 
-/* ============ 2. 루미네이트 — 미소 밝기 미리보기 + 삭제량 비교 ============ */
+/* ============ 2. 블룸네이트 — 미소 밝기 미리보기 + 삭제량 비교 ============ */
 function luminateWidget(): string {
   return shell('luminate-sim', 'Interactive · 미소 미리보기', '슬라이더로 밝아지는 미소를 미리 느껴보세요', '실제 진료에서는 RAY 페이스스캐너와 3D 프린터로 약 25분 만에 "나의 새 미소"를 눈으로 직접 확인합니다.', `
   <div class="grid md:grid-cols-2 gap-8">
@@ -104,7 +104,7 @@ function luminateWidget(): string {
     <!-- 삭제량 비교 토글 -->
     <div data-stepper="0" class="rounded-3xl bg-cream border border-ink/6 p-6">
       <div class="grid grid-cols-2 gap-2 mb-4">
-        ${stepBtn(0, '무삭제 · 최소삭제', 'LumiNate 방식')}
+        ${stepBtn(0, '무삭제 · 최소삭제', 'BloomNate 방식')}
         ${stepBtn(1, '기존 라미네이트', '일반적 삭제 방식')}
       </div>
       <svg viewBox="0 0 320 190" class="w-full h-auto" role="img" aria-label="치아 삭제량 비교 모식도">
@@ -436,7 +436,7 @@ function botoxWidget(): string {
 export function interactiveSection(slug: string): string {
   switch (slug) {
     case 'implant': return implantWidget()
-    case 'luminate': return luminateWidget()
+    case 'bloomnate': return luminateWidget()
     case 'tmj': return tmjWidget()
     case 'aesthetic': return aestheticWidget()
     case 'endo': return endoWidget()

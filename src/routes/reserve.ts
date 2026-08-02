@@ -27,10 +27,10 @@ ${pageHero('Reservation', '예약·상담 <span class="font-disp text-shine">신
       <p class="mt-4 font-extrabold text-lg">네이버 예약</p>
       <p class="mt-1 text-white/70 text-[13.5px]">원하는 날짜·시간 직접 선택</p>
     </a>
-    <a href="${CLINIC.kakao}" target="_blank" rel="noopener" class="reveal rounded-3xl bg-[#fee500] text-[#191919] p-7 hover:-translate-y-1 transition-transform" data-tilt data-tilt-max="5">
-      <i class="fas fa-comment text-2xl"></i>
-      <p class="mt-4 font-extrabold text-lg">카카오톡 상담</p>
-      <p class="mt-1 text-[#191919]/60 text-[13.5px]">채팅으로 편하게 문의</p>
+    <a href="${CLINIC.naverTalk}" target="_blank" rel="noopener" class="reveal rounded-3xl bg-white border-2 border-[#03c75a] text-[#03c75a] p-7 hover:-translate-y-1 transition-transform" data-tilt data-tilt-max="5">
+      <i class="fas fa-comment-dots text-2xl"></i>
+      <p class="mt-4 font-extrabold text-lg">네이버 톡톡 상담</p>
+      <p class="mt-1 text-[#03c75a]/70 text-[13.5px]">채팅으로 편하게 문의</p>
     </a>
   </div>
 </section>
@@ -85,7 +85,7 @@ ${pageHero('Reservation', '예약·상담 <span class="font-disp text-shine">신
     </aside>
   </div>
 </section>`
-  return c.html(layout({ title: '예약·상담 신청', desc: `검단퍼스트치과 예약·상담 신청 — 온라인 신청, 네이버 예약, 카카오톡 상담, 전화 ${CLINIC.phone}. 확인 후 순차적으로 연락드립니다.`, path: '/reserve' }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
+  return c.html(layout({ title: '예약·상담 신청', desc: `검단퍼스트치과 예약·상담 신청 — 온라인 신청, 네이버 예약, 네이버 톡톡 상담, 전화 ${CLINIC.phone}. 확인 후 순차적으로 연락드립니다.`, path: '/reserve' }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
 })
 
 reserve.post('/reserve', async (c) => {
@@ -98,9 +98,37 @@ reserve.post('/reserve', async (c) => {
   if (form.privacy_agree !== '1') {
     return c.redirect(`/reserve?error=${encodeURIComponent('개인정보 수집·이용에 동의해 주세요.')}`)
   }
+  const category = String(form.category || '').slice(0, 60)
+  const preferredAt = String(form.preferred_at || '').slice(0, 60)
+  const message = String(form.message || '').slice(0, 800)
   await c.env.DB.prepare(
     'INSERT INTO reservations (name, phone, category, preferred_at, message, privacy_agree) VALUES (?, ?, ?, ?, ?, 1)'
-  ).bind(name, phone, String(form.category || '').slice(0, 60), String(form.preferred_at || '').slice(0, 60), String(form.message || '').slice(0, 800)).run()
+  ).bind(name, phone, category, preferredAt, message).run()
+
+  // 신규 예약 이메일 알림 (RESEND_API_KEY 설정 시 활성화 — 실패해도 접수에는 영향 없음)
+  if (c.env.RESEND_API_KEY) {
+    const notify = fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${c.env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        from: '검단퍼스트치과 홈페이지 <noreply@gdfirstdc.kr>',
+        to: [c.env.NOTIFY_EMAIL || 'gdfirstdental@naver.com'],
+        subject: `[신규 예약·상담] ${name.replace(/[\r\n]/g, ' ')}님 — ${category || '항목 미선택'}`,
+        html: `<div style="font-family:'Apple SD Gothic Neo',sans-serif;max-width:520px;margin:0 auto;border:1px solid #e5e7eb;border-radius:14px;overflow:hidden">
+          <div style="background:#0a1628;color:#fff;padding:18px 22px;font-weight:800;font-size:16px">🦷 새 예약·상담 신청이 접수되었습니다</div>
+          <div style="padding:22px;font-size:14px;line-height:1.8;color:#1f2937">
+            <p><strong>성함</strong> : ${esc(name)}</p>
+            <p><strong>연락처</strong> : <a href="tel:${esc(phone)}">${esc(phone)}</a></p>
+            <p><strong>진료 항목</strong> : ${esc(category) || '선택 안 함'}</p>
+            <p><strong>희망 일시</strong> : ${esc(preferredAt) || '—'}</p>
+            <p><strong>문의 내용</strong> : ${esc(message) || '—'}</p>
+            <p style="margin-top:18px"><a href="https://gdfirstdc.kr/admin/reservations" style="display:inline-block;background:#0a1628;color:#fff;padding:10px 18px;border-radius:8px;text-decoration:none;font-weight:700">관리자에서 확인하기</a></p>
+          </div>
+        </div>`,
+      }),
+    }).catch(() => {})
+    c.executionCtx.waitUntil(notify)
+  }
   return c.redirect('/reserve/done')
 })
 
