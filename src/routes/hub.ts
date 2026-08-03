@@ -238,7 +238,7 @@ async function fetchYoutubeVideos(): Promise<YtVideo[]> {
 hub.get('/tv', async (c) => {
   const videos = await fetchYoutubeVideos()
   const body = `
-${pageHero('Dad the Dentist', '유튜브<br><span class="font-disp text-shine">「치과아빠」</span>', '아이 셋 아빠이자 통합치의학 전문의, 김희수 원장이 전하는 솔직한 치아 이야기.')}
+${pageHero('Dad the Dentist', '유튜브<br><span class="font-disp text-shine">「치과아빠」</span>', '진솔하고 편안하게. 성모병원 전문의 김희수 원장이 전하는 치아 이야기.')}
 <section id="tv-videos" class="max-w-6xl mx-auto px-5 py-12">
   <div class="flex flex-wrap items-center justify-between gap-4 mb-8">
     <p class="text-[13.5px] text-ink/45 font-medium"><i class="fab fa-youtube text-[#ff0000] mr-1.5"></i>채널 최신 영상 기준으로 자동 업데이트됩니다.</p>
