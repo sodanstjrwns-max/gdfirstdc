@@ -21,7 +21,12 @@ const NAV = [
   { href: '/treatments', label: '진료과목', children: TREATMENTS.map((t) => ({ href: `/treatments/${t.slug}`, label: t.name })) },
   { href: '/cases', label: '치료사례' },
   { href: '/pricing', label: '치료비용' },
-  { href: '/blog', label: '칼럼' },
+  { href: '/content', label: '콘텐츠', children: [
+    { href: '/symptom-check', label: 'AI 증상체크' },
+    { href: '/tv', label: '치과아빠 TV' },
+    { href: '/encyclopedia', label: '치과 백과사전' },
+    { href: '/blog', label: '건강칼럼' },
+  ] },
   { href: '/notice', label: '공지사항' },
   { href: '/faq', label: 'FAQ' },
   { href: '/location', label: '오시는길' },

@@ -11,6 +11,7 @@ import auth from './routes/auth'
 import content from './routes/content'
 import admin from './routes/admin'
 import reserve from './routes/reserve'
+import hub from './routes/hub'
 import type { AppEnv } from './types'
 
 const app = new Hono<AppEnv>()
@@ -127,6 +128,10 @@ app.get('/sitemap.xml', async (c) => {
     ['/location', '0.8', 'monthly'],
     ['/reserve', '0.9', 'monthly'],
     ['/cases', '0.8', 'weekly'],
+    ['/content', '0.8', 'monthly'],
+    ['/symptom-check', '0.8', 'monthly'],
+    ['/tv', '0.7', 'weekly'],
+    ['/encyclopedia', '0.8', 'monthly'],
     ['/blog', '0.8', 'weekly'],
     ['/notice', '0.6', 'weekly'],
   ]
@@ -154,6 +159,7 @@ ${urls.map((u) => `  <url><loc>${CLINIC.siteUrl}${u.loc}</loc><lastmod>${today}<
 app.route('/', auth)
 app.route('/', content)
 app.route('/', reserve)
+app.route('/', hub)
 app.route('/', admin)
 app.route('/', pages)
 

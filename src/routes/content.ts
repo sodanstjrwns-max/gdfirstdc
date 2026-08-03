@@ -103,6 +103,25 @@ content.get('/cases/:id', async (c) => {
   await c.env.DB.prepare('UPDATE before_after SET views = views + 1 WHERE id = ?').bind(id).run()
   const t = r.category ? getTreatment(r.category) : null
 
+  const isMember = !!c.get('user') || !!c.get('isAdmin')
+  const repKey = r.intra_after_key || r.pano_after_key || r.intra_before_key || r.pano_before_key
+  const lockedBlock = `
+  ${repKey ? `<figure class="mb-8"><figcaption class="text-[13px] font-extrabold text-ink mb-3 uppercase tracking-wide">대표 사진</figcaption><img src="${imgUrl(repKey)}" alt="${esc(r.title)} 대표 사진" class="w-full rounded-3xl border border-ink/8" loading="lazy" decoding="async"></figure>` : ''}
+  <div id="member-lock" class="relative rounded-3xl bg-ink text-white p-9 sm:p-12 text-center overflow-hidden">
+    <div class="absolute -top-16 -right-16 w-56 h-56 rounded-full bg-gold-500/15 blur-[80px]" aria-hidden="true"></div>
+    <span class="relative inline-flex w-14 h-14 rounded-2xl bg-white/10 items-center justify-center text-xl text-gold-400 mb-5"><i class="fas fa-lock"></i></span>
+    <h2 class="relative text-xl sm:text-2xl font-extrabold tracking-tight">전후비교 슬라이더와 치료 이야기는<br>회원에게만 공개됩니다.</h2>
+    <p class="relative mt-3 text-[13.5px] text-white/50 leading-relaxed">환자 프라이버시 보호를 위해 상세 기록은 회원 인증 후 열람하실 수 있습니다.<br>가입은 30초면 충분합니다.</p>
+    <div class="relative mt-7 flex flex-wrap justify-center gap-2.5">
+      <a href="/signup" class="btn-3d px-7 py-3.5 rounded-full bg-gold-500 text-ink text-sm font-extrabold hover:bg-gold-400 transition">30초 회원가입</a>
+      <a href="/login?next=${encodeURIComponent(`/cases/${r.id}`)}" class="px-7 py-3.5 rounded-full border border-white/20 text-white text-sm font-extrabold hover:bg-white/10 transition">로그인</a>
+    </div>
+  </div>`
+  const memberBlock = `
+  ${baCompare(r.intra_before_key, r.intra_after_key, '구내포토')}
+  ${baCompare(r.pano_before_key, r.pano_after_key, '파노라마')}
+  ${r.description ? `<div class="prose-clinic mt-4"><h2>치료 이야기</h2>${r.description.split('\n').filter(Boolean).map((p) => `<p>${esc(p)}</p>`).join('')}</div>` : ''}`
+
   const body = `
 <section class="page-hero relative bg-ink text-white pt-36 pb-14 sm:pt-44 px-5 overflow-hidden">
   <div class="absolute -top-32 -left-32 w-[480px] h-[480px] rounded-full bg-navy-600/25 blur-[130px]" aria-hidden="true"></div>
@@ -115,9 +134,7 @@ content.get('/cases/:id', async (c) => {
   </div>
 </section>
 <article class="max-w-3xl mx-auto px-5 py-12">
-  ${baCompare(r.intra_before_key, r.intra_after_key, '구내포토')}
-  ${baCompare(r.pano_before_key, r.pano_after_key, '파노라마')}
-  ${r.description ? `<div class="prose-clinic mt-4"><h2>치료 이야기</h2>${r.description.split('\n').filter(Boolean).map((p) => `<p>${esc(p)}</p>`).join('')}</div>` : ''}
+  ${isMember ? memberBlock : lockedBlock}
   <p class="mt-10 text-[11.5px] text-ink/35 bg-white border border-ink/8 rounded-2xl p-5 leading-relaxed"><i class="fas fa-circle-info mr-1.5"></i>본 치료사례는 환자 동의 하에 게시되었으며, 치료 결과는 개인에 따라 다를 수 있습니다.</p>
   ${t ? `
   <div class="mt-6 rounded-3xl bg-ink text-white p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 relative overflow-hidden" data-tilt data-tilt-max="5">
