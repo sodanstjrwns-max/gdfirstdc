@@ -4,7 +4,7 @@ import { layout, esc, pageHero } from '../lib/layout'
 import { CLINIC } from '../data/clinic'
 import { TREATMENTS, getTreatment } from '../data/treatments'
 import { SYMPTOM_GROUPS } from '../data/symptoms'
-import { ENCYCLOPEDIA, ENCY_CATEGORIES } from '../data/encyclopedia'
+import { ENCY_CATEGORIES, getReleasedEncyclopedia, encyTomorrowCount, ENCY_PER_DAY } from '../data/encyclopedia'
 import type { AppEnv } from '../types'
 
 const hub = new Hono<AppEnv>()
@@ -287,17 +287,20 @@ document.querySelectorAll('.yt-card .yt-thumb').forEach(function(btn){
 // ============ 치과 백과사전 ============
 hub.get('/encyclopedia', (c) => {
   const cat = c.req.query('category') || ''
-  const items = cat ? ENCYCLOPEDIA.filter((e) => e.category === cat) : ENCYCLOPEDIA
+  const released = getReleasedEncyclopedia()
+  const tomorrow = encyTomorrowCount()
+  const items = cat ? released.filter((e) => e.category === cat) : released
   const jsonLd = [{
     '@context': 'https://schema.org',
     '@type': 'DefinedTermSet',
     name: '검단퍼스트치과 치과 백과사전',
     description: '치과 용어와 치료 상식을 쉽게 풀어낸 백과사전',
-    hasDefinedTerm: ENCYCLOPEDIA.slice(0, 30).map((e) => ({ '@type': 'DefinedTerm', name: e.term, description: e.def })),
+    hasDefinedTerm: released.slice(0, 30).map((e) => ({ '@type': 'DefinedTerm', name: e.term, description: e.def })),
   }]
   const body = `
-${pageHero('Dental Encyclopedia', '치과 용어,<br><span class="font-disp text-shine">쉽게 풀었습니다.</span>', `진료실에서 들었던 그 단어, 여기서 확인하세요. 총 ${ENCYCLOPEDIA.length}개 용어를 담았습니다.`)}
+${pageHero('Dental Encyclopedia', '치과 용어,<br><span class="font-disp text-shine">쉽게 풀었습니다.</span>', `진료실에서 들었던 그 단어, 여기서 확인하세요. 현재 ${released.length}개 용어가 공개되어 있습니다.`)}
 <section id="ency-app" class="max-w-4xl mx-auto px-5 py-12">
+  ${tomorrow > 0 ? `<div id="ency-daily-badge" class="mb-6 flex items-center justify-center gap-2 rounded-full bg-ink text-white/90 px-5 py-3 text-[12.5px] font-bold"><i class="fas fa-sparkles text-gold-500"></i>매일 자정, 새 용어 ${ENCY_PER_DAY}개가 자동으로 추가됩니다 — 내일 ${tomorrow}개 공개 예정</div>` : ''}
   <div class="relative mb-6">
     <i class="fas fa-magnifying-glass absolute left-5 top-1/2 -translate-y-1/2 text-ink/25"></i>
     <input id="ency-search" type="search" placeholder="용어 검색 — 예: 임플란트, 신경치료, 지르코니아" class="w-full rounded-full border border-ink/12 bg-white pl-12 pr-5 py-4 text-[14.5px] font-medium focus:outline-none focus:ring-2 focus:ring-ink/60" autocomplete="off">
@@ -347,7 +350,7 @@ ${pageHero('Dental Encyclopedia', '치과 용어,<br><span class="font-disp text
   });
 })();
 </script>`
-  return c.html(layout({ title: '치과 백과사전 — 치과 용어 쉽게 알기', desc: `임플란트, 신경치료, 지르코니아, 턱관절 장애까지 — 검단퍼스트치과가 어려운 치과 용어 ${ENCYCLOPEDIA.length}개를 환자 눈높이로 쉽게 풀었습니다.`, path: '/encyclopedia', jsonLd }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
+  return c.html(layout({ title: '치과 백과사전 — 치과 용어 쉽게 알기', desc: `임플란트, 신경치료, 지르코니아, 턱관절 장애까지 — 검단퍼스트치과가 어려운 치과 용어 ${released.length}개를 환자 눈높이로 쉽게 풀었습니다. 매일 새 용어가 추가됩니다.`, path: '/encyclopedia', jsonLd }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
 })
 
 export default hub
