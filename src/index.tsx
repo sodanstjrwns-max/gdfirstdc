@@ -12,6 +12,7 @@ import content from './routes/content'
 import admin from './routes/admin'
 import reserve from './routes/reserve'
 import hub from './routes/hub'
+import philosophy from './routes/philosophy'
 import type { AppEnv } from './types'
 
 const app = new Hono<AppEnv>()
@@ -120,6 +121,7 @@ app.get('/sitemap.xml', async (c) => {
   const staticPaths: [string, string, string][] = [
     ['/', '1.0', 'weekly'],
     ['/about', '0.9', 'monthly'],
+    ['/philosophy', '0.8', 'monthly'],
     ['/treatments', '0.9', 'monthly'],
     ['/faq', '0.9', 'monthly'],
     ['/pricing', '0.9', 'monthly'],
@@ -160,6 +162,7 @@ app.route('/', auth)
 app.route('/', content)
 app.route('/', reserve)
 app.route('/', hub)
+app.route('/', philosophy)
 app.route('/', admin)
 app.route('/', pages)
 
