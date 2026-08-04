@@ -521,8 +521,6 @@ ${pageHero('About Us', '광고 대신,<br><span class="font-disp text-shine">진
     worksFor: { '@id': `${CLINIC.siteUrl}/#clinic` },
     image: `${CLINIC.siteUrl}/static/images/doctor_lobby.webp`,
     alumniOf: [
-      { '@type': 'CollegeOrUniversity', name: '경희대학교' },
-      { '@type': 'CollegeOrUniversity', name: '전북대학교 치의학전문대학원' },
       { '@type': 'CollegeOrUniversity', name: '가톨릭대학교 부천성모병원 통합치의학과 (레지던트)' },
     ],
     hasCredential: [

@@ -79,7 +79,7 @@ export function clinicJsonLd(): object {
       name: CLINIC.doctor,
       jobTitle: '대표원장',
       description: '보건복지부 인증 통합치의학 전문의, 대한치과보철학회 인증 우수보철의사, Harvard Implant CE 수료, 오스템·덴티스 임상자문연구위원',
-      alumniOf: ['경희대학교', '전북대학교 치의학전문대학원'],
+      alumniOf: ['가톨릭대학교 부천성모병원 통합치의학과 (레지던트)'],
     },
     medicalSpecialty: 'Dentistry',
     isAcceptingNewPatients: true,
