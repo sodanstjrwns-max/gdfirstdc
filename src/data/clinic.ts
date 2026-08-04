@@ -51,14 +51,12 @@ export const DOCTOR = {
     '보건복지부 산하 대한치과보철학회 인증 「우수보철의사」',
   ],
   career: [
-    '휘문고등학교 졸업',
-    '육군 수도기계화보병사단(맹호부대) 기갑수색대대 만기 제대',
-    '경희대학교 학사',
-    '전북대학교 치의학전문대학원 석사',
+    '보건복지부 인증 통합치의학 전문의 (대학병원 정식 수련과정)',
+    '보건복지부 산하 대한치과보철학회 인증 「우수보철의사」',
     '가톨릭대학교 부천성모병원 통합치의학과 레지던트 과정 수료',
-    '필리핀 카푸친 수녀원 해외봉사단 치과 진료팀',
     '미국 Harvard School of Dental Medicine Implant Dentistry CE',
     '서울대학교 치의학대학원 Periodontal / Implant Therapy',
+    '필리핀 카푸친 수녀원 해외봉사단 치과 진료팀',
   ],
   courses: [
     'CIRD Advanced Implant Sinus / Ridge Augmentation Course',
