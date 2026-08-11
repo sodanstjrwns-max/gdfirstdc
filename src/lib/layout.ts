@@ -21,16 +21,18 @@ const NAV = [
   { href: '/stories', label: '스토리' },
   { href: '/treatments', label: '진료과목', children: TREATMENTS.map((t) => ({ href: `/treatments/${t.slug}`, label: t.name })) },
   { href: '/cases', label: '치료사례' },
-  { href: '/pricing', label: '치료비용' },
   { href: '/content', label: '콘텐츠', children: [
     { href: '/symptom-check', label: 'AI 증상체크' },
     { href: '/tv', label: '치과아빠 TV' },
     { href: '/encyclopedia', label: '치과 백과사전' },
     { href: '/blog', label: '건강칼럼' },
   ] },
-  { href: '/notice', label: '공지사항' },
-  { href: '/faq', label: 'FAQ' },
-  { href: '/location', label: '오시는길' },
+  { href: '/notice', label: '안내사항', children: [
+    { href: '/pricing', label: '치료비용' },
+    { href: '/notice', label: '공지사항' },
+    { href: '/faq', label: 'FAQ' },
+    { href: '/location', label: '오시는길' },
+  ] },
 ]
 
 export function clinicJsonLd(): object {
@@ -240,10 +242,13 @@ ${meta.path === '/' ? '<div id="curtain" aria-hidden="true"><span class="curtain
       <button id="mobile-menu-close" class="w-11 h-11 rounded-full bg-white/10 text-white flex items-center justify-center" aria-label="메뉴 닫기"><i class="fas fa-xmark text-xl"></i></button>
     </div>
     <nav class="mt-10 space-y-1">
-      ${NAV.map((n, i) => `<a href="${n.href}" class="mobile-link flex items-baseline gap-3 py-3 border-b border-white/10" style="--d:${i * 0.05}s">
-        <span class="text-gold-400 text-xs font-mono">0${i + 1}</span>
-        <span class="text-white text-3xl font-extrabold tracking-tightest">${n.label}</span>
-      </a>`).join('')}
+      ${NAV.map((n, i) => `<div class="border-b border-white/10">
+        <a href="${n.href}" class="mobile-link flex items-baseline gap-3 py-3" style="--d:${i * 0.05}s">
+          <span class="text-gold-400 text-xs font-mono">0${i + 1}</span>
+          <span class="text-white text-3xl font-extrabold tracking-tightest">${n.label}</span>
+        </a>
+        ${n.children ? `<div class="flex flex-wrap gap-x-4 gap-y-1 pb-3 pl-8">${n.children.map((ch) => `<a href="${ch.href}" class="text-white/50 text-[13.5px] font-semibold py-1">${ch.label}</a>`).join('')}</div>` : ''}
+      </div>`).join('')}
     </nav>
     <div class="mt-8 flex flex-wrap gap-2">
       ${TREATMENTS.slice(0, 6).map((t) => `<a href="/treatments/${t.slug}" data-tilt data-tilt-max="14" class="px-4 py-2 rounded-full border border-white/20 text-white/70 text-sm">${t.name}</a>`).join('')}
