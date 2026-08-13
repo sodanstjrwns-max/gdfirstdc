@@ -131,7 +131,7 @@ export const PRICING: PriceCategory[] = [
       { name: 'Band & Loop', price: 250000 },
       { name: 'Crown & loop', price: 250000 },
       { name: '불소', price: 15000 },
-      { name: '스켈링', price: 50000 },
+      { name: '스케일링', price: 50000 },
       { name: 'Nance Holding Arch', price: 250000 },
     ],
   },
