@@ -506,7 +506,8 @@ ${pageHero('About Us', '광고 대신,<br><span class="font-disp text-shine">진
 <section id="equipment-full" class="max-w-6xl mx-auto px-5 py-20">
   <header class="mb-10">
     <p class="reveal text-gold-600 text-xs font-bold tracking-[0.3em] uppercase">Equipment</p>
-    <h2 class="reveal mt-2 text-3xl sm:text-4xl font-extrabold text-ink tracking-tightest">첨단 장비</h2>
+    <h2 class="reveal mt-2 text-3xl sm:text-4xl font-extrabold text-ink tracking-tightest">ZEISS 미세현미경부터<br class="sm:hidden"> 체외충격파까지 — 9가지 장비</h2>
+  <p class="reveal mt-3 text-[14px] text-ink/45 max-w-2xl leading-relaxed">장비 이름만 나열하지 않습니다. 각 장비로 <strong class="text-ink/70">무엇을 다르게 하는지</strong>까지 확인하세요.</p>
   </header>
   <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3" data-stagger>
     ${EQUIPMENT.map((e, i) => `<article class="bento rounded-3xl bg-white border border-ink/8 p-6 relative"><span class="absolute top-5 right-6 text-[11px] font-mono text-ink/25">${String(i + 1).padStart(2, '0')}</span><span class="w-11 h-11 rounded-xl bg-ink/[0.04] text-ink flex items-center justify-center"><i class="fas ${e.icon}"></i></span><h3 class="mt-4 font-extrabold text-ink text-[15.5px]">${e.name}</h3><p class="mt-2 text-[13.5px] text-ink/50 leading-relaxed">${e.desc}</p></article>`).join('')}

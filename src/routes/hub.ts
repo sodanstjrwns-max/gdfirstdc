@@ -4,7 +4,7 @@ import { layout, esc, pageHero } from '../lib/layout'
 import { CLINIC } from '../data/clinic'
 import { TREATMENTS, getTreatment } from '../data/treatments'
 import { SYMPTOM_GROUPS } from '../data/symptoms'
-import { ENCY_CATEGORIES, getReleasedEncyclopedia, encyTomorrowCount, ENCY_PER_DAY } from '../data/encyclopedia'
+import { ENCY_CATEGORIES, getReleasedEncyclopedia, encyTomorrowCount, ENCY_PER_DAY, getReleasedEncyTerm, encyReleaseDate } from '../data/encyclopedia'
 import type { AppEnv } from '../types'
 
 const hub = new Hono<AppEnv>()
@@ -321,7 +321,10 @@ ${pageHero('Dental Encyclopedia', '치과 용어,<br><span class="font-disp text
       </summary>
       <div class="px-6 pb-6 -mt-1">
         <p class="text-[13.5px] text-ink/60 leading-relaxed">${e.def}</p>
-        ${t ? `<a href="/treatments/${t.slug}" class="mt-4 inline-flex items-center gap-1.5 text-[12.5px] font-extrabold text-ink hover:text-gold-600 transition"><i class="fas ${t.icon} text-gold-500"></i>${t.name} 진료 안내 <i class="fas fa-arrow-right text-[10px]"></i></a>` : ''}
+        <div class="mt-4 flex flex-wrap gap-x-5 gap-y-2">
+          <a href="/encyclopedia/${encodeURIComponent(e.term)}" class="inline-flex items-center gap-1.5 text-[12.5px] font-extrabold text-ink hover:text-gold-600 transition"><i class="fas fa-book-open text-gold-500"></i>자세히 보기 <i class="fas fa-arrow-right text-[10px]"></i></a>
+          ${t ? `<a href="/treatments/${t.slug}" class="inline-flex items-center gap-1.5 text-[12.5px] font-extrabold text-ink hover:text-gold-600 transition"><i class="fas ${t.icon} text-gold-500"></i>${t.name} 진료 안내 <i class="fas fa-arrow-right text-[10px]"></i></a>` : ''}
+        </div>
       </div>
     </details>`
     }).join('')}
@@ -351,6 +354,97 @@ ${pageHero('Dental Encyclopedia', '치과 용어,<br><span class="font-disp text
 })();
 </script>`
   return c.html(layout({ title: '치과 백과사전 — 치과 용어 쉽게 알기', desc: `임플란트, 신경치료, 지르코니아, 턱관절 장애까지 — 검단퍼스트치과가 어려운 치과 용어 ${released.length}개를 환자 눈높이로 쉽게 풀었습니다. 매일 새 용어가 추가됩니다.`, path: '/encyclopedia', jsonLd }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
+})
+
+
+// ============ 백과사전 용어 상세 페이지 (용어당 1 URL — SEO/AEO 색인 자산) ============
+hub.get('/encyclopedia/:term', (c) => {
+  const termParam = decodeURIComponent(c.req.param('term'))
+  const found = getReleasedEncyTerm(termParam)
+  if (!found) return c.notFound()
+  const { item: e, index } = found
+  const t = e.related ? getTreatment(e.related) : null
+  const released = getReleasedEncyclopedia()
+  // 같은 카테고리 관련 용어 (자기 자신 제외, 최대 6개)
+  const siblings = released.filter((x) => x.category === e.category && x.term !== e.term).slice(0, 6)
+  const releaseDate = encyReleaseDate(index)
+  // 정의 첫 문장 = 직답 (AEO)
+  const firstSentence = e.def.split('. ')[0] + (e.def.includes('. ') ? '.' : '')
+  const jsonLd = [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'DefinedTerm',
+      '@id': `${CLINIC.siteUrl}/encyclopedia/${encodeURIComponent(e.term)}`,
+      name: e.term,
+      ...(e.reading ? { alternateName: e.reading } : {}),
+      description: e.def,
+      inDefinedTermSet: { '@type': 'DefinedTermSet', name: '검단퍼스트치과 치과 백과사전', url: `${CLINIC.siteUrl}/encyclopedia` },
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'Article',
+      headline: `${e.term}${e.reading ? ` (${e.reading})` : ''} — 뜻과 치료 상식`,
+      description: firstSentence,
+      datePublished: releaseDate,
+      dateModified: releaseDate,
+      author: { '@type': 'Person', name: '김희수', jobTitle: '대표원장 · 보건복지부 인증 통합치의학 전문의', url: `${CLINIC.siteUrl}/about` },
+      publisher: { '@id': `${CLINIC.siteUrl}/#clinic` },
+      mainEntityOfPage: `${CLINIC.siteUrl}/encyclopedia/${encodeURIComponent(e.term)}`,
+    },
+  ]
+  const body = `
+${pageHero('Dental Encyclopedia', `${esc(e.term)}`, e.reading ? `${esc(e.reading)} — ${e.category}` : e.category)}
+<article id="ency-term" class="max-w-3xl mx-auto px-5 py-12">
+  <nav class="mb-8 flex items-center gap-2 text-[12.5px] text-ink/40 font-semibold" aria-label="breadcrumb">
+    <a href="/encyclopedia" class="hover:text-ink transition">치과 백과사전</a>
+    <i class="fas fa-chevron-right text-[9px]"></i>
+    <a href="/encyclopedia?category=${encodeURIComponent(e.category)}" class="hover:text-ink transition">${e.category}</a>
+    <i class="fas fa-chevron-right text-[9px]"></i>
+    <span class="text-ink/70">${esc(e.term)}</span>
+  </nav>
+
+  <section id="ency-answer" class="rounded-3xl bg-ink text-white p-7 sm:p-8 mb-8">
+    <p class="text-gold-400 text-[11px] font-bold tracking-[0.3em] uppercase mb-3"><i class="fas fa-bolt mr-1"></i>한 줄 정의</p>
+    <p class="text-[15.5px] sm:text-[16.5px] leading-[1.85] font-semibold">${firstSentence}</p>
+  </section>
+
+  <section id="ency-detail" class="space-y-4">
+    ${e.def.split('. ').reduce((acc: string[][], sent: string, i: number) => {
+      const gi = Math.floor(i / 3)
+      if (!acc[gi]) acc[gi] = []
+      acc[gi].push(sent)
+      return acc
+    }, []).map((g: string[]) => `<p class="text-[14.5px] text-ink/65 leading-[1.95]">${g.join('. ')}${g[g.length - 1].endsWith('.') || g[g.length - 1].endsWith('다') === false ? '' : '.'}</p>`).join('')}
+  </section>
+
+  <p class="mt-8 text-[12px] text-ink/35">공개일 ${releaseDate} · 작성 검수: 김희수 대표원장 (보건복지부 인증 통합치의학 전문의)</p>
+
+  ${t ? `
+  <aside id="ency-treatment-link" class="mt-10 rounded-3xl border border-gold-500/30 bg-gold-500/8 p-7">
+    <p class="text-gold-600 text-[11px] font-bold tracking-[0.25em] uppercase">Related Treatment</p>
+    <h2 class="mt-2 text-lg font-extrabold text-ink tracking-tight">${t.name} — 검단퍼스트치과 진료 안내</h2>
+    <p class="mt-2 text-[13.5px] text-ink/55 leading-relaxed">${esc(t.tagline)}</p>
+    <a href="/treatments/${t.slug}" class="mt-4 inline-flex items-center gap-2 px-6 py-3 rounded-full bg-ink text-white text-[13px] font-extrabold hover:bg-navy-800 transition"><i class="fas ${t.icon}"></i>${t.name} 자세히 보기</a>
+  </aside>` : ''}
+
+  ${siblings.length ? `
+  <section id="ency-related" class="mt-12">
+    <h2 class="text-sm font-extrabold text-ink/70 tracking-tight mb-4"><i class="fas fa-link text-gold-500 mr-1.5"></i>함께 보면 좋은 ${e.category} 용어</h2>
+    <div class="flex flex-wrap gap-2">
+      ${siblings.map((x) => `<a href="/encyclopedia/${encodeURIComponent(x.term)}" class="px-4 py-2.5 rounded-full bg-white border border-ink/10 text-[13px] font-bold text-ink/65 hover:border-ink hover:text-ink transition">${esc(x.term)}</a>`).join('')}
+    </div>
+  </section>` : ''}
+
+  <div class="mt-12 rounded-3xl bg-gold-500/10 border border-gold-500/25 p-7 text-center">
+    <p class="text-ink font-extrabold tracking-tight">${esc(e.term)}에 대해 더 궁금한 점이 있으신가요?</p>
+    <p class="mt-1 text-[13px] text-ink/50">원장이 직접 상담해 드립니다. 네이버 톡톡은 진료시간 내 30분 이내 답변드립니다.</p>
+    <div class="mt-4 flex flex-wrap justify-center gap-2">
+      <a href="/reserve" class="inline-flex px-6 py-3 rounded-full bg-ink text-white text-[13px] font-extrabold hover:bg-navy-800 transition">예약·상담 신청</a>
+      <a href="/encyclopedia" class="inline-flex px-6 py-3 rounded-full bg-white border border-ink/12 text-ink text-[13px] font-extrabold hover:border-ink transition">전체 용어 보기</a>
+    </div>
+  </div>
+</article>`
+  return c.html(layout({ title: `${e.term} 뜻 — 치과 백과사전`, desc: firstSentence.slice(0, 155), path: `/encyclopedia/${encodeURIComponent(e.term)}`, jsonLd }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
 })
 
 export default hub

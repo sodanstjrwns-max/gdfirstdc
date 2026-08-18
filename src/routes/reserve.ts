@@ -30,7 +30,7 @@ ${pageHero('Reservation', '예약·상담 <span class="font-disp text-shine">신
     <a href="${CLINIC.naverTalk}" target="_blank" rel="noopener" class="reveal rounded-3xl bg-white border-2 border-[#03c75a] text-[#03c75a] p-7 hover:-translate-y-1 transition-transform" data-tilt data-tilt-max="5">
       <i class="fas fa-comment-dots text-2xl"></i>
       <p class="mt-4 font-extrabold text-lg">네이버 톡톡 상담</p>
-      <p class="mt-1 text-[#03c75a]/70 text-[13.5px]">채팅으로 편하게 문의</p>
+      <p class="mt-1 text-[#03c75a]/70 text-[13.5px]">진료시간 내 30분 이내 답변</p>
     </a>
   </div>
 </section>
@@ -40,7 +40,7 @@ ${pageHero('Reservation', '예약·상담 <span class="font-disp text-shine">신
     <div class="lg:col-span-3">
       <div class="reveal rounded-3xl bg-white border border-ink/8 p-7 sm:p-10 shadow-xl shadow-ink/5">
         <h2 class="text-2xl font-extrabold text-ink tracking-tightest"><i class="fas fa-calendar-check text-gold-600 mr-2"></i>온라인 예약·상담 신청</h2>
-        <p class="mt-2 text-ink/45 text-[14px]">확인 후 해당 번호로 연락드려 예약을 확정해 드립니다.</p>
+        <p class="mt-2 text-ink/45 text-[14px]">진료시간 내 접수분은 <strong class="text-ink/70">당일 중</strong>, 야간·휴일 접수분은 <strong class="text-ink/70">다음 진료일 오전</strong>에 연락드려 예약을 확정해 드립니다.</p>
         ${err ? `<p class="mt-5 rounded-xl bg-red-50 text-red-600 text-sm px-4 py-3"><i class="fas fa-circle-exclamation mr-1"></i>${esc(err)}</p>` : ''}
         <form method="POST" action="/reserve" class="mt-7 space-y-5">
           <div class="grid sm:grid-cols-2 gap-4">

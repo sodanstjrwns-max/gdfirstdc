@@ -5,6 +5,7 @@ import { layout } from './lib/layout'
 import { readSession } from './lib/auth'
 import { CLINIC } from './data/clinic'
 import { TREATMENTS } from './data/treatments'
+import { getReleasedEncyclopedia, encyReleaseDate } from './data/encyclopedia'
 import { SEO_REGIONS } from './data/regions'
 import pages from './routes/pages'
 import auth from './routes/auth'
@@ -117,42 +118,48 @@ ${SEO_REGIONS.map((r) => `- ${r.name} (${r.distance}): ${CLINIC.siteUrl}/region/
 )
 
 app.get('/sitemap.xml', async (c) => {
-  const today = new Date().toISOString().slice(0, 10)
-  const staticPaths: [string, string, string][] = [
-    ['/', '1.0', 'weekly'],
-    ['/about', '0.9', 'monthly'],
-    ['/philosophy', '0.8', 'monthly'],
-    ['/treatments', '0.9', 'monthly'],
-    ['/faq', '0.9', 'monthly'],
-    ['/pricing', '0.9', 'monthly'],
-    ['/region', '0.8', 'monthly'],
-    ['/stories', '0.8', 'monthly'],
-    ['/location', '0.8', 'monthly'],
-    ['/reserve', '0.9', 'monthly'],
-    ['/cases', '0.8', 'weekly'],
-    ['/content', '0.8', 'monthly'],
-    ['/symptom-check', '0.8', 'monthly'],
-    ['/tv', '0.7', 'weekly'],
-    ['/encyclopedia', '0.8', 'monthly'],
-    ['/blog', '0.8', 'weekly'],
-    ['/notice', '0.6', 'weekly'],
+  // lastmod 정직성: 페이지 성격별 실제 갱신 시점을 반영 (전 URL 동일 날짜 금지)
+  // - 정적 페이지: 마지막 콘텐츠 개편일을 수동 기록
+  // - 블로그/사례: D1 updated_at
+  // - 백과사전 용어: 해당 용어의 실제 공개일
+  const staticPaths: [string, string, string, string][] = [
+    // [path, priority, changefreq, lastmod]
+    ['/', '1.0', 'weekly', '2026-08-17'],
+    ['/about', '0.9', 'monthly', '2026-08-17'],
+    ['/philosophy', '0.8', 'monthly', '2026-08-17'],
+    ['/treatments', '0.9', 'monthly', '2026-08-13'],
+    ['/faq', '0.9', 'monthly', '2026-08-02'],
+    ['/pricing', '0.9', 'monthly', '2026-08-13'],
+    ['/region', '0.8', 'monthly', '2026-08-02'],
+    ['/stories', '0.8', 'monthly', '2026-08-04'],
+    ['/location', '0.8', 'monthly', '2026-08-02'],
+    ['/reserve', '0.9', 'monthly', '2026-08-02'],
+    ['/cases', '0.8', 'weekly', '2026-08-04'],
+    ['/content', '0.8', 'monthly', '2026-08-03'],
+    ['/symptom-check', '0.8', 'monthly', '2026-08-03'],
+    ['/tv', '0.7', 'weekly', '2026-08-17'],
+    ['/encyclopedia', '0.8', 'daily', new Date().toISOString().slice(0, 10)],
+    ['/blog', '0.8', 'weekly', '2026-08-04'],
+    ['/notice', '0.6', 'weekly', '2026-08-04'],
   ]
-  const urls: { loc: string; priority: string; changefreq: string }[] = [
-    ...staticPaths.map(([loc, priority, changefreq]) => ({ loc, priority, changefreq })),
-    ...TREATMENTS.map((t) => ({ loc: `/treatments/${t.slug}`, priority: t.isCore ? '0.9' : '0.7', changefreq: 'monthly' })),
-    ...SEO_REGIONS.map((r) => ({ loc: `/region/${r.slug}`, priority: '0.7', changefreq: 'monthly' })),
+  const urls: { loc: string; priority: string; changefreq: string; lastmod: string }[] = [
+    ...staticPaths.map(([loc, priority, changefreq, lastmod]) => ({ loc, priority, changefreq, lastmod })),
+    ...TREATMENTS.map((t) => ({ loc: `/treatments/${t.slug}`, priority: t.isCore ? '0.9' : '0.7', changefreq: 'monthly', lastmod: '2026-08-13' })),
+    ...SEO_REGIONS.map((r) => ({ loc: `/region/${r.slug}`, priority: '0.7', changefreq: 'monthly', lastmod: '2026-08-02' })),
+    // 백과사전 용어별 개별 페이지 — 실제 공개일을 lastmod로
+    ...getReleasedEncyclopedia().map((e, i) => ({ loc: `/encyclopedia/${encodeURIComponent(e.term)}`, priority: '0.6', changefreq: 'monthly', lastmod: encyReleaseDate(i) })),
   ]
   try {
-    const blog = (await c.env.DB.prepare('SELECT slug FROM blog_posts WHERE published = 1 ORDER BY created_at DESC LIMIT 500').all<{ slug: string }>()).results
-    urls.push(...blog.map((b) => ({ loc: `/blog/${b.slug}`, priority: '0.6', changefreq: 'monthly' })))
-    const cases = (await c.env.DB.prepare('SELECT id FROM before_after WHERE published = 1 ORDER BY created_at DESC LIMIT 500').all<{ id: number }>()).results
-    urls.push(...cases.map((b) => ({ loc: `/cases/${b.id}`, priority: '0.5', changefreq: 'monthly' })))
+    const blog = (await c.env.DB.prepare('SELECT slug, COALESCE(updated_at, created_at) AS m FROM blog_posts WHERE published = 1 ORDER BY created_at DESC LIMIT 500').all<{ slug: string; m: string }>()).results
+    urls.push(...blog.map((b) => ({ loc: `/blog/${b.slug}`, priority: '0.6', changefreq: 'monthly', lastmod: (b.m || '').slice(0, 10) || '2026-08-04' })))
+    const cases = (await c.env.DB.prepare('SELECT id, COALESCE(updated_at, created_at) AS m FROM before_after WHERE published = 1 ORDER BY created_at DESC LIMIT 500').all<{ id: number; m: string }>()).results
+    urls.push(...cases.map((b) => ({ loc: `/cases/${b.id}`, priority: '0.5', changefreq: 'monthly', lastmod: (b.m || '').slice(0, 10) || '2026-08-04' })))
   } catch {
     /* DB 미준비 시 정적 URL만 */
   }
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${urls.map((u) => `  <url><loc>${CLINIC.siteUrl}${u.loc}</loc><lastmod>${today}</lastmod><changefreq>${u.changefreq}</changefreq><priority>${u.priority}</priority></url>`).join('\n')}
+${urls.map((u) => `  <url><loc>${CLINIC.siteUrl}${u.loc}</loc><lastmod>${u.lastmod}</lastmod><changefreq>${u.changefreq}</changefreq><priority>${u.priority}</priority></url>`).join('\n')}
 </urlset>`
   return c.body(xml, 200, { 'Content-Type': 'application/xml; charset=utf-8' })
 })

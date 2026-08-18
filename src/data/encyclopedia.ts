@@ -174,3 +174,19 @@ export function encyTomorrowCount(now: Date = new Date()): number {
   const released = encyReleasedCount(now)
   return Math.min(ENCY_PER_DAY, ENCYCLOPEDIA.length - released)
 }
+
+/** i번째(0-base) 용어의 실제 공개일 (YYYY-MM-DD, KST) — sitemap lastmod용 */
+export function encyReleaseDate(index: number): string {
+  const [y, m, d] = ENCY_LAUNCH.split('-').map(Number)
+  const launch = Date.UTC(y, m - 1, d)
+  const dayOffset = index < ENCY_INITIAL ? 0 : Math.floor((index - ENCY_INITIAL) / ENCY_PER_DAY) + 1
+  return new Date(launch + dayOffset * 86400000).toISOString().slice(0, 10)
+}
+
+/** term으로 항목 + 인덱스 조회 (공개된 것만) */
+export function getReleasedEncyTerm(term: string, now: Date = new Date()): { item: EncyItem; index: number } | null {
+  const count = encyReleasedCount(now)
+  const index = ENCYCLOPEDIA.findIndex((e) => e.term === term)
+  if (index < 0 || index >= count) return null
+  return { item: ENCYCLOPEDIA[index], index }
+}

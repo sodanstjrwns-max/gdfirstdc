@@ -86,6 +86,22 @@ export function clinicJsonLd(): object {
     },
     medicalSpecialty: 'Dentistry',
     isAcceptingNewPatients: true,
+    slogan: '과잉진료 없는 1인 책임진료 — 상담부터 사후관리까지 원장이 직접',
+    knowsAbout: ['임플란트', '무삭제 라미네이트', '턱관절 치료', '미세현미경 신경치료', '사랑니 발치', '잇몸치료', '보철치료'],
+    contactPoint: [
+      { '@type': 'ContactPoint', contactType: 'reservations', telephone: CLINIC.phone, availableLanguage: 'Korean', hoursAvailable: { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Friday'], opens: '09:30', closes: '18:30' } },
+      { '@type': 'ContactPoint', contactType: 'customer support', url: CLINIC.naverTalk, availableLanguage: 'Korean' },
+    ],
+    potentialAction: {
+      '@type': 'ReserveAction',
+      target: {
+        '@type': 'EntryPoint',
+        urlTemplate: `${CLINIC.siteUrl}/reserve`,
+        inLanguage: 'ko',
+        actionPlatform: ['http://schema.org/DesktopWebPlatform', 'http://schema.org/MobileWebPlatform'],
+      },
+      result: { '@type': 'Reservation', name: '진료 예약' },
+    },
   }
 }
 
@@ -318,7 +334,7 @@ ${meta.path === '/' ? '<div id="curtain" aria-hidden="true"><span class="curtain
         <a href="/reserve" class="btn-3d px-7 py-4 rounded-full bg-gold-500 text-ink font-extrabold hover:bg-gold-400 transition"><i class="fas fa-calendar-check mr-2"></i>예약·상담 신청</a>
         <a href="tel:${CLINIC.phone}" class="px-7 py-4 rounded-full border border-white/25 text-white font-bold hover:bg-white/10 transition"><i class="fas fa-phone mr-2 text-gold-400"></i>${CLINIC.phone}</a>
         <a href="${CLINIC.naverBooking}" target="_blank" rel="noopener" class="px-6 py-4 rounded-full bg-[#03c75a] text-white font-extrabold hover:brightness-110 transition"><span class="inline-flex w-5 h-5 rounded bg-white text-[#03c75a] items-center justify-center font-black text-[11px] mr-2 align-[-3px]">N</span>네이버 예약</a>
-        <a href="${CLINIC.naverTalk}" target="_blank" rel="noopener" class="px-6 py-4 rounded-full bg-white text-[#03c75a] font-extrabold hover:brightness-95 transition"><i class="fas fa-comment-dots mr-2"></i>톡톡 상담</a>
+        <a href="${CLINIC.naverTalk}" target="_blank" rel="noopener" class="px-6 py-4 rounded-full bg-white text-[#03c75a] font-extrabold hover:brightness-95 transition"><i class="fas fa-comment-dots mr-2"></i>톡톡 상담 <span class="text-[11px] font-bold opacity-70">진료시간 내 30분 답변</span></a>
       </div>
     </div>
     <div class="grid sm:grid-cols-2 lg:grid-cols-5 gap-8 py-10 text-[13.5px]">
