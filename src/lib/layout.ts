@@ -213,6 +213,8 @@ ${meta.path === '/' ? '<link rel="preload" as="image" href="/static/images/hero_
 <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
 <link href="/static/style.css" rel="stylesheet">
 ${jsonLd.map((j) => `<script type="application/ld+json">${JSON.stringify(j)}</script>`).join('\n')}
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-15B8GNDDN3"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-15B8GNDDN3',{anonymize_ip:true});</script>
 </head>
 <body class="bg-cream text-ink antialiased overflow-x-hidden">
 <div class="grain-overlay" aria-hidden="true"></div>
