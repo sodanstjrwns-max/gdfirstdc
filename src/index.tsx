@@ -55,6 +55,7 @@ const INDEXNOW_KEY = '590444d00bd12772f2739457f987a200'
 app.get(`/${INDEXNOW_KEY}.txt`, (c) => c.text(INDEXNOW_KEY))
 
 // ===== SEO/AEO: robots.txt / sitemap.xml / llms.txt =====
+app.get('/naverfd988407159025b7e1d55524212b7a9d.html', (c) => c.html('naver-site-verification: naverfd988407159025b7e1d55524212b7a9d.html'))
 app.get('/df71908e181b46a5a01a62c02c5af9db.txt', (c) => c.text('df71908e181b46a5a01a62c02c5af9db'))
 const AI_BOTS = ['GPTBot', 'OAI-SearchBot', 'ChatGPT-User', 'ClaudeBot', 'Claude-Web', 'anthropic-ai', 'PerplexityBot', 'Perplexity-User', 'Google-Extended', 'Applebot-Extended', 'Amazonbot', 'cohere-ai', 'CCBot', 'Bytespider', 'meta-externalagent', 'Yeti', 'Daum', 'NaverBot']
 
