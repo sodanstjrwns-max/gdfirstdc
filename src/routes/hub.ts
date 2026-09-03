@@ -320,7 +320,7 @@ ${pageHero('Dental Encyclopedia', '치과 용어,<br><span class="font-disp text
         <i class="fas fa-chevron-down ml-auto text-ink/25 text-xs group-open:rotate-180 transition-transform"></i>
       </summary>
       <div class="px-6 pb-6 -mt-1">
-        <p class="text-[13.5px] text-ink/60 leading-relaxed">${e.def}</p>
+        <p class="text-[13.5px] text-ink/60 leading-relaxed">${(() => { const fs = e.def.split('. ')[0]; return fs.length < e.def.length ? esc(fs) + '.' : esc(e.def) })()}</p>
         <div class="mt-4 flex flex-wrap gap-x-5 gap-y-2">
           <a href="/encyclopedia/${encodeURIComponent(e.term)}" class="inline-flex items-center gap-1.5 text-[12.5px] font-extrabold text-ink hover:text-gold-600 transition"><i class="fas fa-book-open text-gold-500"></i>자세히 보기 <i class="fas fa-arrow-right text-[10px]"></i></a>
           ${t ? `<a href="/treatments/${t.slug}" class="inline-flex items-center gap-1.5 text-[12.5px] font-extrabold text-ink hover:text-gold-600 transition"><i class="fas ${t.icon} text-gold-500"></i>${t.name} 진료 안내 <i class="fas fa-arrow-right text-[10px]"></i></a>` : ''}

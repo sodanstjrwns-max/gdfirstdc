@@ -143,7 +143,7 @@ pages.get('/', (c) => {
   <header class="mb-10 flex flex-wrap items-end justify-between gap-4">
     <div>
       <p class="reveal text-gold-600 text-xs font-bold tracking-[0.3em] uppercase">Signature</p>
-      <h2 class="reveal mt-2 text-3xl sm:text-5xl font-extrabold text-ink tracking-tightest">가장 잘하는 세 가지</h2>
+      <h2 class="reveal mt-2 text-3xl sm:text-5xl font-extrabold text-ink tracking-tightest">치아를 잃었거나, 미소가 고민이거나,<br class="sm:hidden"> 턱이 아프시거나.</h2>
     </div>
     <a href="/treatments" class="reveal px-5 py-2.5 rounded-full border border-ink/15 text-sm font-bold text-ink/70 hover:bg-ink hover:text-white transition">전체 진료 <i class="fas fa-arrow-right ml-1 text-xs"></i></a>
   </header>
@@ -243,7 +243,7 @@ pages.get('/', (c) => {
 <section id="equipment-section" class="max-w-6xl mx-auto px-5 py-20 sm:py-24">
   <header class="mb-10">
     <p class="reveal text-gold-600 text-xs font-bold tracking-[0.3em] uppercase">Equipment</p>
-    <h2 class="reveal mt-2 text-3xl sm:text-5xl font-extrabold text-ink tracking-tightest">정확한 진단에<br class="sm:hidden"> 아낌없이 씁니다.</h2>
+    <h2 class="reveal mt-2 text-3xl sm:text-5xl font-extrabold text-ink tracking-tightest">왜 아픈지 모른 채<br class="sm:hidden"> 치료받지 않으시도록.</h2>
     <p class="reveal mt-4 text-ink/45 text-[15px]">광고비 대신 장비에 투자합니다. 좋은 치료는 정확한 진단에서 시작되니까요.</p>
   </header>
   <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3" data-stagger>
@@ -454,7 +454,7 @@ ${pageHero('About Us', '광고 대신,<br><span class="font-disp text-shine">진
 <section id="clinic-gallery" class="max-w-6xl mx-auto px-5 py-20">
   <header class="mb-10">
     <p class="reveal text-gold-600 text-xs font-bold tracking-[0.3em] uppercase">Inside the Clinic</p>
-    <h2 class="reveal mt-2 text-3xl sm:text-4xl font-extrabold text-ink tracking-tightest">공간에도<br class="sm:hidden"> 진심을 담았습니다.</h2>
+    <h2 class="reveal mt-2 text-3xl sm:text-4xl font-extrabold text-ink tracking-tightest">치과 특유의 소리와 냄새가<br class="sm:hidden"> 불편하셨다면.</h2>
     <p class="reveal mt-4 text-ink/45 text-[15px]">긴장을 덜어드리는 공간 설계 — 실제 원내 모습 그대로입니다.</p>
   </header>
   <div class="grid grid-cols-2 lg:grid-cols-4 gap-3" data-stagger>
@@ -1200,6 +1200,21 @@ ${pageHero('Pricing', '비용까지,<br><span class="font-disp text-shine">투�
         { '@type': 'Question', name: '검단퍼스트치과 크라운·인레이 비용은 얼마인가요?', acceptedAnswer: { '@type': 'Answer', text: '지르코니아 크라운 50만원(전치부 PFZ 60만원), PFM 크라운 45만원, 세라믹인레이 30만~36만원, 세라믹온레이 40만원입니다.' } },
         { '@type': 'Question', name: '치아미백 비용은 얼마인가요?', acceptedAnswer: { '@type': 'Answer', text: '전문가미백 1회 14만원, 2회 27만원, 3회 38만원이며 전문가(3회)+자가(4회) 패키지는 63만원입니다.' } },
       ],
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'OfferCatalog',
+      name: '검단퍼스트치과 비급여 진료비용 전체 수가표',
+      url: `${CLINIC.siteUrl}/pricing`,
+      itemListElement: nonInsured.flatMap((cat) =>
+        cat.items.filter((it) => it.price > 0).map((it) => ({
+          '@type': 'Offer',
+          itemOffered: { '@type': 'MedicalProcedure', name: `${cat.label} — ${it.name}` },
+          price: it.price,
+          priceCurrency: 'KRW',
+          ...(it.note ? { description: it.note } : {}),
+        }))
+      ),
     },
   ]
   return c.html(layout({ title: `치료비용 안내 — 임플란트 90만원부터, 비급여 수가 전체 공개`, desc: `검단퍼스트치과 비급여 진료비용 안내 — 임플란트 90만원~, 라미네이트 55만원, 지르코니아 크라운 50만원, 세라믹인레이 30만원~, 전문가미백 14만원~. 의료법에 따라 ${totalItems}개 전 항목 투명 공개. 검단신도시·김포·청라 치과 비용 비교.`, path: '/pricing', jsonLd }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
