@@ -101,6 +101,7 @@ admin.use('/admin', async (c, next) => {
 admin.use('/admin/*', async (c, next) => {
   const p = c.req.path
   if (p === '/admin/login' || p === '/admin/logout') return next()
+  if (p === '/admin/stats') return next() // 통계 페이지는 자체 인증(세션 또는 ?key) — 무인증 시 404
   if (!(await isAdminReq(c))) return c.redirect('/admin/login')
   await next()
 })
