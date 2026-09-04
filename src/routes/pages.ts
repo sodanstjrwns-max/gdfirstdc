@@ -301,7 +301,28 @@ pages.get('/', (c) => {
     </div>
   </div>
 </section>`
-  return c.html(layout({ title: '홈', desc: `검단신도시 치과 — ${CLINIC.name}. 과잉진료 없는 1인 대표원장 책임진료. 임플란트·라미네이트·턱관절 치료. 통합치의학 전문의 김희수 원장. ${CLINIC.phone}`, path: '/' }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
+  // 홈 JSON-LD — FAQPage(기존 FAQ 데이터에서 핵심 6개 발췌) + BreadcrumbList(홈 1뎁스)
+  const homeFaqs = [
+    FAQS.implant[0], // 임플란트 수술 시간
+    FAQS.implant[6], // 만 65세 이상 임플란트 건강보험
+    FAQS.bloomnate[0], // 블룸네이트(무삭제 라미네이트)란
+    FAQS.bloomnate[1], // 라미네이트 치아 손상 걱정
+    FAQS.tmj[1], // 턱관절은 어느 병원으로 가야 하나
+    FAQS.tmj[2], // 체외충격파 치료 효과
+  ].filter(Boolean)
+  const homeJsonLd = [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: homeFaqs.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [{ '@type': 'ListItem', position: 1, name: '홈', item: `${CLINIC.siteUrl}/` }],
+    },
+  ]
+  return c.html(layout({ title: '홈', desc: `검단신도시 치과 — ${CLINIC.name}. 과잉진료 없는 1인 대표원장 책임진료. 임플란트·라미네이트·턱관절 치료. 통합치의학 전문의 김희수 원장. ${CLINIC.phone}`, path: '/', jsonLd: homeJsonLd }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
 })
 
 // ============ 병원소개 ============

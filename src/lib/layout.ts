@@ -38,7 +38,7 @@ const NAV = [
 export function clinicJsonLd(): object {
   return {
     '@context': 'https://schema.org',
-    '@type': 'Dentist',
+    '@type': ['Dentist', 'LocalBusiness'],
     '@id': `${CLINIC.siteUrl}/#clinic`,
     name: CLINIC.name,
     alternateName: [CLINIC.shortName, CLINIC.nameEn],
@@ -179,6 +179,7 @@ export function layout(meta: PageMeta, body: string, opts?: { user?: { name: str
 <meta name="description" content="${esc(meta.desc)}">
 ${meta.noindex ? '<meta name="robots" content="noindex,nofollow">' : '<meta name="robots" content="index,follow">'}
 <link rel="canonical" href="${url}">
+<link rel="alternate" type="application/rss+xml" title="검단퍼스트치과 건강칼럼 RSS" href="${CLINIC.siteUrl}/rss.xml">
 <meta property="og:type" content="website">
 <meta property="og:title" content="${esc(fullTitle)}">
 <meta property="og:description" content="${esc(meta.desc)}">

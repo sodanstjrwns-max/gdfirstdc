@@ -166,6 +166,48 @@ ${urls.map((u) => `  <url><loc>${CLINIC.siteUrl}${u.loc}</loc><lastmod>${u.lastm
   return c.body(xml, 200, { 'Content-Type': 'application/xml; charset=utf-8' })
 })
 
+// ===== RSS 2.0 피드 (건강칼럼 — 검색엔진·AI 크롤러 구독용) =====
+app.get('/rss.xml', async (c) => {
+  const escXml = (s: string) => (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+  const stripTags = (s: string) => (s || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim()
+  const toUTC = (s: string) => { const d = new Date((s || '').replace(' ', 'T') + 'Z'); return isNaN(d.getTime()) ? new Date().toUTCString() : d.toUTCString() }
+  let items = ''
+  let lastBuild = new Date().toUTCString()
+  try {
+    const rows = (await c.env.DB.prepare('SELECT slug, title, excerpt, content_html, author, category, created_at FROM blog_posts WHERE published = 1 ORDER BY created_at DESC LIMIT 30').all<{ slug: string; title: string; excerpt: string | null; content_html: string; author: string; category: string | null; created_at: string }>()).results
+    if (rows.length) lastBuild = toUTC(rows[0].created_at)
+    items = rows.map((p) => {
+      const url = `${CLINIC.siteUrl}/blog/${p.slug}`
+      const desc = (p.excerpt || stripTags(p.content_html)).slice(0, 300)
+      return `    <item>
+      <title>${escXml(p.title)}</title>
+      <link>${url}</link>
+      <guid isPermaLink="true">${url}</guid>
+      <description>${escXml(desc)}</description>
+      <pubDate>${toUTC(p.created_at)}</pubDate>${p.category ? `
+      <category>${escXml(p.category)}</category>` : ''}
+      <dc:creator>${escXml(p.author || `${CLINIC.doctor} 원장`)}</dc:creator>
+    </item>`
+    }).join('\n')
+  } catch {
+    /* DB 미준비 시 빈 피드 */
+  }
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>${escXml(CLINIC.shortName)} 건강칼럼</title>
+    <link>${CLINIC.siteUrl}/blog</link>
+    <atom:link href="${CLINIC.siteUrl}/rss.xml" rel="self" type="application/rss+xml"/>
+    <description>검단신도시 검단퍼스트치과 김희수 원장이 전하는 치과 건강 정보 — 임플란트, 무삭제 라미네이트, 턱관절, 신경치료</description>
+    <language>ko</language>
+    <lastBuildDate>${lastBuild}</lastBuildDate>
+    <ttl>60</ttl>
+${items}
+  </channel>
+</rss>`
+  return c.body(xml, 200, { 'Content-Type': 'application/rss+xml; charset=utf-8', 'Cache-Control': 'public, max-age=1800' })
+})
+
 // ===== 라우트 =====
 app.route('/', auth)
 app.route('/', content)
