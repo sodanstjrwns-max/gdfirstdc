@@ -11,6 +11,7 @@ import pages from './routes/pages'
 import auth from './routes/auth'
 import content from './routes/content'
 import admin from './routes/admin'
+import adminStats from './routes/admin-stats'
 import reserve from './routes/reserve'
 import hub from './routes/hub'
 import philosophy from './routes/philosophy'
@@ -215,6 +216,7 @@ app.route('/', reserve)
 app.route('/', hub)
 app.route('/', philosophy)
 app.route('/', admin)
+app.route('/', adminStats)
 app.route('/', pages)
 
 // ===== 404 =====

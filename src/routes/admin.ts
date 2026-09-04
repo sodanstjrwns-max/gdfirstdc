@@ -18,7 +18,7 @@ async function isAdminReq(c: any): Promise<boolean> {
   return !!sess?.admin
 }
 
-function adminShell(title: string, inner: string, active: string): string {
+export function adminShell(title: string, inner: string, active: string): string {
   const menu = [
     { href: '/admin', key: 'home', label: '대시보드', icon: 'fa-gauge' },
     { href: '/admin/reservations', key: 'reservations', label: '예약 문의', icon: 'fa-calendar-check' },
@@ -26,6 +26,7 @@ function adminShell(title: string, inner: string, active: string): string {
     { href: '/admin/blog', key: 'blog', label: '건강칼럼', icon: 'fa-pen-nib' },
     { href: '/admin/notice', key: 'notice', label: '공지사항', icon: 'fa-bullhorn' },
     { href: '/admin/pricing', key: 'pricing', label: '수가표', icon: 'fa-won-sign' },
+    { href: '/admin/stats', key: 'stats', label: '검색·방문 통계', icon: 'fa-chart-line' },
     { href: '/admin/password', key: 'password', label: '비밀번호 변경', icon: 'fa-key' },
   ]
   return `
