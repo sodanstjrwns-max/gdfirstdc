@@ -206,7 +206,8 @@ export async function getPricing(db?: D1Database): Promise<{ pricing: PriceCateg
   if (db) {
     try {
       const [rows, upd] = await Promise.all([
-        db.prepare('SELECT id, category_key, name, price, note, sort FROM price_items ORDER BY sort, id').all<PriceItemRow>(),
+        // 공개(is_published=1) 항목만 노출 — 관리자가 비공개 처리한 항목은 홈페이지에서 숨김
+        db.prepare('SELECT id, category_key, name, price, note, sort FROM price_items WHERE is_published = 1 ORDER BY sort, id').all<PriceItemRow>(),
         db.prepare("SELECT value FROM settings WHERE key = 'pricing_updated'").first<{ value: string }>(),
       ])
       if (rows.results && rows.results.length > 0) {
