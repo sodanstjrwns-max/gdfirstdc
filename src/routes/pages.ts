@@ -132,7 +132,7 @@ pages.get('/', (c) => {
     </p>
     <div class="relative mt-8 flex flex-wrap gap-2.5 text-[13px]">
       <span class="inline-flex items-center gap-2 rounded-full bg-white/[0.07] border border-white/10 px-4 py-2.5 text-white/80"><i class="fas fa-location-dot text-gold-400"></i>${CLINIC.addressShort}</span>
-      <span class="inline-flex items-center gap-2 rounded-full bg-white/[0.07] border border-white/10 px-4 py-2.5 text-white/80"><i class="fas fa-clock text-gold-400"></i>평일 09:30~18:30 · 토 09:30~14:00 <span class="text-white/45">(목·일 휴진)</span></span>
+      <span class="inline-flex items-center gap-2 rounded-full bg-white/[0.07] border border-white/10 px-4 py-2.5 text-white/80"><i class="fas fa-clock text-gold-400"></i>평일 09:30~18:30 · 화 야간 ~20:30 · 토 09:30~14:00 <span class="text-white/45">(목·일 휴진)</span></span>
       <a href="tel:${CLINIC.phone}" class="inline-flex items-center gap-2 rounded-full bg-gold-500 hover:bg-gold-400 px-4 py-2.5 font-extrabold text-ink transition"><i class="fas fa-phone"></i>${CLINIC.phone}</a>
     </div>
   </div>
@@ -294,7 +294,7 @@ pages.get('/', (c) => {
     <div class="reveal-scale lg:col-span-2 rounded-3xl bg-white border border-ink/8 p-8" data-tilt data-tilt-max="5">
       <h2 class="font-extrabold text-ink flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-gold-500"></span>진료시간</h2>
       <ul class="mt-5 space-y-3 text-[14px]">
-        ${CLINIC.hours.map((h) => `<li class="flex justify-between items-baseline gap-3"><span class="text-ink/40 shrink-0">${h.day}</span><span class="tick-line flex-1 h-px self-center"></span><span class="font-bold text-ink text-right">${h.time.replace('AM 09:30 ~ PM 18:30', '09:30–18:30').replace('AM 09:30 ~ PM 14:00 (점심시간 없이 진료)', '09:30–14:00').replace('휴진 (공휴일이 있는 주는 정상진료)', '휴진*').replace('휴진', '휴진')}</span></li>`).join('')}
+        ${CLINIC.hours.map((h) => `<li class="flex justify-between items-baseline gap-3"><span class="text-ink/40 shrink-0">${h.day}</span><span class="tick-line flex-1 h-px self-center"></span><span class="font-bold text-ink text-right">${h.time.replace('AM 09:30 ~ PM 20:30', '09:30–20:30').replace('AM 09:30 ~ PM 18:30', '09:30–18:30').replace('AM 09:30 ~ PM 14:00 (점심시간 없이 진료)', '09:30–14:00').replace('휴진 (공휴일이 있는 주는 정상진료)', '휴진*').replace('휴진', '휴진')}</span></li>`).join('')}
         <li class="flex justify-between items-baseline gap-3"><span class="text-ink/40 shrink-0">점심시간</span><span class="tick-line flex-1 h-px self-center"></span><span class="font-bold text-ink">13:00–14:00</span></li>
       </ul>
       <p class="mt-4 text-[11.5px] text-ink/35">* 공휴일이 있는 주 목요일은 정상진료 · 토요일은 점심시간 없이 진료</p>
@@ -1100,7 +1100,7 @@ ${pageHero('Location', '검단 한복판,<br><span class="font-disp text-shine">
     <article class="rounded-3xl bg-ink text-white p-7" data-tilt data-tilt-max="7">
       <h2 class="font-extrabold flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-gold-400"></span>진료시간</h2>
       <ul class="mt-4 space-y-2.5 text-[13.5px]">
-        <li class="flex justify-between"><span class="text-white/40">월·화·수·금</span><span class="font-bold">09:30–18:30</span></li>
+        <li class="flex justify-between"><span class="text-white/40">월·수·금</span><span class="font-bold">09:30–18:30</span></li><li class="flex justify-between"><span class="text-white/40">화 (야간진료)</span><span class="font-bold">09:30–20:30</span></li>
         <li class="flex justify-between"><span class="text-white/40">토요일</span><span class="font-bold">09:30–14:00 <span class="text-gold-400 text-[11px]">점심없이</span></span></li>
         <li class="flex justify-between"><span class="text-white/40">목·일·공휴일</span><span class="font-bold">휴진</span></li>
         <li class="flex justify-between"><span class="text-white/40">점심시간</span><span class="font-bold">13:00–14:00</span></li>
@@ -1135,7 +1135,7 @@ ${pageHero('Location', '검단 한복판,<br><span class="font-disp text-shine">
     </figure>
   </div>
 </section>`
-  return c.html(layout({ title: '내원안내 · 오시는길 — 검단신도시 이음5로 치과', desc: `검단퍼스트치과 오시는 길 — ${CLINIC.address}. 진료시간 평일 09:30~18:30, 토요일 09:30~14:00, 목·일 휴진. 건물 주차장 완비. 예약 문의 ${CLINIC.phone}`, path: '/location' }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
+  return c.html(layout({ title: '내원안내 · 오시는길 — 검단신도시 이음5로 치과', desc: `검단퍼스트치과 오시는 길 — ${CLINIC.address}. 진료시간 월·수·금 09:30~18:30, 화요일 야간진료 09:30~20:30, 토요일 09:30~14:00, 목·일 휴진. 건물 주차장 완비. 예약 문의 ${CLINIC.phone}`, path: '/location' }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
 })
 
 // ============ 치료비용 안내 (비급여 수가표) ============
@@ -1305,7 +1305,7 @@ function regionFaqs(r: SeoRegion): { q: string; a: string }[] {
     { q: `${r.name}에서 임플란트 잘하는 치과를 찾고 있어요.`, a: `검단퍼스트치과는 ${r.name}에서 ${r.distance} 거리로, 보건복지부 인증 통합치의학 전문의이자 우수보철의사인 김희수 원장이 상담·수술·보철·사후관리를 모두 직접 진행합니다. Harvard Implant CE 과정을 수료했으며 오스템·덴티스 임상자문연구위원으로 활동 중입니다. 만 65세 이상은 임플란트 건강보험(평생 2개, 본인부담 30%) 적용이 가능합니다.` },
     { q: `${r.name} 근처에 턱관절(TMJ) 치료하는 치과가 있나요?`, a: `검단퍼스트치과는 ${r.name}에서 ${r.distance} 거리에 있는 턱관절 특화 치과입니다. 아시안 턱관절 포럼 Advanced Course를 수료한 원장이 정확한 진단 후 스플린트·체외충격파(ESWT)·PDRN 인대강화주사 등으로 치료하며, 턱 탈구 응급 정복도 가능합니다.` },
     { q: `${r.name}에서 라미네이트 상담을 받고 싶은데 치아 삭제가 걱정돼요.`, a: `검단퍼스트치과의 블룸네이트(BloomNate)는 미국 뉴욕대 무삭제 라미네이트 과정을 수료한 원장이 무삭제(Non-prep)·최소삭제 원칙으로 진행합니다. RAY 페이스 스캐너로 얼굴 전체와 조화로운 미소를 디자인하며, 무삭제 가능 여부를 정밀진단 후 정직하게 알려드립니다. ${r.name}에서 ${r.distance}면 도착합니다.` },
-    { q: `진료시간과 예약 방법이 궁금해요.`, a: `평일(월·화·수·금) 09:30~18:30, 토요일 09:30~14:00(점심시간 없이 진료), 목·일·공휴일은 휴진입니다(공휴일이 있는 주 목요일은 정상진료). 예약 및 상담은 ${CLINIC.phone}로 전화 주시면 됩니다.` },
+    { q: `진료시간과 예약 방법이 궁금해요.`, a: `월·수·금 09:30~18:30, 화요일(야간진료) 09:30~20:30, 토요일 09:30~14:00(점심시간 없이 진료), 목·일·공휴일은 휴진입니다(공휴일이 있는 주 목요일은 정상진료). 예약 및 상담은 ${CLINIC.phone}로 전화 주시면 됩니다.` },
     { q: `다른 치과에서 받은 견적을 들고 가서 상담만 받아도 되나요?`, a: `물론입니다. 검단퍼스트치과는 "다른 병원도 다녀오세요. 그럼 저희의 가치를 더 느끼실 수 있습니다"를 원칙으로, 과잉진료 없이 꼭 필요한 치료만 말씀드립니다. 세컨드 오피니언 상담을 환영합니다.` },
   ]
 }
@@ -1374,7 +1374,7 @@ ${pageHero('Local', `${r.name} 치과,<br><span class="font-disp text-shine">가
 <section id="region-answer" class="max-w-6xl mx-auto px-5 -mt-8 relative z-10">
   <div class="reveal-scale rounded-3xl bg-white border border-ink/8 shadow-xl shadow-ink/5 p-7 sm:p-9">
     <p class="text-[11px] font-bold tracking-[0.3em] uppercase text-gold-600">한눈에 보기</p>
-    <p class="speakable-summary mt-3 text-[15px] sm:text-base text-ink/75 leading-[1.9]"><strong class="text-ink">${r.name}에서 치과를 찾으신다면</strong> — 검단퍼스트치과는 ${esc(r.full)}에서 <strong class="text-ink">${r.distance}</strong> 거리(${CLINIC.address})에 있는 <strong class="text-ink">통합치의학 전문의 1인 원장 책임진료</strong> 치과입니다. 임플란트·무삭제 라미네이트·턱관절(체외충격파) 특화 진료를 하며, 평일 09:30~18:30 · 토요일 09:30~14:00 진료, 예약은 <a href="tel:${CLINIC.phone}" class="font-extrabold text-gold-600 underline underline-offset-4">${CLINIC.phone}</a>.</p>
+    <p class="speakable-summary mt-3 text-[15px] sm:text-base text-ink/75 leading-[1.9]"><strong class="text-ink">${r.name}에서 치과를 찾으신다면</strong> — 검단퍼스트치과는 ${esc(r.full)}에서 <strong class="text-ink">${r.distance}</strong> 거리(${CLINIC.address})에 있는 <strong class="text-ink">통합치의학 전문의 1인 원장 책임진료</strong> 치과입니다. 임플란트·무삭제 라미네이트·턱관절(체외충격파) 특화 진료를 하며, 평일 09:30~18:30(화요일은 야간진료 20:30까지) · 토요일 09:30~14:00 진료, 예약은 <a href="tel:${CLINIC.phone}" class="font-extrabold text-gold-600 underline underline-offset-4">${CLINIC.phone}</a>.</p>
     <div class="mt-4 flex flex-wrap gap-2">
       ${r.keywords.slice(0, 5).map((k) => `<span class="text-[11.5px] font-semibold text-ink/40 bg-ink/5 rounded-full px-3 py-1">#${k.replace(/ /g, '')}</span>`).join('')}
     </div>
@@ -1404,7 +1404,7 @@ ${pageHero('Local', `${r.name} 치과,<br><span class="font-disp text-shine">가
       <article class="rounded-3xl bg-ink text-white p-7">
         <h2 class="font-extrabold flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-gold-400"></span>진료시간</h2>
         <ul class="mt-4 space-y-2.5 text-[13.5px]">
-          <li class="flex justify-between"><span class="text-white/40">월·화·수·금</span><span class="font-bold">09:30–18:30</span></li>
+          <li class="flex justify-between"><span class="text-white/40">월·수·금</span><span class="font-bold">09:30–18:30</span></li><li class="flex justify-between"><span class="text-white/40">화 (야간진료)</span><span class="font-bold">09:30–20:30</span></li>
           <li class="flex justify-between"><span class="text-white/40">토요일</span><span class="font-bold">09:30–14:00 <span class="text-gold-400 text-[11px]">점심없이</span></span></li>
           <li class="flex justify-between"><span class="text-white/40">목·일·공휴일</span><span class="font-bold">휴진</span></li>
         </ul>

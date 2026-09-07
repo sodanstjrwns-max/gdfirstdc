@@ -72,7 +72,7 @@ ${pageHero('Reservation', '예약·상담 <span class="font-disp text-shine">신
         <div class="absolute -bottom-14 -right-14 w-52 h-52 rounded-full bg-gold-500/15 blur-[70px]" aria-hidden="true"></div>
         <h2 class="font-extrabold flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-gold-400"></span>진료시간</h2>
         <ul class="mt-4 space-y-2 text-[13.5px] relative">
-          ${CLINIC.hours.map((h) => `<li class="flex justify-between gap-3"><span class="text-white/40">${h.day}</span><span class="font-bold text-right">${h.time.replace('AM 09:30 ~ PM 18:30', '09:30–18:30').replace('AM 09:30 ~ PM 14:00 (점심시간 없이 진료)', '09:30–14:00').replace('휴진 (공휴일이 있는 주는 정상진료)', '휴진*')}</span></li>`).join('')}
+          ${CLINIC.hours.map((h) => `<li class="flex justify-between gap-3"><span class="text-white/40">${h.day}</span><span class="font-bold text-right">${h.time.replace('AM 09:30 ~ PM 20:30', '09:30–20:30').replace('AM 09:30 ~ PM 18:30', '09:30–18:30').replace('AM 09:30 ~ PM 14:00 (점심시간 없이 진료)', '09:30–14:00').replace('휴진 (공휴일이 있는 주는 정상진료)', '휴진*')}</span></li>`).join('')}
           <li class="flex justify-between gap-3"><span class="text-white/40">점심시간</span><span class="font-bold">13:00–14:00</span></li>
         </ul>
         <p class="mt-3 text-[11px] text-white/35">* 공휴일이 있는 주 목요일은 정상진료</p>

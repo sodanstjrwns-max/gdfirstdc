@@ -61,7 +61,8 @@ export function clinicJsonLd(): object {
     hasMap: 'https://map.naver.com/p/search/' + encodeURIComponent('검단퍼스트치과'),
     sameAs: [CLINIC.blog, CLINIC.youtube, 'https://map.naver.com/p/search/' + encodeURIComponent('검단퍼스트치과')],
     openingHoursSpecification: [
-      { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Friday'], opens: '09:30', closes: '18:30' },
+      { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Monday', 'Wednesday', 'Friday'], opens: '09:30', closes: '18:30' },
+      { '@type': 'OpeningHoursSpecification', dayOfWeek: 'Tuesday', opens: '09:30', closes: '20:30' },
       { '@type': 'OpeningHoursSpecification', dayOfWeek: 'Saturday', opens: '09:30', closes: '14:00' },
     ],
     areaServed: [
@@ -89,7 +90,7 @@ export function clinicJsonLd(): object {
     slogan: '과잉진료 없는 1인 책임진료 — 상담부터 사후관리까지 원장이 직접',
     knowsAbout: ['임플란트', '무삭제 라미네이트', '턱관절 치료', '미세현미경 신경치료', '사랑니 발치', '잇몸치료', '보철치료'],
     contactPoint: [
-      { '@type': 'ContactPoint', contactType: 'reservations', telephone: CLINIC.phone, availableLanguage: 'Korean', hoursAvailable: { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Friday'], opens: '09:30', closes: '18:30' } },
+      { '@type': 'ContactPoint', contactType: 'reservations', telephone: CLINIC.phone, availableLanguage: 'Korean', hoursAvailable: [{ '@type': 'OpeningHoursSpecification', dayOfWeek: ['Monday', 'Wednesday', 'Friday'], opens: '09:30', closes: '18:30' }, { '@type': 'OpeningHoursSpecification', dayOfWeek: 'Tuesday', opens: '09:30', closes: '20:30' }] },
       { '@type': 'ContactPoint', contactType: 'customer support', url: CLINIC.naverTalk, availableLanguage: 'Korean' },
     ],
     potentialAction: {
@@ -364,7 +365,8 @@ ${meta.path === '/' ? '<div id="curtain" aria-hidden="true"><span class="curtain
       <section>
         <h2 class="text-white/90 font-bold mb-3 text-xs tracking-[0.2em] uppercase">Hours</h2>
         <ul class="space-y-1">
-          <li class="flex justify-between max-w-[240px]"><span class="text-white/35">월·화·수·금</span><span>09:30–18:30</span></li>
+          <li class="flex justify-between max-w-[240px]"><span class="text-white/35">월·수·금</span><span>09:30–18:30</span></li>
+          <li class="flex justify-between max-w-[240px]"><span class="text-white/35">화 (야간진료)</span><span>09:30–20:30</span></li>
           <li class="flex justify-between max-w-[240px]"><span class="text-white/35">토요일</span><span>09:30–14:00</span></li>
           <li class="flex justify-between max-w-[240px]"><span class="text-white/35">목·일·공휴일</span><span>휴진</span></li>
           <li class="flex justify-between max-w-[240px]"><span class="text-white/35">점심</span><span>13:00–14:00</span></li>

@@ -20,7 +20,7 @@ export const CLINIC = {
   siteUrl: 'https://gdfirstdc.kr', // 공식 도메인 (가비아 등록, Cloudflare DNS)
   hours: [
     { day: '월요일', time: 'AM 09:30 ~ PM 18:30' },
-    { day: '화요일', time: 'AM 09:30 ~ PM 18:30' },
+    { day: '화요일 (야간진료)', time: 'AM 09:30 ~ PM 20:30' },
     { day: '수요일', time: 'AM 09:30 ~ PM 18:30' },
     { day: '목요일', time: '휴진 (공휴일이 있는 주는 정상진료)' },
     { day: '금요일', time: 'AM 09:30 ~ PM 18:30' },
