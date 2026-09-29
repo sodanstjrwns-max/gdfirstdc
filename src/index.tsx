@@ -5,7 +5,7 @@ import { layout, TX_REVIEWED } from './lib/layout'
 import { readSession } from './lib/auth'
 import { CLINIC } from './data/clinic'
 import { TREATMENTS } from './data/treatments'
-import { getReleasedEncyclopedia, encyReleaseDate, encyPath } from './data/encyclopedia'
+import { getReleasedEncyclopedia, encyReleaseDate, encyPath, encyTomorrowCount } from './data/encyclopedia'
 import { SEO_REGIONS } from './data/regions'
 import { FAQS } from './data/faqs'
 import { getPricing, fmtPrice } from './data/pricing'
@@ -165,6 +165,10 @@ app.get('/sitemap.xml', async (c) => {
   // - 정적 페이지: 마지막 콘텐츠 개편일을 수동 기록
   // - 블로그/사례: D1 updated_at
   // - 백과사전 용어: 해당 용어의 실제 공개일
+  // 백과사전 목록 lastmod = 가장 최근에 공개된 용어의 공개일 (매일 자동 공개는 2026-08-22 전량 공개로 끝남).
+  // 예전엔 new Date()(매일 오늘)였다 (2026-09-29 교정). 공개가 남아 있을 때만 changefreq daily.
+  const releasedEncy = getReleasedEncyclopedia()
+  const encyListLastmod = releasedEncy.length ? encyReleaseDate(releasedEncy.length - 1) : ''
   const staticPaths: [string, string, string, string][] = [
     // [path, priority, changefreq, lastmod]
     ['/', '1.0', 'weekly', '2026-08-17'],
@@ -180,7 +184,7 @@ app.get('/sitemap.xml', async (c) => {
     ['/cases', '0.8', 'weekly', '2026-08-04'],
     // /content(안내 허브)는 noindex, follow 라 사이트맵 제외
     ['/symptom-check', '0.8', 'monthly', '2026-08-03'],
-    ['/encyclopedia', '0.8', 'daily', new Date().toISOString().slice(0, 10)],
+    ['/encyclopedia', '0.8', encyTomorrowCount() > 0 ? 'daily' : 'monthly', encyListLastmod],
     ['/blog', '0.8', 'weekly', '2026-08-04'],
   ]
   const urls: { loc: string; priority: string; changefreq: string; lastmod: string }[] = [
@@ -189,7 +193,7 @@ app.get('/sitemap.xml', async (c) => {
     ...TREATMENTS.map((t) => ({ loc: `/treatments/${t.slug}`, priority: t.isCore ? '0.9' : '0.7', changefreq: 'monthly', lastmod: TX_REVIEWED })),
     ...SEO_REGIONS.map((r) => ({ loc: `/region/${r.slug}`, priority: '0.7', changefreq: 'monthly', lastmod: '2026-08-02' })),
     // 백과사전 용어별 개별 페이지 — 실제 공개일을 lastmod로
-    ...getReleasedEncyclopedia().map((e, i) => ({ loc: encyPath(e.term), priority: '0.6', changefreq: 'monthly', lastmod: encyReleaseDate(i) })),
+    ...releasedEncy.map((e, i) => ({ loc: encyPath(e.term), priority: '0.6', changefreq: 'monthly', lastmod: encyReleaseDate(i) })),
   ]
   try {
     const blog = (await c.env.DB.prepare('SELECT slug, COALESCE(updated_at, created_at) AS m FROM blog_posts WHERE published = 1 ORDER BY created_at DESC LIMIT 500').all<{ slug: string; m: string }>()).results
@@ -211,7 +215,7 @@ app.get('/sitemap.xml', async (c) => {
   } catch { /* noop */ }
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${urls.map((u) => `  <url><loc>${CLINIC.siteUrl}${u.loc}</loc><lastmod>${u.lastmod}</lastmod><changefreq>${u.changefreq}</changefreq><priority>${u.priority}</priority></url>`).join('\n')}
+${urls.map((u) => `  <url><loc>${CLINIC.siteUrl}${u.loc}</loc>${u.lastmod ? `<lastmod>${u.lastmod}</lastmod>` : ''}<changefreq>${u.changefreq}</changefreq><priority>${u.priority}</priority></url>`).join('\n')}
 </urlset>`
   return c.body(xml, 200, { 'Content-Type': 'application/xml; charset=utf-8' })
 })
@@ -220,9 +224,9 @@ ${urls.map((u) => `  <url><loc>${CLINIC.siteUrl}${u.loc}</loc><lastmod>${u.lastm
 app.get('/rss.xml', async (c) => {
   const escXml = (s: string) => (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
   const stripTags = (s: string) => (s || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim()
-  const toUTC = (s: string) => { const d = new Date((s || '').replace(' ', 'T') + 'Z'); return isNaN(d.getTime()) ? new Date().toUTCString() : d.toUTCString() }
+  const toUTC = (s: string) => { const d = new Date((s || '').replace(' ', 'T') + 'Z'); return isNaN(d.getTime()) ? '' : d.toUTCString() } // 무효 날짜 → 생략(오늘로 채우지 않음)
   let items = ''
-  let lastBuild = new Date().toUTCString()
+  let lastBuild = '' // 피드 항목 최신 작성 시각 (요청 시각·오늘 아님), 항목 없으면 생략
   try {
     const rows = (await c.env.DB.prepare('SELECT slug, title, excerpt, content_html, author, category, created_at FROM blog_posts WHERE published = 1 ORDER BY created_at DESC LIMIT 30').all<{ slug: string; title: string; excerpt: string | null; content_html: string; author: string; category: string | null; created_at: string }>()).results
     if (rows.length) lastBuild = toUTC(rows[0].created_at)
@@ -234,7 +238,7 @@ app.get('/rss.xml', async (c) => {
       <link>${url}</link>
       <guid isPermaLink="true">${url}</guid>
       <description>${escXml(desc)}</description>
-      <pubDate>${toUTC(p.created_at)}</pubDate>${p.category ? `
+${toUTC(p.created_at) ? `      <pubDate>${toUTC(p.created_at)}</pubDate>` : ''}${p.category ? `
       <category>${escXml(p.category)}</category>` : ''}
       <dc:creator>${escXml(p.author || `${CLINIC.doctor} 원장`)}</dc:creator>
     </item>`
@@ -249,8 +253,8 @@ app.get('/rss.xml', async (c) => {
     <link>${CLINIC.siteUrl}/blog</link>
     <atom:link href="${CLINIC.siteUrl}/rss.xml" rel="self" type="application/rss+xml"/>
     <description>검단신도시 검단퍼스트치과 김희수 원장이 전하는 치과 건강 정보 — 임플란트, 무삭제 라미네이트, 턱관절, 신경치료</description>
-    <language>ko</language>
-    <lastBuildDate>${lastBuild}</lastBuildDate>
+    <language>ko</language>${lastBuild ? `
+    <lastBuildDate>${lastBuild}</lastBuildDate>` : ''}
     <ttl>60</ttl>
 ${items}
   </channel>
