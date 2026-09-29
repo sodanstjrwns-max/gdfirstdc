@@ -203,12 +203,21 @@ content.get('/blog/:slug', async (c) => {
   const absUrl = (u: string) => (u.startsWith('http') ? u : `${CLINIC.siteUrl}${u.startsWith('/') ? '' : '/'}${u}`)
   const postImage = r.thumbnail_key ? absUrl(imgUrl(r.thumbnail_key)) : firstImg ? absUrl(firstImg) : `${CLINIC.siteUrl}/static/images/og_default.jpg`
   const isDirector = (r.author || '').includes(CLINIC.doctor)
+  // 요약(excerpt)은 줄바꿈·긴 문단이 섞여 있어 한 줄로 정리 후 155자 이내(문장 경계 우선)로 자른다
+  const flatExcerpt = (r.excerpt || '').replace(/\s+/g, ' ').trim()
+  const metaDesc = (() => {
+    const base = flatExcerpt || `${r.title} — 검단퍼스트치과 건강칼럼`
+    if (base.length <= 155) return base
+    const cut = base.slice(0, 155)
+    const end = Math.max(cut.lastIndexOf('다.'), cut.lastIndexOf('요.'), cut.lastIndexOf('? '))
+    return end >= 60 ? cut.slice(0, end + (cut[end] === '?' ? 1 : 2)) : cut.slice(0, 154).replace(/\s+\S*$/, '') + '…'
+  })()
   const articleLd = [{
     '@context': 'https://schema.org',
     '@type': 'BlogPosting',
     '@id': `${pageUrl}#article`,
     headline: r.title,
-    ...(r.excerpt ? { description: r.excerpt } : {}),
+    ...(flatExcerpt ? { description: metaDesc } : {}),
     image: postImage,
     author: isDirector ? { '@type': 'Person', '@id': PHYSICIAN_ID, name: CLINIC.doctor, url: `${CLINIC.siteUrl}/about` } : { '@type': 'Person', name: r.author },
     datePublished: toIso(r.created_at),
@@ -236,7 +245,7 @@ content.get('/blog/:slug', async (c) => {
     <a href="tel:032-563-2872" class="btn-3d relative shrink-0 px-6 py-3.5 rounded-full bg-gold-500 text-ink text-sm font-extrabold hover:bg-gold-400 transition"><i class="fas fa-phone mr-2"></i>032-563-2872</a>
   </footer>
 </article>`
-  return c.html(layout({ title: r.title, desc: r.excerpt || `${r.title} — 검단퍼스트치과 건강칼럼`, path: `/blog/${r.slug}`, jsonLd: articleLd, ogImage: r.thumbnail_key ? absUrl(imgUrl(r.thumbnail_key)) : undefined }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
+  return c.html(layout({ title: r.title, desc: metaDesc, path: `/blog/${r.slug}`, jsonLd: articleLd, ogImage: r.thumbnail_key ? absUrl(imgUrl(r.thumbnail_key)) : undefined }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
 })
 
 // ============ 공지사항 목록 ============
