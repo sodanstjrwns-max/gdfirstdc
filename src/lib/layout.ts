@@ -11,7 +11,15 @@ export interface PageMeta {
   noindex?: boolean
   /** robots 메타 직접 지정 (예: 얇은 페이지 'noindex, follow'). noindex 보다 우선 */
   robots?: string
+  /** 페이지 WebPage 노드(speakable)에 합칠 속성 — 예: 진료 페이지 MedicalWebPage·reviewedBy·lastReviewed */
+  webPage?: Record<string, unknown>
 }
+
+/** 대표원장 Physician 노드 @id — reviewedBy·author 가 모두 이 @id 를 참조한다 (정의는 clinicJsonLd().founder) */
+export const PHYSICIAN_ID = `${CLINIC.siteUrl}/#physician`
+
+/** 진료 콘텐츠 최종 검토일 — 빌드 시 진료 데이터 파일의 마지막 커밋 날짜로 고정 (vite.config.ts) */
+export const TX_REVIEWED: string = __TX_REVIEWED__
 
 export function esc(s: string): string {
   return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
@@ -49,6 +57,7 @@ export function clinicJsonLd(): object {
     email: CLINIC.email,
     url: CLINIC.siteUrl,
     image: `${CLINIC.siteUrl}/static/images/doctor_lobby.webp`,
+    logo: { '@type': 'ImageObject', url: `${CLINIC.siteUrl}/static/images/logo.png` },
     priceRange: '₩₩',
     currenciesAccepted: 'KRW',
     paymentAccepted: '현금, 카드, 계좌이체',
@@ -81,8 +90,11 @@ export function clinicJsonLd(): object {
       { '@type': 'MedicalProcedure', name: '사랑니 발치', description: '디지털 CT 정밀진단 후 안전한 매복 사랑니 발치' },
     ],
     founder: {
-      '@type': 'Person',
+      '@type': ['Person', 'Physician'],
+      '@id': PHYSICIAN_ID,
       name: CLINIC.doctor,
+      url: `${CLINIC.siteUrl}/about`,
+      worksFor: { '@id': `${CLINIC.siteUrl}/#clinic` },
       jobTitle: '대표원장',
       description: '보건복지부 인증 통합치의학 전문의, 대한치과보철학회 인증 우수보철의사, Harvard Implant CE 수료, 오스템·덴티스 임상자문연구위원',
       alumniOf: ['가톨릭대학교 부천성모병원 통합치의학과 (레지던트)'],
@@ -155,12 +167,15 @@ export function autoBreadcrumbJsonLd(path: string, pageTitle: string): object | 
 }
 
 // Speakable 스키마 (음성·AI 답변엔진이 읽을 핵심 요약 영역)
-export function speakableJsonLd(path: string): object {
+export function speakableJsonLd(path: string, extra?: Record<string, unknown>): object {
   return {
     '@context': 'https://schema.org',
     '@type': 'WebPage',
     '@id': `${CLINIC.siteUrl}${path}`,
+    url: `${CLINIC.siteUrl}${path}`,
+    isPartOf: { '@id': `${CLINIC.siteUrl}/#website` },
     speakable: { '@type': 'SpeakableSpecification', cssSelector: ['.speakable-summary', 'h1'] },
+    ...(extra || {}),
   }
 }
 
@@ -170,7 +185,7 @@ export function layout(meta: PageMeta, body: string, opts?: { user?: { name: str
   const extraLd = meta.jsonLd || []
   const hasBreadcrumb = extraLd.some((j) => (j as Record<string, unknown>)['@type'] === 'BreadcrumbList')
   const autoBc = hasBreadcrumb ? null : autoBreadcrumbJsonLd(meta.path, meta.title)
-  const jsonLd = [clinicJsonLd(), websiteJsonLd(), speakableJsonLd(meta.path), ...(autoBc ? [autoBc] : []), ...extraLd]
+  const jsonLd = [clinicJsonLd(), websiteJsonLd(), speakableJsonLd(meta.path, meta.webPage), ...(autoBc ? [autoBc] : []), ...extraLd]
   const userName = opts?.user?.name
 
   return `<!DOCTYPE html>

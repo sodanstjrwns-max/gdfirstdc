@@ -190,3 +190,22 @@ export function getReleasedEncyTerm(term: string, now: Date = new Date()): { ite
   if (index < 0 || index >= count) return null
   return { item: ENCYCLOPEDIA[index], index }
 }
+
+/** 용어 → URL 슬러그. 공백과 '/'를 하이픈으로 바꾼다 (예: '치아와 심장 건강' → '치아와-심장-건강').
+ *  공백이 들어간 구 주소(/encyclopedia/치아와%20심장%20건강)는 라우트에서 새 슬러그로 301 한다. */
+export function encySlug(term: string): string {
+  return term.trim().replace(/[\s/]+/g, '-')
+}
+
+/** 용어 상세 경로 (퍼센트 인코딩 포함) — 링크·canonical·사이트맵 공통 */
+export function encyPath(term: string): string {
+  return `/encyclopedia/${encodeURIComponent(encySlug(term))}`
+}
+
+/** 슬러그로 공개된 항목 조회 */
+export function getReleasedEncyBySlug(slug: string, now: Date = new Date()): { item: EncyItem; index: number } | null {
+  const count = encyReleasedCount(now)
+  const index = ENCYCLOPEDIA.findIndex((e) => encySlug(e.term) === slug)
+  if (index < 0 || index >= count) return null
+  return { item: ENCYCLOPEDIA[index], index }
+}

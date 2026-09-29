@@ -4,7 +4,7 @@ import { layout, esc, pageHero } from '../lib/layout'
 import { CLINIC } from '../data/clinic'
 import { TREATMENTS, getTreatment } from '../data/treatments'
 import { SYMPTOM_GROUPS } from '../data/symptoms'
-import { ENCY_CATEGORIES, getReleasedEncyclopedia, encyTomorrowCount, ENCY_PER_DAY, getReleasedEncyTerm, encyReleaseDate } from '../data/encyclopedia'
+import { ENCY_CATEGORIES, getReleasedEncyclopedia, encyTomorrowCount, ENCY_PER_DAY, getReleasedEncyTerm, getReleasedEncyBySlug, encySlug, encyPath, encyReleaseDate } from '../data/encyclopedia'
 import { THIN_TV_MIN_VIDEOS, NOINDEX_FOLLOW } from '../lib/thin-content'
 import type { AppEnv } from '../types'
 
@@ -328,7 +328,7 @@ ${pageHero('Dental Encyclopedia', '치과 용어,<br><span class="font-disp text
       <div class="px-6 pb-6 -mt-1">
         <p class="text-[13.5px] text-ink/60 leading-relaxed">${(() => { const fs = e.def.split('. ')[0]; return fs.length < e.def.length ? esc(fs) + '.' : esc(e.def) })()}</p>
         <div class="mt-4 flex flex-wrap gap-x-5 gap-y-2">
-          <a href="/encyclopedia/${encodeURIComponent(e.term)}" class="inline-flex items-center gap-1.5 text-[12.5px] font-extrabold text-ink hover:text-gold-600 transition"><i class="fas fa-book-open text-gold-500"></i>자세히 보기 <i class="fas fa-arrow-right text-[10px]"></i></a>
+          <a href="${encyPath(e.term)}" class="inline-flex items-center gap-1.5 text-[12.5px] font-extrabold text-ink hover:text-gold-600 transition"><i class="fas fa-book-open text-gold-500"></i>자세히 보기 <i class="fas fa-arrow-right text-[10px]"></i></a>
           ${t ? `<a href="/treatments/${t.slug}" class="inline-flex items-center gap-1.5 text-[12.5px] font-extrabold text-ink hover:text-gold-600 transition"><i class="fas ${t.icon} text-gold-500"></i>${t.name} 진료 안내 <i class="fas fa-arrow-right text-[10px]"></i></a>` : ''}
         </div>
       </div>
@@ -363,11 +363,31 @@ ${pageHero('Dental Encyclopedia', '치과 용어,<br><span class="font-disp text
 })
 
 
+// 메타 설명: 정의 문장을 앞에서부터 이어 70자 이상·155자 이내로 (첫 문장만 쓰면 20~40자로 너무 짧은 용어가 많음)
+function encyMetaDesc(def: string): string {
+  const sents = def.split('. ').map((x, i, a) => (i < a.length - 1 ? `${x}.` : x))
+  let out = ''
+  for (const sn of sents) {
+    const next = out ? `${out} ${sn}` : sn
+    if (next.length > 155) break
+    out = next
+    if (out.length >= 70) break
+  }
+  if (!out) out = def.slice(0, 154).replace(/\s+\S*$/, '') + '…'
+  return out
+}
+
 // ============ 백과사전 용어 상세 페이지 (용어당 1 URL — SEO/AEO 색인 자산) ============
 hub.get('/encyclopedia/:term', (c) => {
-  const termParam = decodeURIComponent(c.req.param('term'))
-  const found = getReleasedEncyTerm(termParam)
-  if (!found) return c.notFound()
+  let termParam = c.req.param('term')
+  try { termParam = decodeURIComponent(termParam) } catch { /* 이미 디코딩된 값 */ }
+  const found = getReleasedEncyBySlug(termParam)
+  if (!found) {
+    // 구 주소(공백·'/'가 든 용어 원문) → 하이픈 슬러그로 영구 이동
+    const legacy = getReleasedEncyTerm(termParam)
+    if (legacy && encySlug(legacy.item.term) !== termParam) return c.redirect(encyPath(legacy.item.term), 301)
+    return c.notFound()
+  }
   const { item: e, index } = found
   const t = e.related ? getTreatment(e.related) : null
   const released = getReleasedEncyclopedia()
@@ -380,7 +400,7 @@ hub.get('/encyclopedia/:term', (c) => {
     {
       '@context': 'https://schema.org',
       '@type': 'DefinedTerm',
-      '@id': `${CLINIC.siteUrl}/encyclopedia/${encodeURIComponent(e.term)}`,
+      '@id': `${CLINIC.siteUrl}${encyPath(e.term)}`,
       name: e.term,
       ...(e.reading ? { alternateName: e.reading } : {}),
       description: e.def,
@@ -395,7 +415,7 @@ hub.get('/encyclopedia/:term', (c) => {
       dateModified: releaseDate,
       author: { '@type': 'Person', name: '김희수', jobTitle: '대표원장 · 보건복지부 인증 통합치의학 전문의', url: `${CLINIC.siteUrl}/about` },
       publisher: { '@id': `${CLINIC.siteUrl}/#clinic` },
-      mainEntityOfPage: `${CLINIC.siteUrl}/encyclopedia/${encodeURIComponent(e.term)}`,
+      mainEntityOfPage: `${CLINIC.siteUrl}${encyPath(e.term)}`,
     },
   ]
   const body = `
@@ -437,7 +457,7 @@ ${pageHero('Dental Encyclopedia', `${esc(e.term)}`, e.reading ? `${esc(e.reading
   <section id="ency-related" class="mt-12">
     <h2 class="text-sm font-extrabold text-ink/70 tracking-tight mb-4"><i class="fas fa-link text-gold-500 mr-1.5"></i>함께 보면 좋은 ${e.category} 용어</h2>
     <div class="flex flex-wrap gap-2">
-      ${siblings.map((x) => `<a href="/encyclopedia/${encodeURIComponent(x.term)}" class="px-4 py-2.5 rounded-full bg-white border border-ink/10 text-[13px] font-bold text-ink/65 hover:border-ink hover:text-ink transition">${esc(x.term)}</a>`).join('')}
+      ${siblings.map((x) => `<a href="${encyPath(x.term)}" class="px-4 py-2.5 rounded-full bg-white border border-ink/10 text-[13px] font-bold text-ink/65 hover:border-ink hover:text-ink transition">${esc(x.term)}</a>`).join('')}
     </div>
   </section>` : ''}
 
@@ -450,7 +470,7 @@ ${pageHero('Dental Encyclopedia', `${esc(e.term)}`, e.reading ? `${esc(e.reading
     </div>
   </div>
 </article>`
-  return c.html(layout({ title: `${e.term} 뜻 — 치과 백과사전`, desc: firstSentence.slice(0, 155), path: `/encyclopedia/${encodeURIComponent(e.term)}`, jsonLd }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
+  return c.html(layout({ title: `${e.term} 뜻 — 치과 백과사전`, desc: encyMetaDesc(e.def), path: encyPath(e.term), jsonLd }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
 })
 
 export default hub

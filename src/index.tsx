@@ -1,12 +1,14 @@
 import { Hono } from 'hono'
 import { getCookie } from 'hono/cookie'
 import { secureHeaders } from 'hono/secure-headers'
-import { layout } from './lib/layout'
+import { layout, TX_REVIEWED } from './lib/layout'
 import { readSession } from './lib/auth'
 import { CLINIC } from './data/clinic'
 import { TREATMENTS } from './data/treatments'
-import { getReleasedEncyclopedia, encyReleaseDate } from './data/encyclopedia'
+import { getReleasedEncyclopedia, encyReleaseDate, encyPath } from './data/encyclopedia'
 import { SEO_REGIONS } from './data/regions'
+import { FAQS } from './data/faqs'
+import { getPricing, fmtPrice } from './data/pricing'
 import pages from './routes/pages'
 import auth from './routes/auth'
 import content from './routes/content'
@@ -60,7 +62,7 @@ app.get(`/${INDEXNOW_KEY}.txt`, (c) => c.text(INDEXNOW_KEY))
 // ===== SEO/AEO: robots.txt / sitemap.xml / llms.txt =====
 app.get('/naverfd988407159025b7e1d55524212b7a9d.html', (c) => c.html('naver-site-verification: naverfd988407159025b7e1d55524212b7a9d.html'))
 app.get('/df71908e181b46a5a01a62c02c5af9db.txt', (c) => c.text('df71908e181b46a5a01a62c02c5af9db'))
-const AI_BOTS = ['GPTBot', 'OAI-SearchBot', 'ChatGPT-User', 'ClaudeBot', 'Claude-Web', 'anthropic-ai', 'PerplexityBot', 'Perplexity-User', 'Google-Extended', 'Applebot-Extended', 'Amazonbot', 'cohere-ai', 'CCBot', 'Bytespider', 'meta-externalagent', 'Yeti', 'Daum', 'NaverBot']
+const AI_BOTS = ['GPTBot', 'OAI-SearchBot', 'ChatGPT-User', 'ClaudeBot', 'Claude-Web', 'Claude-SearchBot', 'Claude-User', 'anthropic-ai', 'PerplexityBot', 'Perplexity-User', 'Google-Extended', 'Applebot-Extended', 'Amazonbot', 'cohere-ai', 'CCBot', 'Bytespider', 'meta-externalagent', 'Yeti', 'Daum', 'Daumoa', 'NaverBot', 'DuckAssistBot', 'MistralAI-User']
 
 app.get('/robots.txt', (c) =>
   c.text(`# 검단퍼스트치과 — 검색엔진 및 AI 답변엔진 크롤링 정책
@@ -76,8 +78,7 @@ Sitemap: ${CLINIC.siteUrl}/sitemap.xml
 )
 
 // llms.txt — AI 답변엔진(ChatGPT·Claude·Perplexity 등)을 위한 사이트 요약
-app.get('/llms.txt', (c) =>
-  c.text(`# ${CLINIC.name} (Geomdan First Dental Clinic)
+const llmsText = () => `# ${CLINIC.name} (Geomdan First Dental Clinic)
 
 > 인천 검단신도시에서 가장 오래된 치과. 보건복지부 인증 통합치의학 전문의 김희수 대표원장의 1인 책임진료(상담·수술·보철·사후관리 모두 원장 직접). 과잉진료 없는 정직한 진료가 원칙.
 
@@ -119,8 +120,45 @@ ${SEO_REGIONS.map((r) => `- ${r.name} (${r.distance}): ${CLINIC.siteUrl}/region/
 - 전문가미백: 1회 14만원 / 3회 38만원
 - 틀니: 부분 150만원 / 완전 170만원 / 오버덴쳐 200만원
 실제 비용은 치아 상태에 따라 달라질 수 있으며 정밀진단 후 확정됩니다.
-`)
-)
+`
+
+app.get('/llms.txt', (c) => c.text(llmsText() + `\n## 상세판\n- 진료별 요약·FAQ·수가 전문: ${CLINIC.siteUrl}/llms-full.txt\n`))
+
+// llms-full.txt — llms.txt + 진료별 요약(화면 본문·FAQ와 같은 데이터) + 공개 비급여 수가 전문. 사이트에 공개된 내용만.
+app.get('/llms-full.txt', async (c) => {
+  const flat = (t: string) => String(t || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim()
+  const out: string[] = [llmsText(), '---', '']
+  out.push('## 진료별 요약')
+  out.push(`각 진료 페이지 본문과 같은 내용입니다. 감수: ${CLINIC.doctor} 대표원장(보건복지부 인증 통합치의학 전문의) · 최종 검토 ${TX_REVIEWED}. 비용·기간은 개인 상태에 따라 달라지며 정밀진단 후 안내합니다.`)
+  out.push('')
+  for (const t of TREATMENTS) {
+    out.push(`### ${t.name} (${t.nameEn}) — ${flat(t.tagline)}`)
+    out.push(`URL: ${CLINIC.siteUrl}/treatments/${t.slug}`)
+    out.push(flat(t.heroDesc))
+    for (const sec of t.sections.slice(0, 4)) {
+      out.push(`- ${flat(sec.h2)}: ${flat(sec.body[0] || '')}`)
+    }
+    const fq = FAQS[t.slug] || []
+    if (fq.length) {
+      out.push('')
+      out.push('자주 묻는 질문:')
+      for (const f of fq.slice(0, 6)) {
+        out.push(`- Q. ${flat(f.q)}`)
+        out.push(`  A. ${flat(f.a)}`)
+      }
+    }
+    out.push('')
+  }
+  const { pricing, updated } = await getPricing(c.env.DB)
+  out.push(`## 진료비용 (비급여 항목은 의료법 제45조 고지 · ${updated} 기준, ${CLINIC.siteUrl}/pricing 과 동일)`)
+  for (const cat of pricing) {
+    out.push(`### ${cat.label}${cat.insured ? " (건강보험 적용)" : ""}`)
+    for (const it of cat.items) out.push(`- ${flat(it.name)}: ${fmtPrice(it.price)}${it.note ? ` (${flat(it.note)})` : ''}`)
+  }
+  out.push('실제 비용은 치아 상태에 따라 달라질 수 있으며 정밀진단 후 확정됩니다.')
+  out.push('')
+  return c.text(out.join('\n'), 200, { 'Cache-Control': 'public, max-age=3600' })
+})
 
 app.get('/sitemap.xml', async (c) => {
   // lastmod 정직성: 페이지 성격별 실제 갱신 시점을 반영 (전 URL 동일 날짜 금지)
@@ -147,10 +185,11 @@ app.get('/sitemap.xml', async (c) => {
   ]
   const urls: { loc: string; priority: string; changefreq: string; lastmod: string }[] = [
     ...staticPaths.map(([loc, priority, changefreq, lastmod]) => ({ loc, priority, changefreq, lastmod })),
-    ...TREATMENTS.map((t) => ({ loc: `/treatments/${t.slug}`, priority: t.isCore ? '0.9' : '0.7', changefreq: 'monthly', lastmod: '2026-08-13' })),
+    // 진료 페이지 lastmod = 화면 '최종 검토' 날짜(진료 데이터 마지막 커밋일, 빌드 시 고정)
+    ...TREATMENTS.map((t) => ({ loc: `/treatments/${t.slug}`, priority: t.isCore ? '0.9' : '0.7', changefreq: 'monthly', lastmod: TX_REVIEWED })),
     ...SEO_REGIONS.map((r) => ({ loc: `/region/${r.slug}`, priority: '0.7', changefreq: 'monthly', lastmod: '2026-08-02' })),
     // 백과사전 용어별 개별 페이지 — 실제 공개일을 lastmod로
-    ...getReleasedEncyclopedia().map((e, i) => ({ loc: `/encyclopedia/${encodeURIComponent(e.term)}`, priority: '0.6', changefreq: 'monthly', lastmod: encyReleaseDate(i) })),
+    ...getReleasedEncyclopedia().map((e, i) => ({ loc: encyPath(e.term), priority: '0.6', changefreq: 'monthly', lastmod: encyReleaseDate(i) })),
   ]
   try {
     const blog = (await c.env.DB.prepare('SELECT slug, COALESCE(updated_at, created_at) AS m FROM blog_posts WHERE published = 1 ORDER BY created_at DESC LIMIT 500').all<{ slug: string; m: string }>()).results

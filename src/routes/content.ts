@@ -1,6 +1,7 @@
 // 콘텐츠 라우트 — 치료사례(비포애프터), 건강칼럼(블로그), 공지사항, 이미지 서빙 (2026 리뉴얼)
 import { Hono } from 'hono'
-import { layout, esc, pageHero } from '../lib/layout'
+import { layout, esc, pageHero, PHYSICIAN_ID } from '../lib/layout'
+import { CLINIC } from '../data/clinic'
 import { TREATMENTS, getTreatment } from '../data/treatments'
 import { isThinCase, isThinNotice, isThinList, NOINDEX_FOLLOW } from '../lib/thin-content'
 import type { AppEnv } from '../types'
@@ -13,7 +14,7 @@ interface BARow {
   pano_before_key: string | null; pano_after_key: string | null; intra_before_key: string | null; intra_after_key: string | null
   views: number; created_at: string
 }
-interface BlogRow { id: number; title: string; slug: string; content_html: string; excerpt: string | null; thumbnail_key: string | null; author: string; category: string | null; views: number; created_at: string }
+interface BlogRow { id: number; title: string; slug: string; content_html: string; excerpt: string | null; thumbnail_key: string | null; author: string; category: string | null; views: number; created_at: string; updated_at?: string | null }
 interface NoticeRow { id: number; title: string; content_html: string; image_keys: string | null; is_pinned: number; views: number; created_at: string }
 
 function fmtDate(s: string): string {
@@ -189,13 +190,32 @@ content.get('/blog/:slug', async (c) => {
   if (!r) return c.notFound()
   await c.env.DB.prepare('UPDATE blog_posts SET views = views + 1 WHERE id = ?').bind(r.id).run()
 
+  // BlogPosting — 날짜는 DB 값(작성·마지막 수정 시각) 그대로, 이미지는 썸네일 → 본문 첫 이미지 → 기본 OG 순
+  const pageUrl = `${CLINIC.siteUrl}/blog/${r.slug}`
+  const toIso = (v: string | null | undefined): string | undefined => {
+    if (!v) return undefined
+    const t = String(v).trim()
+    if (/^\d{4}-\d{2}-\d{2}$/.test(t)) return t
+    const iso = t.replace(' ', 'T')
+    return /([zZ]|[+-]\d\d:?\d\d)$/.test(iso) ? iso : `${iso}+00:00` // D1 CURRENT_TIMESTAMP = UTC
+  }
+  const firstImg = (r.content_html.match(/<img[^>]+src=["']([^"']+)["']/i) || [])[1]
+  const absUrl = (u: string) => (u.startsWith('http') ? u : `${CLINIC.siteUrl}${u.startsWith('/') ? '' : '/'}${u}`)
+  const postImage = r.thumbnail_key ? absUrl(imgUrl(r.thumbnail_key)) : firstImg ? absUrl(firstImg) : `${CLINIC.siteUrl}/static/images/og_default.jpg`
+  const isDirector = (r.author || '').includes(CLINIC.doctor)
   const articleLd = [{
     '@context': 'https://schema.org',
-    '@type': 'Article',
+    '@type': 'BlogPosting',
+    '@id': `${pageUrl}#article`,
     headline: r.title,
-    author: { '@type': 'Person', name: r.author },
-    datePublished: r.created_at,
-    publisher: { '@type': 'Organization', name: '검단퍼스트치과의원' },
+    ...(r.excerpt ? { description: r.excerpt } : {}),
+    image: postImage,
+    author: isDirector ? { '@type': 'Person', '@id': PHYSICIAN_ID, name: CLINIC.doctor, url: `${CLINIC.siteUrl}/about` } : { '@type': 'Person', name: r.author },
+    datePublished: toIso(r.created_at),
+    dateModified: toIso(r.updated_at || r.created_at),
+    mainEntityOfPage: pageUrl,
+    publisher: { '@id': `${CLINIC.siteUrl}/#clinic` },
+    inLanguage: 'ko-KR',
   }]
   const body = `
 <section class="page-hero relative bg-ink text-white pt-36 pb-14 sm:pt-44 px-5 overflow-hidden">
@@ -216,7 +236,7 @@ content.get('/blog/:slug', async (c) => {
     <a href="tel:032-563-2872" class="btn-3d relative shrink-0 px-6 py-3.5 rounded-full bg-gold-500 text-ink text-sm font-extrabold hover:bg-gold-400 transition"><i class="fas fa-phone mr-2"></i>032-563-2872</a>
   </footer>
 </article>`
-  return c.html(layout({ title: r.title, desc: r.excerpt || `${r.title} — 검단퍼스트치과 건강칼럼`, path: `/blog/${r.slug}`, jsonLd: articleLd, ogImage: r.thumbnail_key ? imgUrl(r.thumbnail_key) : undefined }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
+  return c.html(layout({ title: r.title, desc: r.excerpt || `${r.title} — 검단퍼스트치과 건강칼럼`, path: `/blog/${r.slug}`, jsonLd: articleLd, ogImage: r.thumbnail_key ? absUrl(imgUrl(r.thumbnail_key)) : undefined }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
 })
 
 // ============ 공지사항 목록 ============

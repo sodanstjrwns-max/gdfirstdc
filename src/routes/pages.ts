@@ -1,6 +1,6 @@
 // 정적 페이지 라우트 — 홈, 병원소개, 진료과목, 내원안내, 지역페이지 (2026 리뉴얼)
 import { Hono } from 'hono'
-import { layout, esc, pageHero } from '../lib/layout'
+import { layout, esc, pageHero, PHYSICIAN_ID, TX_REVIEWED } from '../lib/layout'
 import { CLINIC, DOCTOR, EQUIPMENT, STORIES } from '../data/clinic'
 import { TREATMENTS, getTreatment } from '../data/treatments'
 import { FAQS } from '../data/faqs'
@@ -27,6 +27,15 @@ function marquee(): string {
 pages.get('/', (c) => {
   const core = TREATMENTS.filter((t) => t.isCore)
   const others = TREATMENTS.filter((t) => !t.isCore)
+  // 홈 FAQ — 기존 FAQ 데이터에서 핵심 6개 발췌. 화면 섹션(#home-faq)과 FAQPage 스키마가 같은 배열을 쓴다 (1:1 일치)
+  const homeFaqs = [
+    FAQS.implant[0], // 임플란트 수술 시간
+    FAQS.implant[6], // 만 65세 이상 임플란트 건강보험
+    FAQS.bloomnate[0], // 블룸네이트(무삭제 라미네이트)란
+    FAQS.bloomnate[1], // 라미네이트 치아 손상 걱정
+    FAQS.tmj[1], // 턱관절은 어느 병원으로 가야 하나
+    FAQS.tmj[2], // 체외충격파 치료 효과
+  ].filter(Boolean)
   const body = `
 <!-- ===== 히어로 ===== -->
 <section id="hero-section" class="relative min-h-[92vh] bg-ink text-white flex flex-col justify-end overflow-hidden">
@@ -113,7 +122,7 @@ pages.get('/', (c) => {
       { n: 2, suffix: '개사', label: '임플란트 임상자문위원', sub: '오스템 · 덴티스' },
     ].map((s) => `
     <div class="bg-cream p-7 sm:p-9" data-tilt data-tilt-max="6">
-      <p class="stat-num text-5xl sm:text-6xl font-extrabold text-ink" data-count="${s.n}" data-suffix="${s.suffix}">0</p>
+      <p class="stat-num text-5xl sm:text-6xl font-extrabold text-ink" data-count="${s.n}" data-suffix="${s.suffix}">${s.n}${s.suffix}</p>
       <p class="mt-3 font-bold text-ink text-[15px]">${s.label}</p>
       <p class="mt-0.5 text-[13px] text-ink/40">${s.sub}</p>
     </div>`).join('')}
@@ -276,6 +285,22 @@ pages.get('/', (c) => {
   </a>
 </section>
 
+<!-- ===== 자주 묻는 질문 (FAQPage 스키마와 동일 문항) ===== -->
+<section id="home-faq" class="max-w-4xl mx-auto px-5 pb-16">
+  <p class="text-gold-600 text-xs font-bold tracking-[0.3em] uppercase">FAQ</p>
+  <h2 class="mt-2 text-2xl sm:text-3xl font-extrabold text-ink tracking-tightest">자주 묻는 질문</h2>
+  <div class="mt-6 space-y-2.5">
+    ${homeFaqs.map((f) => `<details class="group rounded-2xl bg-white border border-ink/8 overflow-hidden">
+      <summary class="flex items-center justify-between gap-4 px-5 py-4 cursor-pointer list-none">
+        <h3 class="text-[14.5px] font-bold text-ink leading-snug">${esc(f.q)}</h3>
+        <span class="shrink-0 w-7 h-7 rounded-full bg-ink/5 flex items-center justify-center text-ink/40 group-open:rotate-45 transition-transform"><i class="fas fa-plus text-[10px]"></i></span>
+      </summary>
+      <p class="px-5 pb-5 text-[13.5px] text-ink/60 leading-[1.9]">${esc(f.a)}</p>
+    </details>`).join('')}
+  </div>
+  <p class="mt-5 text-[13px] text-ink/40">진료과목별 전체 질문과 답변은 <a href="/faq" class="font-bold text-gold-600 underline underline-offset-4">통합 FAQ 페이지</a>에서 확인하세요.</p>
+</section>
+
 <!-- ===== 진료시간/CTA ===== -->
 <section id="visit-info" class="max-w-6xl mx-auto px-5 pb-24">
   <div class="grid lg:grid-cols-5 gap-4">
@@ -301,15 +326,7 @@ pages.get('/', (c) => {
     </div>
   </div>
 </section>`
-  // 홈 JSON-LD — FAQPage(기존 FAQ 데이터에서 핵심 6개 발췌) + BreadcrumbList(홈 1뎁스)
-  const homeFaqs = [
-    FAQS.implant[0], // 임플란트 수술 시간
-    FAQS.implant[6], // 만 65세 이상 임플란트 건강보험
-    FAQS.bloomnate[0], // 블룸네이트(무삭제 라미네이트)란
-    FAQS.bloomnate[1], // 라미네이트 치아 손상 걱정
-    FAQS.tmj[1], // 턱관절은 어느 병원으로 가야 하나
-    FAQS.tmj[2], // 체외충격파 치료 효과
-  ].filter(Boolean)
+  // 홈 JSON-LD — FAQPage(화면 '자주 묻는 질문' 섹션과 같은 homeFaqs 6개) + BreadcrumbList(홈 1뎁스)
   const homeJsonLd = [
     {
       '@context': 'https://schema.org',
@@ -684,6 +701,16 @@ pages.get('/treatments/:slug', async (c) => {
     followup: '정기검진을 통한 유지관리',
     provider: { '@id': `${CLINIC.siteUrl}/#clinic` },
   })
+  // 페이지 노드 = MedicalWebPage: 다루는 진료(about) + 대표원장 감수(reviewedBy) + 최종 검토일(화면 감수 줄과 같은 값)
+  const txWebPage = {
+    '@type': 'MedicalWebPage',
+    name: `${t.name} — ${CLINIC.shortName}`,
+    about: { '@id': `${CLINIC.siteUrl}/treatments/${t.slug}#procedure` },
+    reviewedBy: { '@id': PHYSICIAN_ID },
+    lastReviewed: TX_REVIEWED,
+    dateModified: TX_REVIEWED,
+    medicalAudience: { '@type': 'MedicalAudience', audienceType: 'Patient' },
+  }
 
   const body = `
 <section class="page-hero relative bg-ink text-white pt-36 pb-16 sm:pt-44 sm:pb-20 px-5 overflow-hidden">
@@ -700,6 +727,7 @@ pages.get('/treatments/:slug', async (c) => {
       <span class="reveal-scale hidden sm:flex w-20 h-20 rounded-3xl bg-white/[0.06] border border-white/10 items-center justify-center text-3xl text-gold-400" data-tilt data-tilt-max="16"><i class="fas ${t.icon}"></i></span>
     </div>
     <p class="reveal speakable-summary mt-7 text-white/50 leading-relaxed max-w-2xl text-[15px]">${esc(t.heroDesc)}</p>
+    <p id="tx-reviewed" class="reveal mt-4 text-[12px] text-white/40"><i class="fas fa-user-doctor text-gold-400 mr-1.5" aria-hidden="true"></i>감수: <a href="/about" class="text-white/60 hover:text-gold-400">${CLINIC.doctor} 대표원장</a> (보건복지부 인증 통합치의학 전문의) · 최종 검토 <time datetime="${TX_REVIEWED}">${TX_REVIEWED}</time></p>
   </div>
 </section>
 
@@ -920,7 +948,7 @@ ${relCases.length || relPosts.length ? `
 </nav>
 
 <script src="/static/treatment.js" defer></script>`
-  return c.html(layout({ title: `${t.name} — 인천 검단신도시 치과`, desc: t.metaDesc, path: `/treatments/${t.slug}`, jsonLd }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
+  return c.html(layout({ title: `${t.name} — 인천 검단신도시 치과`, desc: t.metaDesc, path: `/treatments/${t.slug}`, jsonLd, webPage: txWebPage }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
 })
 
 // ============ 치료스토리 (매거진 챕터형) ============
