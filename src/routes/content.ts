@@ -2,6 +2,7 @@
 import { Hono } from 'hono'
 import { layout, esc, pageHero } from '../lib/layout'
 import { TREATMENTS, getTreatment } from '../data/treatments'
+import { isThinCase, isThinNotice, isThinList, NOINDEX_FOLLOW } from '../lib/thin-content'
 import type { AppEnv } from '../types'
 
 const content = new Hono<AppEnv>()
@@ -113,8 +114,8 @@ content.get('/cases/:id', async (c) => {
     <h2 class="relative text-xl sm:text-2xl font-extrabold tracking-tight">전후비교 슬라이더와 치료 이야기는<br>회원에게만 공개됩니다.</h2>
     <p class="relative mt-3 text-[13.5px] text-white/50 leading-relaxed">환자 프라이버시 보호를 위해 상세 기록은 회원 인증 후 열람하실 수 있습니다.<br>가입은 30초면 충분합니다.</p>
     <div class="relative mt-7 flex flex-wrap justify-center gap-2.5">
-      <a href="/signup" class="btn-3d px-7 py-3.5 rounded-full bg-gold-500 text-ink text-sm font-extrabold hover:bg-gold-400 transition">30초 회원가입</a>
-      <a href="/login?next=${encodeURIComponent(`/cases/${r.id}`)}" class="px-7 py-3.5 rounded-full border border-white/20 text-white text-sm font-extrabold hover:bg-white/10 transition">로그인</a>
+      <a href="/signup" rel="nofollow" class="btn-3d px-7 py-3.5 rounded-full bg-gold-500 text-ink text-sm font-extrabold hover:bg-gold-400 transition">30초 회원가입</a>
+      <a href="/login?next=${encodeURIComponent(`/cases/${r.id}`)}" rel="nofollow" class="px-7 py-3.5 rounded-full border border-white/20 text-white text-sm font-extrabold hover:bg-white/10 transition">로그인</a>
     </div>
   </div>`
   const memberBlock = `
@@ -143,7 +144,10 @@ content.get('/cases/:id', async (c) => {
     <a href="/treatments/${t.slug}" class="btn-3d relative shrink-0 px-6 py-3.5 rounded-full bg-gold-500 text-ink text-sm font-extrabold hover:bg-gold-400 transition">진료 안내 <i class="fas fa-arrow-right ml-1 text-xs"></i></a>
   </div>` : ''}
 </article>`
-  return c.html(layout({ title: r.title, desc: `${r.title} — 검단퍼스트치과 치료사례. ${[t?.name, r.age_group, r.gender].filter(Boolean).join(', ')} 치료 전후 기록.`, path: `/cases/${r.id}` }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
+  // 얇은 사례(비로그인 고유 본문 300자 미만) → noindex, follow (페이지·링크 유지)
+  const thin = isThinCase(r)
+  if (thin) c.header('X-Robots-Tag', NOINDEX_FOLLOW)
+  return c.html(layout({ title: r.title, desc: `${r.title} — 검단퍼스트치과 치료사례. ${[t?.name, r.age_group, r.gender].filter(Boolean).join(', ')} 치료 전후 기록.`, path: `/cases/${r.id}`, robots: thin ? NOINDEX_FOLLOW : undefined }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
 })
 
 // ============ 건강칼럼(블로그) 목록 ============
@@ -239,7 +243,10 @@ ${pageHero('Notice', '병원 소식을<br><span class="font-disp text-shine">전
   </ul>
   ${pager('/notice?', page, pages)}`}
 </section>`
-  return c.html(layout({ title: '공지사항 — 진료일정·휴진 안내', desc: '검단퍼스트치과 공지사항 — 진료일정 변경, 공휴일·휴진 안내, 병원 소식을 가장 빠르게 확인하실 수 있습니다. 진료 문의 032-563-2872.', path: '/notice' }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
+  // 공지가 적어 목록 본문이 얇으면 noindex, follow (공지가 쌓이면 자동 복귀)
+  const thinList = isThinList(rows.map((r) => r.title))
+  if (thinList) c.header('X-Robots-Tag', NOINDEX_FOLLOW)
+  return c.html(layout({ robots: thinList ? NOINDEX_FOLLOW : undefined, title: '공지사항 — 진료일정·휴진 안내', desc: '검단퍼스트치과 공지사항 — 진료일정 변경, 공휴일·휴진 안내, 병원 소식을 가장 빠르게 확인하실 수 있습니다. 진료 문의 032-563-2872.', path: '/notice' }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
 })
 
 // ============ 공지사항 상세 ============
@@ -265,7 +272,9 @@ content.get('/notice/:id', async (c) => {
   ${r.content_html}
   ${images.map((k) => `<img src="${imgUrl(k)}" alt="공지 이미지" class="w-full rounded-3xl my-5" loading="lazy" decoding="async">`).join('')}
 </article>`
-  return c.html(layout({ title: r.title, desc: `${r.title} — 검단퍼스트치과 공지사항`, path: `/notice/${r.id}` }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
+  const thin = isThinNotice(r)
+  if (thin) c.header('X-Robots-Tag', NOINDEX_FOLLOW)
+  return c.html(layout({ title: r.title, desc: `${r.title} — 검단퍼스트치과 공지사항`, path: `/notice/${r.id}`, robots: thin ? NOINDEX_FOLLOW : undefined }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
 })
 
 // ============ R2 이미지 서빙 ============

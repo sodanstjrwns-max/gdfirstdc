@@ -9,6 +9,8 @@ export interface PageMeta {
   ogImage?: string
   jsonLd?: object[]
   noindex?: boolean
+  /** robots 메타 직접 지정 (예: 얇은 페이지 'noindex, follow'). noindex 보다 우선 */
+  robots?: string
 }
 
 export function esc(s: string): string {
@@ -178,7 +180,7 @@ export function layout(meta: PageMeta, body: string, opts?: { user?: { name: str
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>${esc(fullTitle)}</title>
 <meta name="description" content="${esc(meta.desc)}">
-${meta.noindex ? '<meta name="robots" content="noindex,nofollow">' : '<meta name="robots" content="index,follow">'}
+${meta.robots ? `<meta name="robots" content="${esc(meta.robots)}">` : meta.noindex ? '<meta name="robots" content="noindex,nofollow">' : '<meta name="robots" content="index,follow">'}
 <link rel="canonical" href="${url}">
 <link rel="alternate" type="application/rss+xml" title="검단퍼스트치과 건강칼럼 RSS" href="${CLINIC.siteUrl}/rss.xml">
 <meta property="og:type" content="website">
@@ -283,7 +285,7 @@ ${meta.path === '/' ? '<div id="curtain" aria-hidden="true"><span class="curtain
       <a href="${CLINIC.naverTalk}" target="_blank" rel="noopener" class="flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-white text-[#03c75a] font-extrabold text-sm"><i class="fas fa-comment-dots"></i>톡톡 상담</a>
     </div>
     <div class="mt-auto pt-8 flex gap-3 text-sm">
-      ${userName ? `<span class="text-gold-400 py-3">${esc(userName)}님</span><a href="/logout" class="text-white/60 py-3">로그아웃</a>` : `<a href="/login" class="text-white/60 py-3">로그인</a><a href="/signup" class="text-white/60 py-3">회원가입</a>`}
+      ${userName ? `<span class="text-gold-400 py-3">${esc(userName)}님</span><a href="/logout" class="text-white/60 py-3">로그아웃</a>` : `<a href="/login" rel="nofollow" class="text-white/60 py-3">로그인</a><a href="/signup" rel="nofollow" class="text-white/60 py-3">회원가입</a>`}
     </div>
   </div>
 </div>
@@ -387,7 +389,7 @@ ${meta.path === '/' ? '<div id="curtain" aria-hidden="true"><span class="curtain
           <li><a href="/region" class="hover:text-gold-400 transition">진료 지역 안내</a></li>
           <li><a href="${CLINIC.blog}" target="_blank" rel="noopener" class="hover:text-gold-400 transition">네이버 블로그 <i class="fas fa-arrow-up-right-from-square text-[9px]"></i></a></li>
           <li><a href="${CLINIC.youtube}" target="_blank" rel="noopener" class="hover:text-gold-400 transition"><i class="fab fa-youtube text-[#ff0000] mr-1"></i>유튜브 「치과아빠」 <i class="fas fa-arrow-up-right-from-square text-[9px]"></i></a></li>
-          ${userName ? `<li class="text-gold-400/80">${esc(userName)}님 · <a href="/logout" class="hover:text-gold-400">로그아웃</a></li>` : `<li><a href="/login" class="hover:text-gold-400 transition">로그인</a> · <a href="/signup" class="hover:text-gold-400 transition">회원가입</a></li>`}
+          ${userName ? `<li class="text-gold-400/80">${esc(userName)}님 · <a href="/logout" class="hover:text-gold-400">로그아웃</a></li>` : `<li><a href="/login" rel="nofollow" class="hover:text-gold-400 transition">로그인</a> · <a href="/signup" rel="nofollow" class="hover:text-gold-400 transition">회원가입</a></li>`}
         </ul>
       </section>
     </div>

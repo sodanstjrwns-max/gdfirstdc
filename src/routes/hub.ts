@@ -5,6 +5,7 @@ import { CLINIC } from '../data/clinic'
 import { TREATMENTS, getTreatment } from '../data/treatments'
 import { SYMPTOM_GROUPS } from '../data/symptoms'
 import { ENCY_CATEGORIES, getReleasedEncyclopedia, encyTomorrowCount, ENCY_PER_DAY, getReleasedEncyTerm, encyReleaseDate } from '../data/encyclopedia'
+import { THIN_TV_MIN_VIDEOS, NOINDEX_FOLLOW } from '../lib/thin-content'
 import type { AppEnv } from '../types'
 
 const hub = new Hono<AppEnv>()
@@ -40,7 +41,9 @@ ${pageHero('Contents', '알수록 지키기 쉬운<br><span class="font-disp tex
     </a>`).join('')}
   </div>
 </section>`
-  return c.html(layout({ title: '콘텐츠 — AI 증상체크·치과아빠 TV·백과사전', desc: '검단퍼스트치과 콘텐츠 허브 — AI 증상체크, 유튜브 치과아빠, 치과 백과사전, 건강칼럼까지 치아 건강 정보를 한곳에서 만나보세요.', path: '/content' }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
+  // 카드 4장뿐인 안내 허브 → noindex, follow (하위 페이지로의 링크는 그대로 따라감)
+  c.header('X-Robots-Tag', NOINDEX_FOLLOW)
+  return c.html(layout({ robots: NOINDEX_FOLLOW, title: '콘텐츠 — AI 증상체크·치과아빠 TV·백과사전', desc: '검단퍼스트치과 콘텐츠 허브 — AI 증상체크, 유튜브 치과아빠, 치과 백과사전, 건강칼럼까지 치아 건강 정보를 한곳에서 만나보세요.', path: '/content' }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
 })
 
 // ============ AI 증상체크 ============
@@ -182,7 +185,7 @@ hub.get('/api/cases-preview', async (c) => {
 // ============ 치과아빠 TV (유튜브 최신 영상) ============
 interface YtVideo { id: string; title: string; published?: string }
 
-async function fetchYoutubeVideos(): Promise<YtVideo[]> {
+export async function fetchYoutubeVideos(): Promise<YtVideo[]> {
   // 1차: RSS 피드
   try {
     const res = await fetch(`https://www.youtube.com/feeds/videos.xml?channel_id=${YT_CHANNEL_ID}`, {
@@ -281,7 +284,10 @@ document.querySelectorAll('.yt-card .yt-thumb').forEach(function(btn){
   });
 });
 </script>`
-  return c.html(layout({ title: '치과아빠 TV — 김희수 원장 유튜브', desc: '검단퍼스트치과 김희수 원장의 유튜브 채널 「치과아빠」 — 임플란트, 라미네이트, 아이 치아 관리까지 솔직한 치아 이야기를 영상으로 만나보세요.', path: '/tv' }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
+  // 영상이 적으면 noindex, follow — THIN_TV_MIN_VIDEOS 편 이상 쌓이면 자동 색인 복귀
+  const thin = videos.length < THIN_TV_MIN_VIDEOS
+  if (thin) c.header('X-Robots-Tag', NOINDEX_FOLLOW)
+  return c.html(layout({ robots: thin ? NOINDEX_FOLLOW : undefined, title: '치과아빠 TV — 김희수 원장 유튜브', desc: '검단퍼스트치과 김희수 원장의 유튜브 채널 「치과아빠」 — 임플란트, 라미네이트, 아이 치아 관리까지 솔직한 치아 이야기를 영상으로 만나보세요.', path: '/tv' }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
 })
 
 // ============ 치과 백과사전 ============

@@ -15,6 +15,8 @@ import adminStats from './routes/admin-stats'
 import reserve from './routes/reserve'
 import hub from './routes/hub'
 import philosophy from './routes/philosophy'
+import { fetchYoutubeVideos } from './routes/hub'
+import { isThinCase, isThinList, THIN_TV_MIN_VIDEOS } from './lib/thin-content'
 import type { AppEnv } from './types'
 
 const app = new Hono<AppEnv>()
@@ -138,12 +140,10 @@ app.get('/sitemap.xml', async (c) => {
     ['/location', '0.8', 'monthly', '2026-08-02'],
     ['/reserve', '0.9', 'monthly', '2026-08-02'],
     ['/cases', '0.8', 'weekly', '2026-08-04'],
-    ['/content', '0.8', 'monthly', '2026-08-03'],
+    // /content(안내 허브)는 noindex, follow 라 사이트맵 제외
     ['/symptom-check', '0.8', 'monthly', '2026-08-03'],
-    ['/tv', '0.7', 'weekly', '2026-08-17'],
     ['/encyclopedia', '0.8', 'daily', new Date().toISOString().slice(0, 10)],
     ['/blog', '0.8', 'weekly', '2026-08-04'],
-    ['/notice', '0.6', 'weekly', '2026-08-04'],
   ]
   const urls: { loc: string; priority: string; changefreq: string; lastmod: string }[] = [
     ...staticPaths.map(([loc, priority, changefreq, lastmod]) => ({ loc, priority, changefreq, lastmod })),
@@ -155,11 +155,21 @@ app.get('/sitemap.xml', async (c) => {
   try {
     const blog = (await c.env.DB.prepare('SELECT slug, COALESCE(updated_at, created_at) AS m FROM blog_posts WHERE published = 1 ORDER BY created_at DESC LIMIT 500').all<{ slug: string; m: string }>()).results
     urls.push(...blog.map((b) => ({ loc: `/blog/${b.slug}`, priority: '0.6', changefreq: 'monthly', lastmod: (b.m || '').slice(0, 10) || '2026-08-04' })))
-    const cases = (await c.env.DB.prepare('SELECT id, COALESCE(updated_at, created_at) AS m FROM before_after WHERE published = 1 ORDER BY created_at DESC LIMIT 500').all<{ id: number; m: string }>()).results
+    // 얇은 치료사례(noindex, follow)는 사이트맵 제외 — 본문 보강 시 자동 복귀
+    const cases = (await c.env.DB.prepare('SELECT id, title, description, COALESCE(updated_at, created_at) AS m FROM before_after WHERE published = 1 ORDER BY created_at DESC LIMIT 500').all<{ id: number; title: string; description: string | null; m: string }>()).results.filter((b) => !isThinCase(b))
     urls.push(...cases.map((b) => ({ loc: `/cases/${b.id}`, priority: '0.5', changefreq: 'monthly', lastmod: (b.m || '').slice(0, 10) || '2026-08-04' })))
   } catch {
     /* DB 미준비 시 정적 URL만 */
   }
+  // 공지 목록: 공지 제목이 충분히 쌓였을 때만 (얇으면 noindex, follow)
+  try {
+    const notices = (await c.env.DB.prepare('SELECT title FROM notices WHERE published = 1 ORDER BY is_pinned DESC, created_at DESC LIMIT 15').all<{ title: string }>()).results
+    if (!isThinList(notices.map((n) => n.title))) urls.push({ loc: '/notice', priority: '0.6', changefreq: 'weekly', lastmod: '2026-08-04' })
+  } catch { /* noop */ }
+  // 치과아빠 TV: 영상이 충분할 때만 (얇으면 noindex, follow)
+  try {
+    if ((await fetchYoutubeVideos()).length >= THIN_TV_MIN_VIDEOS) urls.push({ loc: '/tv', priority: '0.7', changefreq: 'weekly', lastmod: '2026-08-17' })
+  } catch { /* noop */ }
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${urls.map((u) => `  <url><loc>${CLINIC.siteUrl}${u.loc}</loc><lastmod>${u.lastmod}</lastmod><changefreq>${u.changefreq}</changefreq><priority>${u.priority}</priority></url>`).join('\n')}
