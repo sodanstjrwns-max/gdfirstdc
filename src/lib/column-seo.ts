@@ -163,8 +163,8 @@ export function kstDate(v: string | null | undefined): string {
 export function caseAutoSummary(r: { category: string | null; duration: string | null; doctor: string | null }): string {
   const t = r.category ? TREATMENTS.find((x) => x.slug === r.category) : null
   const parts: string[] = []
-  parts.push(`${CLINIC.shortName}${t ? ` ${t.name}` : ''} 치료사례입니다.`)
-  if (r.duration) parts.push(`치료 기간은 ${r.duration}이었습니다.`)
+  parts.push(`${CLINIC.shortName}${t ? ` ${t.name}` : ''} 사례입니다.`)
+  if (r.duration) parts.push(`치료 기간은 ${r.duration}입니다.`)
   if (r.doctor) parts.push(`${r.doctor} 원장이 진단부터 치료까지 직접 진료했습니다.`)
   parts.push('전후 사진은 같은 촬영 조건에서 기록했으며, 치료 결과는 개인에 따라 다를 수 있습니다.')
   return parts.join(' ')
