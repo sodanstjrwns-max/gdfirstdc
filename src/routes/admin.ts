@@ -7,6 +7,8 @@ import { TREATMENTS } from '../data/treatments'
 import { PRICING } from '../data/pricing'
 import { searchRegions } from '../data/regions'
 import type { AppEnv } from '../types'
+import { pingIndexNow } from '../lib/column-seo'
+import { CLINIC } from '../data/clinic'
 
 const admin = new Hono<AppEnv>()
 
@@ -633,6 +635,12 @@ admin.get('/admin/blog/new', (c) =>
   c.html(layout({ title: '칼럼 등록', desc: '관리자', path: '/admin/blog/new', noindex: true }, adminShell('칼럼 등록', blogForm('/admin/blog/new'), 'blog')))
 )
 
+/** 칼럼 발행·수정 시 IndexNow 핑 — 응답을 막지 않도록 waitUntil */
+function indexNowLater(c: { executionCtx: { waitUntil(p: Promise<unknown>): void } }, paths: string[]) {
+  const urls = paths.map((p) => encodeURI(`${CLINIC.siteUrl}${p}`))
+  try { c.executionCtx.waitUntil(pingIndexNow(urls).catch(() => {})) } catch { /* 로컬 dev 등 executionCtx 없음 */ }
+}
+
 admin.post('/admin/blog/new', async (c) => {
   const form = await c.req.parseBody()
   const title = String(form.title || '').trim()
@@ -643,6 +651,7 @@ admin.post('/admin/blog/new', async (c) => {
   await c.env.DB.prepare(
     'INSERT INTO blog_posts (title, slug, content_html, excerpt, thumbnail_key, category, published) VALUES (?, ?, ?, ?, ?, ?, ?)'
   ).bind(title, slug, String(form.content_html || ''), String(form.excerpt || ''), thumb, String(form.category || ''), form.published === '1' ? 1 : 0).run()
+  if (form.published === '1') indexNowLater(c, [`/blog/${slug}`, '/blog'])
   return c.redirect('/admin/blog')
 })
 
@@ -662,6 +671,7 @@ admin.post('/admin/blog/:id/edit', async (c) => {
   await c.env.DB.prepare(
     'UPDATE blog_posts SET title=?, slug=?, content_html=?, excerpt=?, thumbnail_key=?, category=?, published=?, updated_at=CURRENT_TIMESTAMP WHERE id=?'
   ).bind(String(form.title || '').trim(), slug, String(form.content_html || ''), String(form.excerpt || ''), thumb, String(form.category || ''), form.published === '1' ? 1 : 0, id).run()
+  if (form.published === '1' || old.published) indexNowLater(c, [`/blog/${slug}`, '/blog', ...(old.slug !== slug ? [`/blog/${old.slug}`] : [])])
   return c.redirect('/admin/blog')
 })
 

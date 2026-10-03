@@ -19,7 +19,8 @@ import hub from './routes/hub'
 import philosophy from './routes/philosophy'
 import { fetchYoutubeVideos } from './routes/hub'
 import { isThinCase, isThinList, THIN_TV_MIN_VIDEOS } from './lib/thin-content'
-import type { AppEnv } from './types'
+import { kstDate, answerSummary } from './lib/column-seo'
+import type { AppEnv, D1Database } from './types'
 
 const app = new Hono<AppEnv>()
 
@@ -122,7 +123,20 @@ ${SEO_REGIONS.map((r) => `- ${r.name} (${r.distance}): ${CLINIC.siteUrl}/region/
 실제 비용은 치아 상태에 따라 달라질 수 있으며 정밀진단 후 확정됩니다.
 `
 
-app.get('/llms.txt', (c) => c.text(llmsText() + `\n## 상세판\n- 진료별 요약·FAQ·수가 전문: ${CLINIC.siteUrl}/llms-full.txt\n`))
+// 공개 칼럼 목록 (llms.txt·llms-full.txt 공용, DB 실패 시 빈 목록)
+type LlmsPost = { slug: string; title: string; excerpt: string | null; content_html: string; created_at: string; updated_at: string | null }
+async function publishedPosts(db: D1Database): Promise<LlmsPost[]> {
+  try {
+    return (await db.prepare('SELECT slug, title, excerpt, content_html, created_at, updated_at FROM blog_posts WHERE published = 1 ORDER BY created_at DESC LIMIT 500').all<LlmsPost>()).results
+  } catch {
+    return []
+  }
+}
+app.get('/llms.txt', async (c) => {
+  const posts = await publishedPosts(c.env.DB)
+  const col = posts.length ? `\n## 건강칼럼 (김희수 대표원장 작성·감수, ${posts.length}편)\n- 목록: ${CLINIC.siteUrl}/blog\n${posts.map((p) => `- ${p.title}: ${CLINIC.siteUrl}/blog/${p.slug}`).join('\n')}\n` : ''
+  return c.text(llmsText() + col + `\n## 상세판\n- 진료별 요약·FAQ·수가·칼럼 요약 전문: ${CLINIC.siteUrl}/llms-full.txt\n`)
+})
 
 // llms-full.txt — llms.txt + 진료별 요약(화면 본문·FAQ와 같은 데이터) + 공개 비급여 수가 전문. 사이트에 공개된 내용만.
 app.get('/llms-full.txt', async (c) => {
@@ -157,6 +171,17 @@ app.get('/llms-full.txt', async (c) => {
   }
   out.push('실제 비용은 치아 상태에 따라 달라질 수 있으며 정밀진단 후 확정됩니다.')
   out.push('')
+  const posts = await publishedPosts(c.env.DB)
+  if (posts.length) {
+    out.push(`## 건강칼럼 (김희수 대표원장 작성·감수, ${posts.length}편 — 각 글 맨 위 '핵심 답변'과 같은 요약)`)
+    for (const p of posts) {
+      out.push(`### ${p.title}`)
+      out.push(`URL: ${CLINIC.siteUrl}/blog/${p.slug} · 최종 수정 ${kstDate(p.updated_at || p.created_at)}`)
+      const sm = answerSummary(p.title, p.excerpt, p.content_html)
+      if (sm) out.push(sm)
+      out.push('')
+    }
+  }
   return c.text(out.join('\n'), 200, { 'Cache-Control': 'public, max-age=3600' })
 })
 
@@ -181,11 +206,12 @@ app.get('/sitemap.xml', async (c) => {
     ['/stories', '0.8', 'monthly', '2026-08-04'],
     ['/location', '0.8', 'monthly', '2026-08-02'],
     ['/reserve', '0.9', 'monthly', '2026-08-02'],
-    ['/cases', '0.8', 'weekly', '2026-08-04'],
+    // 목록 lastmod = 최신 공개 항목의 수정일 (아래 DB 조회 후 채움, 실패 시 생략)
+    ['/cases', '0.8', 'weekly', ''],
     // /content(안내 허브)는 noindex, follow 라 사이트맵 제외
     ['/symptom-check', '0.8', 'monthly', '2026-08-03'],
     ['/encyclopedia', '0.8', encyTomorrowCount() > 0 ? 'daily' : 'monthly', encyListLastmod],
-    ['/blog', '0.8', 'weekly', '2026-08-04'],
+    ['/blog', '0.8', 'weekly', ''],
   ]
   const urls: { loc: string; priority: string; changefreq: string; lastmod: string }[] = [
     ...staticPaths.map(([loc, priority, changefreq, lastmod]) => ({ loc, priority, changefreq, lastmod })),
@@ -197,10 +223,14 @@ app.get('/sitemap.xml', async (c) => {
   ]
   try {
     const blog = (await c.env.DB.prepare('SELECT slug, COALESCE(updated_at, created_at) AS m FROM blog_posts WHERE published = 1 ORDER BY created_at DESC LIMIT 500').all<{ slug: string; m: string }>()).results
-    urls.push(...blog.map((b) => ({ loc: `/blog/${b.slug}`, priority: '0.6', changefreq: 'monthly', lastmod: (b.m || '').slice(0, 10) || '2026-08-04' })))
+    urls.push(...blog.map((b) => ({ loc: `/blog/${b.slug}`, priority: '0.6', changefreq: 'monthly', lastmod: kstDate(b.m) })))
+    const blogLatest = blog.map((b) => kstDate(b.m)).sort().pop() || ''
+    const bl = urls.find((u) => u.loc === '/blog'); if (bl) bl.lastmod = blogLatest
     // 얇은 치료사례(noindex, follow)는 사이트맵 제외 — 본문 보강 시 자동 복귀
     const cases = (await c.env.DB.prepare('SELECT id, title, description, COALESCE(updated_at, created_at) AS m FROM before_after WHERE published = 1 ORDER BY created_at DESC LIMIT 500').all<{ id: number; title: string; description: string | null; m: string }>()).results.filter((b) => !isThinCase(b))
-    urls.push(...cases.map((b) => ({ loc: `/cases/${b.id}`, priority: '0.5', changefreq: 'monthly', lastmod: (b.m || '').slice(0, 10) || '2026-08-04' })))
+    urls.push(...cases.map((b) => ({ loc: `/cases/${b.id}`, priority: '0.5', changefreq: 'monthly', lastmod: kstDate(b.m) })))
+    const caseLatest = (await c.env.DB.prepare('SELECT MAX(COALESCE(updated_at, created_at)) AS m FROM before_after WHERE published = 1').first<{ m: string | null }>())?.m
+    const cl = urls.find((u) => u.loc === '/cases'); if (cl) cl.lastmod = kstDate(caseLatest)
   } catch {
     /* DB 미준비 시 정적 URL만 */
   }

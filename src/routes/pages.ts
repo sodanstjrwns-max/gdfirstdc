@@ -1,6 +1,7 @@
 // 정적 페이지 라우트 — 홈, 병원소개, 진료과목, 내원안내, 지역페이지 (2026 리뉴얼)
 import { Hono } from 'hono'
 import { layout, esc, pageHero, PHYSICIAN_ID, TX_REVIEWED } from '../lib/layout'
+import { categoryAliases, answerSummary } from '../lib/column-seo'
 import { CLINIC, DOCTOR, EQUIPMENT, STORIES } from '../data/clinic'
 import { TREATMENTS, getTreatment } from '../data/treatments'
 import { FAQS } from '../data/faqs'
@@ -661,7 +662,8 @@ pages.get('/treatments/:slug', async (c) => {
   try {
     const [cs, ps] = await Promise.all([
       c.env.DB.prepare('SELECT id, title, COALESCE(intra_after_key, pano_after_key, intra_before_key, pano_before_key) AS thumb FROM before_after WHERE published = 1 AND category = ? ORDER BY created_at DESC LIMIT 3').bind(t.slug).all<{ id: number; title: string; thumb: string | null }>(),
-      c.env.DB.prepare('SELECT slug, title, excerpt FROM blog_posts WHERE published = 1 AND category = ? ORDER BY created_at DESC LIMIT 3').bind(t.slug).all<{ slug: string; title: string; excerpt: string | null }>(),
+      // 칼럼 분류는 자유 입력('치주질환'·'gum' 등) → 진료별 별칭 묶음으로 조회
+      c.env.DB.prepare(`SELECT slug, title, excerpt FROM blog_posts WHERE published = 1 AND category IN (${categoryAliases(t.slug).map(() => '?').join(',')}) ORDER BY created_at DESC LIMIT 3`).bind(...categoryAliases(t.slug)).all<{ slug: string; title: string; excerpt: string | null }>(),
     ])
     relCases = cs.results
     relPosts = ps.results
@@ -922,7 +924,7 @@ ${relCases.length || relPosts.length ? `
     ${relCases.map((r) => `
     <a href="/cases/${r.id}" class="bento group block rounded-3xl bg-white border border-ink/8 overflow-hidden">
       <div class="aspect-[16/9] bg-ink/[0.03] overflow-hidden flex items-center justify-center">
-        ${r.thumb ? `<img src="/images/${r.thumb}" alt="${esc(r.title)}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy" decoding="async">` : '<i class="fas fa-tooth text-4xl text-ink/10"></i>'}
+        ${r.thumb ? `<img src="/images/${r.thumb}" alt="${esc(`${t.name} 치료 사례 사진`)}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy" decoding="async">` : '<i class="fas fa-tooth text-4xl text-ink/10"></i>'}
       </div>
       <div class="p-5">
         <span class="text-[10.5px] font-extrabold tracking-widest text-gold-600 uppercase">치료사례</span>
@@ -933,10 +935,14 @@ ${relCases.length || relPosts.length ? `
     <a href="/blog/${esc(p.slug)}" class="bento group block rounded-3xl bg-ink text-white p-6 flex flex-col min-h-[180px]">
       <span class="text-[10.5px] font-extrabold tracking-widest text-gold-400 uppercase">원장 칼럼</span>
       <h3 class="mt-2.5 font-extrabold text-[15.5px] leading-snug line-clamp-2">${esc(p.title)}</h3>
-      ${p.excerpt ? `<p class="mt-2.5 text-[12.5px] text-white/45 leading-relaxed line-clamp-2 flex-1">${esc(p.excerpt)}</p>` : ''}
+      ${p.excerpt ? `<p class="mt-2.5 text-[12.5px] text-white/45 leading-relaxed line-clamp-2 flex-1">${esc(answerSummary(p.title, p.excerpt, ''))}</p>` : ''}
       <p class="mt-4 text-[12.5px] font-bold text-gold-400">읽어보기 <i class="fas fa-arrow-right ml-1 text-[10px] group-hover:translate-x-1 transition-transform"></i></p>
     </a>`).join('')}
   </div>
+  <p class="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-[13px] font-bold">
+    ${relCases.length ? `<a href="/cases?category=${t.slug}" class="text-ink/60 hover:text-ink">${t.name} 치료사례 전체 보기 →</a>` : ''}
+    ${relPosts.length ? `<a href="/blog?category=${t.slug}" class="text-ink/60 hover:text-ink">${t.name} 칼럼 전체 보기 →</a>` : ''}
+  </p>
 </section>` : ''}
 
 <!-- 지역 키워드 칩 (내부링크) -->

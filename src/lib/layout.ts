@@ -13,6 +13,12 @@ export interface PageMeta {
   robots?: string
   /** 페이지 WebPage 노드(speakable)에 합칠 속성 — 예: 진료 페이지 MedicalWebPage·reviewedBy·lastReviewed */
   webPage?: Record<string, unknown>
+  /** og:type (기본 website) — 칼럼은 article */
+  ogType?: 'website' | 'article'
+  /** og:type=article 일 때 article:* 메타 */
+  article?: { published?: string; modified?: string; section?: string }
+  /** 페이지 path 와 다른 canonical(예: ?page=2 목록) — 절대/상대 모두 허용 */
+  canonicalPath?: string
 }
 
 /** 대표원장 Physician 노드 @id — reviewedBy·author 가 모두 이 @id 를 참조한다 (정의는 clinicJsonLd().founder) */
@@ -181,9 +187,10 @@ export function speakableJsonLd(path: string, extra?: Record<string, unknown>): 
 
 export function layout(meta: PageMeta, body: string, opts?: { user?: { name: string } | null; admin?: boolean }): string {
   const fullTitle = meta.path === '/' ? `${CLINIC.name} — ${CLINIC.mission}` : `${meta.title} | ${CLINIC.shortName}`
-  const url = CLINIC.siteUrl + meta.path
+  const url = CLINIC.siteUrl + (meta.canonicalPath || meta.path)
   const extraLd = meta.jsonLd || []
-  const hasBreadcrumb = extraLd.some((j) => (j as Record<string, unknown>)['@type'] === 'BreadcrumbList')
+  const isBc = (j: unknown) => !!j && (j as Record<string, unknown>)['@type'] === 'BreadcrumbList'
+  const hasBreadcrumb = extraLd.some((j) => isBc(j) || (Array.isArray((j as Record<string, unknown>)['@graph']) && ((j as Record<string, unknown>)['@graph'] as unknown[]).some(isBc)))
   const autoBc = hasBreadcrumb ? null : autoBreadcrumbJsonLd(meta.path, meta.title)
   const jsonLd = [clinicJsonLd(), websiteJsonLd(), speakableJsonLd(meta.path, meta.webPage), ...(autoBc ? [autoBc] : []), ...extraLd]
   const userName = opts?.user?.name
@@ -198,7 +205,7 @@ export function layout(meta: PageMeta, body: string, opts?: { user?: { name: str
 ${meta.robots ? `<meta name="robots" content="${esc(meta.robots)}">` : meta.noindex ? '<meta name="robots" content="noindex,nofollow">' : '<meta name="robots" content="index,follow">'}
 <link rel="canonical" href="${url}">
 <link rel="alternate" type="application/rss+xml" title="검단퍼스트치과 건강칼럼 RSS" href="${CLINIC.siteUrl}/rss.xml">
-<meta property="og:type" content="website">
+<meta property="og:type" content="${meta.ogType || 'website'}">${meta.ogType === 'article' && meta.article ? `${meta.article.published ? `\n<meta property="article:published_time" content="${esc(meta.article.published)}">` : ''}${meta.article.modified ? `\n<meta property="article:modified_time" content="${esc(meta.article.modified)}">` : ''}${meta.article.section ? `\n<meta property="article:section" content="${esc(meta.article.section)}">` : ''}` : ''}
 <meta property="og:title" content="${esc(fullTitle)}">
 <meta property="og:description" content="${esc(meta.desc)}">
 <meta property="og:url" content="${url}">
@@ -232,7 +239,7 @@ ${meta.path === '/' ? '<link rel="preload" as="image" href="/static/images/hero_
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&display=swap">
 <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
 <link href="/static/style.css" rel="stylesheet">
-${jsonLd.map((j) => `<script type="application/ld+json">${JSON.stringify(j)}</script>`).join('\n')}
+${jsonLd.map((j) => `<script type="application/ld+json">${JSON.stringify(j).replace(/</g, '\\u003c')}</script>`).join('\n')}
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-15B8GNDDN3"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-15B8GNDDN3',{anonymize_ip:true});</script>
 <script>(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","yc81l757hh");</script>
