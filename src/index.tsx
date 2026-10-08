@@ -20,7 +20,7 @@ import hub from './routes/hub'
 import philosophy from './routes/philosophy'
 import { fetchYoutubeVideos } from './routes/hub'
 import { isThinCase, isThinList, THIN_TV_MIN_VIDEOS } from './lib/thin-content'
-import { kstDate, answerSummary } from './lib/column-seo'
+import { kstDate, answerSummary, isClinicPublishedPost } from './lib/column-seo'
 import type { AppEnv, D1Database } from './types'
 
 const app = new Hono<AppEnv>()
@@ -126,17 +126,18 @@ ${SEO_REGIONS.map((r) => `- ${r.name} (${r.distance}): ${CLINIC.siteUrl}/region/
 `
 
 // 공개 칼럼 목록 (llms.txt·llms-full.txt 공용, DB 실패 시 빈 목록)
-type LlmsPost = { slug: string; title: string; excerpt: string | null; content_html: string; created_at: string; updated_at: string | null }
+type LlmsPost = { id: number; slug: string; title: string; excerpt: string | null; content_html: string; created_at: string; updated_at: string | null }
 async function publishedPosts(db: D1Database): Promise<LlmsPost[]> {
   try {
-    return (await db.prepare('SELECT slug, title, excerpt, content_html, created_at, updated_at FROM blog_posts WHERE published = 1 ORDER BY created_at DESC LIMIT 500').all<LlmsPost>()).results
+    return (await db.prepare('SELECT id, slug, title, excerpt, content_html, created_at, updated_at FROM blog_posts WHERE published = 1 ORDER BY created_at DESC LIMIT 500').all<LlmsPost>()).results
   } catch {
     return []
   }
 }
 app.get('/llms.txt', async (c) => {
   const posts = await publishedPosts(c.env.DB)
-  const col = posts.length ? `\n## 건강칼럼 (김희수 대표원장 작성·감수, ${posts.length}편)\n- 목록: ${CLINIC.siteUrl}/blog\n${posts.map((p) => `- ${p.title}: ${CLINIC.siteUrl}/blog/${p.slug}`).join('\n')}\n` : ''
+  // 글마다 작성 주체 표기 — 원장 작성 근거 없는 글(lib/column-seo.ts isClinicPublishedPost)은 병원 발행
+  const col = posts.length ? `\n## 건강칼럼 (${posts.length}편 · 별도 표기 없는 글은 김희수 대표원장 작성)\n- 목록: ${CLINIC.siteUrl}/blog\n${posts.map((p) => `- ${p.title}: ${CLINIC.siteUrl}/blog/${p.slug}${isClinicPublishedPost(p) ? ` (${CLINIC.shortName} 발행 일반 건강정보)` : ''}`).join('\n')}\n` : ''
   return c.text(llmsText() + col + `\n## 상세판\n- 진료별 요약·FAQ·수가·칼럼 요약 전문: ${CLINIC.siteUrl}/llms-full.txt\n`)
 })
 
@@ -175,10 +176,10 @@ app.get('/llms-full.txt', async (c) => {
   out.push('')
   const posts = await publishedPosts(c.env.DB)
   if (posts.length) {
-    out.push(`## 건강칼럼 (김희수 대표원장 작성·감수, ${posts.length}편 — 각 글 맨 위 '핵심 답변'과 같은 요약)`)
+    out.push(`## 건강칼럼 (${posts.length}편 — 각 글 맨 위 '핵심 답변'과 같은 요약)`)
     for (const p of posts) {
       out.push(`### ${p.title}`)
-      out.push(`URL: ${CLINIC.siteUrl}/blog/${p.slug} · 최종 수정 ${kstDate(p.updated_at || p.created_at)}`)
+      out.push(`URL: ${CLINIC.siteUrl}/blog/${p.slug} · 최종 수정 ${kstDate(p.updated_at || p.created_at)} · ${isClinicPublishedPost(p) ? `${CLINIC.shortName} 발행 일반 건강정보` : `${CLINIC.doctor} 대표원장 작성`}`)
       const sm = answerSummary(p.title, p.excerpt, p.content_html)
       if (sm) out.push(sm)
       out.push('')
@@ -263,7 +264,7 @@ app.get('/rss.xml', async (c) => {
   let items = ''
   let lastBuild = '' // 피드 항목 최신 작성 시각 (요청 시각·오늘 아님), 항목 없으면 생략
   try {
-    const rows = (await c.env.DB.prepare('SELECT slug, title, excerpt, content_html, author, category, created_at FROM blog_posts WHERE published = 1 ORDER BY created_at DESC LIMIT 30').all<{ slug: string; title: string; excerpt: string | null; content_html: string; author: string; category: string | null; created_at: string }>()).results
+    const rows = (await c.env.DB.prepare('SELECT id, slug, title, excerpt, content_html, author, category, created_at FROM blog_posts WHERE published = 1 ORDER BY created_at DESC LIMIT 30').all<{ id: number; slug: string; title: string; excerpt: string | null; content_html: string; author: string; category: string | null; created_at: string }>()).results
     if (rows.length) lastBuild = toUTC(rows[0].created_at)
     items = rows.map((p) => {
       const url = `${CLINIC.siteUrl}/blog/${p.slug}`
@@ -275,7 +276,7 @@ app.get('/rss.xml', async (c) => {
       <description>${escXml(desc)}</description>
 ${toUTC(p.created_at) ? `      <pubDate>${toUTC(p.created_at)}</pubDate>` : ''}${p.category ? `
       <category>${escXml(p.category)}</category>` : ''}
-      <dc:creator>${escXml(p.author || `${CLINIC.doctor} 원장`)}</dc:creator>
+      <dc:creator>${escXml(isClinicPublishedPost(p) ? CLINIC.shortName : p.author || `${CLINIC.doctor} 원장`)}</dc:creator>
     </item>`
     }).join('\n')
   } catch {

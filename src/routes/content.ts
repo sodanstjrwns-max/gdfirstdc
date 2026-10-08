@@ -4,7 +4,7 @@ import { layout, esc, pageHero, PHYSICIAN_ID } from '../lib/layout'
 import { CLINIC } from '../data/clinic'
 import { TREATMENTS, getTreatment } from '../data/treatments'
 import { isThinCase, isThinNotice, isThinList, NOINDEX_FOLLOW } from '../lib/thin-content'
-import { answerSummary, faqsFromArticleHtml, enhanceArticleImages, flatText, clipSentences, toIso, kstDate, caseAutoSummary, cleanCaseTitle, categoryAliases, treatmentSlugForCategory, procedureId } from '../lib/column-seo'
+import { isClinicPublishedPost, CLINIC_GENERAL_INFO_NOTE, answerSummary, faqsFromArticleHtml, enhanceArticleImages, flatText, clipSentences, toIso, kstDate, caseAutoSummary, cleanCaseTitle, categoryAliases, treatmentSlugForCategory, procedureId } from '../lib/column-seo'
 import type { AppEnv } from '../types'
 
 const content = new Hono<AppEnv>()
@@ -367,7 +367,9 @@ content.get('/blog/:slug', async (c) => {
   const firstImg = (r.content_html.match(/<img[^>]+src=["']([^"']+)["']/i) || [])[1]
   const absUrl = (u: string) => (u.startsWith('http') ? u : `${CLINIC.siteUrl}${u.startsWith('/') ? '' : '/'}${u}`)
   const postImage = r.thumbnail_key ? absUrl(imgUrl(r.thumbnail_key)) : firstImg ? absUrl(firstImg) : `${CLINIC.siteUrl}/static/images/og_default.jpg`
-  const isDirector = !r.author || (r.author || '').includes(CLINIC.doctor)
+  // 원장 작성 근거 없는 글(대행사 시드 등, lib/column-seo.ts) → 병원 발행
+  const clinicPost = isClinicPublishedPost(r)
+  const isDirector = !clinicPost && (!r.author || (r.author || '').includes(CLINIC.doctor))
   const summary = answerSummary(r.title, r.excerpt, r.content_html)
   const metaDesc = clipSentences(summary || flatText(r.content_html) || `${r.title} — 검단퍼스트치과 건강칼럼`, 155, 60)
   const faqs = faqsFromArticleHtml(r.content_html)
@@ -375,7 +377,7 @@ content.get('/blog/:slug', async (c) => {
   const published = toIso(r.created_at)
   const modified = toIso(r.updated_at || r.created_at)
   const reviewed = kstDate(r.updated_at || r.created_at)
-  const authorRef = isDirector ? { '@id': PHYSICIAN_ID } : { '@type': 'Person', name: r.author }
+  const authorRef = clinicPost ? { '@id': `${CLINIC.siteUrl}/#clinic` } : isDirector ? { '@id': PHYSICIAN_ID } : { '@type': 'Person', name: r.author }
 
   const graph: Record<string, unknown>[] = [
     {
@@ -428,7 +430,17 @@ content.get('/blog/:slug', async (c) => {
     speakable: { '@type': 'SpeakableSpecification', cssSelector: ['h1', '.answer-summary'] },
   }
 
-  const authorBox = `
+  const authorBox = clinicPost ? `
+  <aside class="author-box mt-12 rounded-3xl bg-white border border-ink/8 p-6 sm:p-7 flex gap-5 items-start" aria-label="발행">
+    <img src="/static/images/logo.png" alt="${CLINIC.shortName} 로고" width="88" height="88" class="w-[88px] h-[88px] rounded-2xl object-contain bg-white border border-ink/8 p-2 shrink-0" loading="lazy" decoding="async">
+    <div class="min-w-0">
+      <p class="text-[11px] font-extrabold tracking-[0.2em] uppercase text-gold-600">발행</p>
+      <p class="mt-1 text-[17px] font-extrabold text-ink tracking-tight"><a href="/about" class="hover:underline decoration-gold-500 underline-offset-4">${CLINIC.shortName}</a></p>
+      <p class="mt-1 text-[13px] text-ink/55 leading-relaxed">${CLINIC_GENERAL_INFO_NOTE}</p>
+      <p class="mt-2 text-[12px] text-ink/40">게시 ${fmtDate(r.created_at)}${r.updated_at && fmtDate(r.updated_at) !== fmtDate(r.created_at) ? ` · 수정 ${fmtDate(r.updated_at)}` : ''}</p>
+    </div>
+  </aside>
+  <p class="mt-4 text-[11.5px] text-ink/35 leading-relaxed"><i class="fas fa-circle-info mr-1.5"></i>이 글은 일반적인 건강 정보이며 진단을 대신하지 않습니다. 치료 방법과 결과는 개인에 따라 다를 수 있으니 정확한 판단은 내원 상담으로 확인하세요.</p>` : `
   <aside class="author-box mt-12 rounded-3xl bg-white border border-ink/8 p-6 sm:p-7 flex gap-5 items-start" aria-label="글쓴이">
     <img src="/static/images/doctor_portrait.webp" alt="${CLINIC.doctor} 대표원장" width="88" height="88" class="w-[88px] h-[88px] rounded-2xl object-cover shrink-0" loading="lazy" decoding="async">
     <div class="min-w-0">
@@ -456,7 +468,7 @@ content.get('/blog/:slug', async (c) => {
     <nav aria-label="breadcrumb" class="reveal text-[12px] text-white/35 font-medium"><a href="/" class="hover:text-gold-400">홈</a> / <a href="/blog" class="hover:text-gold-400">건강칼럼</a>${tx ? ` / <a href="/blog?category=${tx.slug}" class="hover:text-gold-400">${tx.name}</a>` : ''}</nav>
     ${r.category ? `<p class="reveal mt-5 text-gold-400 text-xs font-extrabold tracking-[0.25em] uppercase">${esc(tx ? tx.name : r.category)}</p>` : ''}
     <h1 class="reveal mt-3 text-3xl sm:text-5xl font-extrabold tracking-tightest leading-tight">${esc(r.title)}</h1>
-    <p class="reveal mt-5 text-[13px] text-white/40 font-medium">${esc(r.author || `${CLINIC.doctor} 대표원장`)} · ${fmtDate(r.created_at)} · <i class="fas fa-eye"></i> ${r.views + 1}</p>
+    <p class="reveal mt-5 text-[13px] text-white/40 font-medium">${clinicPost ? CLINIC.shortName : esc(r.author || `${CLINIC.doctor} 대표원장`)} · ${fmtDate(r.created_at)} · <i class="fas fa-eye"></i> ${r.views + 1}</p>
   </div>
 </section>
 <article class="max-w-3xl mx-auto px-5 py-12 blog-content">

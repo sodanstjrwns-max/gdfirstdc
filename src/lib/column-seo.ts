@@ -37,6 +37,22 @@ export function categoryAliases(slug: string): string[] {
   return BLOG_CATEGORY_ALIASES[slug] || [slug]
 }
 
+// ===== 칼럼 작성 주체 (2026-10-08, 사용자 승인) =====
+// 원장을 저자·감수자로 표시하는 건 원장이 쓰거나 검토했다는 근거가 있을 때만.
+// - 대행사 시드 글 3편: seed_content_2026-08-01.sql (커밋 df1ca99 '시뮬레이션 콘텐츠 시드')
+//   → D1 blog_posts id 1 implant-longterm-care · 2 gum-bleeding-signal · 3 veneer-shade-selection
+//   author 컬럼은 스키마 기본값('김희수 대표원장')일 뿐 원장 작성 근거가 아님
+// - 그 밖의 글도 본문에 원장 이름(병원이 관리자 에디터로 넣은 '치과아빠 김희수입니다' 등)이 없으면 근거 없음
+// → 근거 없는 글: 작성·발행 = 병원(#clinic), reviewedBy·lastReviewed 없음, 화면엔 일반 정보 안내 문구.
+// 상세·RSS·llms 모두 이 함수만 사용한다. (2026-10-08 기준 id 4~36 은 원장 바이라인 있음 → 원장 표시 유지)
+export const AGENCY_SEED_POST_IDS = new Set([1, 2, 3])
+export const CLINIC_GENERAL_INFO_NOTE = '일반 건강정보입니다. 진료 판단은 내원 상담에서 원장이 직접 합니다.'
+export function isClinicPublishedPost(p: { id: number | string; content_html?: string | null }): boolean {
+  if (AGENCY_SEED_POST_IDS.has(Number(p.id))) return true
+  if (p.content_html == null) return false // 본문을 조회하지 않은 호출 — 시드 id 만으로 판별
+  return !flatText(p.content_html).includes(CLINIC.doctor)
+}
+
 export const procedureId = (slug: string) => `${CLINIC.siteUrl}/treatments/${slug}#procedure`
 
 const decodeEntities = (s: string) =>
