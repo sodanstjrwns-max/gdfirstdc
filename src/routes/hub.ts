@@ -413,7 +413,8 @@ hub.get('/encyclopedia/:term', (c) => {
       description: firstSentence,
       datePublished: releaseDate,
       dateModified: releaseDate,
-      author: { '@type': 'Person', name: '김희수', jobTitle: '대표원장 · 보건복지부 인증 통합치의학 전문의', url: `${CLINIC.siteUrl}/about` },
+      // 저자 = 병원(원장 작성·검수 기록 없음 — 원장 Person author 쓰지 않음, 2026-10-08)
+      author: { '@id': `${CLINIC.siteUrl}/#clinic` },
       publisher: { '@id': `${CLINIC.siteUrl}/#clinic` },
       mainEntityOfPage: `${CLINIC.siteUrl}${encyPath(e.term)}`,
     },
@@ -443,7 +444,7 @@ ${pageHero('Dental Encyclopedia', `${esc(e.term)}`, e.reading ? `${esc(e.reading
     }, []).map((g: string[]) => `<p class="text-[14.5px] text-ink/65 leading-[1.95]">${g.join('. ')}${g[g.length - 1].endsWith('.') || g[g.length - 1].endsWith('다') === false ? '' : '.'}</p>`).join('')}
   </section>
 
-  <p class="mt-8 text-[12px] text-ink/35">공개일 ${releaseDate} · 작성 검수: 김희수 대표원장 (보건복지부 인증 통합치의학 전문의)</p>
+  <p class="mt-8 text-[12px] text-ink/35">공개일 ${releaseDate} · 일반 건강정보입니다. 진료 판단은 내원 상담에서 원장이 직접 합니다.</p>
 
   ${t ? `
   <aside id="ency-treatment-link" class="mt-10 rounded-3xl border border-gold-500/30 bg-gold-500/8 p-7">

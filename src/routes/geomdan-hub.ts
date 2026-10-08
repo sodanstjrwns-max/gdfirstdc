@@ -7,7 +7,7 @@
 import { CLINIC, DOCTOR } from '../data/clinic'
 import { TREATMENTS } from '../data/treatments'
 import { SEO_REGIONS } from '../data/regions'
-import { esc, pageHero, PHYSICIAN_ID } from '../lib/layout'
+import { esc, pageHero } from '../lib/layout'
 
 export const GEOMDAN_HUB_PATH = '/region/geomdan'
 export const GEOMDAN_HUB_UPDATED = '2026-10-08'
@@ -142,8 +142,8 @@ export function geomdanHubWebPage(): Record<string, unknown> {
     },
     mainEntity: { '@id': `${CLINIC.siteUrl}${GEOMDAN_HUB_PATH}#faq` },
     breadcrumb: { '@id': `${CLINIC.siteUrl}${GEOMDAN_HUB_PATH}#breadcrumb` },
-    reviewedBy: { '@id': PHYSICIAN_ID },
-    lastReviewed: GEOMDAN_HUB_UPDATED,
+    // reviewedBy/lastReviewed 없음 — 2026-10-08 작성 허브, 원장 검토 기록 없음
+    publisher: { '@id': `${CLINIC.siteUrl}/#clinic` },
     dateModified: GEOMDAN_HUB_UPDATED,
     significantLink: ['/location', '/about', '/treatments', '/pricing', '/reserve'].map((p) => `${CLINIC.siteUrl}${p}`),
   }
