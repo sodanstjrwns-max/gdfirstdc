@@ -420,7 +420,7 @@ ${meta.path === '/' ? '<div id="curtain" aria-hidden="true"><span class="curtain
     <nav class="py-5 border-t border-white/10" aria-label="진료 지역 바로가기">
       <p class="text-[10px] font-bold tracking-[0.25em] uppercase text-white/25 mb-2.5">Service Areas — 검단·서구·김포·청라·계양 치과</p>
       <p class="text-[11.5px] leading-[2.1] text-white/30">
-        ${SEO_REGIONS.map((r) => `<a href="/region/${r.slug}" class="hover:text-gold-400 transition whitespace-nowrap">${r.slug === 'geomdan' ? '검단 치과' : `${r.name} 치과`}</a>`).join(' <span class="text-white/10">·</span> ')}
+        ${SEO_REGIONS.filter((r) => !(r.slug === 'geomdan' && meta.path === '/region/geomdan')).map((r) => `<a href="/region/${r.slug}" class="hover:text-gold-400 transition whitespace-nowrap">${r.slug === 'geomdan' ? '검단 치과' : `${r.name} 치과`}</a>`).join(' <span class="text-white/10">·</span> ')}
       </p>
     </nav>
     <div class="pt-5 border-t border-white/10 flex flex-col sm:flex-row justify-between gap-2 text-[11px] text-white/30">

@@ -2,6 +2,7 @@
 import { Hono } from 'hono'
 import { layout, esc, pageHero } from '../lib/layout'
 import { CLINIC } from '../data/clinic'
+import { hubA } from '../lib/hub-link'
 import { TREATMENTS, getTreatment } from '../data/treatments'
 import { SYMPTOM_GROUPS } from '../data/symptoms'
 import { ENCY_CATEGORIES, getReleasedEncyclopedia, encyTomorrowCount, ENCY_PER_DAY, getReleasedEncyTerm, getReleasedEncyBySlug, encySlug, encyPath, encyReleaseDate } from '../data/encyclopedia'
@@ -462,7 +463,9 @@ ${pageHero('Dental Encyclopedia', `${esc(e.term)}`, e.reading ? `${esc(e.reading
     </div>
   </section>` : ''}
 
-  <div class="mt-12 rounded-3xl bg-gold-500/10 border border-gold-500/25 p-7 text-center">
+  <p class="mt-10 text-[13.5px] text-ink/55"><i class="fas fa-location-dot text-gold-500 mr-1.5" aria-hidden="true"></i>검단퍼스트치과 위치·진료시간 안내: ${hubA()}</p>
+
+  <div class="mt-6 rounded-3xl bg-gold-500/10 border border-gold-500/25 p-7 text-center">
     <p class="text-ink font-extrabold tracking-tight">${esc(e.term)}에 대해 더 궁금한 점이 있으신가요?</p>
     <p class="mt-1 text-[13px] text-ink/50">원장이 직접 상담해 드립니다. 네이버 톡톡은 진료시간 내 30분 이내 답변드립니다.</p>
     <div class="mt-4 flex flex-wrap justify-center gap-2">

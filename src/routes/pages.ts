@@ -7,6 +7,7 @@ import { TREATMENTS, getTreatment } from '../data/treatments'
 import { FAQS } from '../data/faqs'
 import { SEO_REGIONS, REGION_GROUPS, type SeoRegion } from '../data/regions'
 import { GEOMDAN_HUB_PATH, GEOMDAN_HUB_TITLE, GEOMDAN_HUB_FULL_TITLE, GEOMDAN_HUB_DESC, geomdanHubBody, geomdanHubJsonLd, geomdanHubWebPage } from './geomdan-hub'
+import { hubA } from '../lib/hub-link'
 import { PRICING, fmtPrice, PRICING_UPDATED, getPricing } from '../data/pricing'
 import { getExtras } from '../data/treatment_extras'
 import { interactiveSection } from '../lib/interactive'
@@ -950,8 +951,9 @@ ${relCases.length || relPosts.length ? `
 <!-- 지역 키워드 칩 (내부링크) -->
 <nav id="region-chips" class="max-w-6xl mx-auto px-5 pb-20" aria-label="지역별 ${t.name} 안내">
   <p class="text-[11px] font-bold tracking-[0.25em] uppercase text-ink/30 mb-3">지역별 안내 — ${t.name}</p>
+  <p class="mb-4 text-[14px] text-ink/60 leading-relaxed">${esc(t.name)} 진료 위치·주차·진료시간은 ${hubA()} 안내에서 확인하실 수 있습니다.</p>
   <p class="flex flex-wrap gap-x-1.5 gap-y-2 text-[12.5px] leading-none">
-    ${SEO_REGIONS.slice(0, 12).map((r) => `<a href="/region/${r.slug}" class="px-3.5 py-2 rounded-full bg-white border border-ink/8 text-ink/50 hover:text-ink hover:border-ink/25 transition whitespace-nowrap">${r.name} ${t.name.replace(/ BloomNate$/, '')}</a>`).join('')}
+    ${SEO_REGIONS.filter((r) => r.slug !== 'geomdan').slice(0, 12).map((r) => `<a href="/region/${r.slug}" class="px-3.5 py-2 rounded-full bg-white border border-ink/8 text-ink/50 hover:text-ink hover:border-ink/25 transition whitespace-nowrap">${r.name} ${t.name.replace(/ BloomNate$/, '')}</a>`).join('')}
   </p>
 </nav>
 
@@ -1411,8 +1413,9 @@ pages.get('/region/:slug', (c) => {
   }
   const core = TREATMENTS.filter((t) => t.isCore)
   const faqs = regionFaqs(r)
-  const nearby = SEO_REGIONS.filter((x) => x.slug !== r.slug && x.group === r.group).slice(0, 5)
-  const others = SEO_REGIONS.filter((x) => x.slug !== r.slug && x.group !== r.group).slice(0, 6)
+  // 검단(허브)은 상단 '한눈에 보기'의 "검단 치과" 링크 + 푸터로 연결 — 페이지당 허브 링크 최대 2개 (2026-10-08)
+  const nearby = SEO_REGIONS.filter((x) => x.slug !== r.slug && x.slug !== 'geomdan' && x.group === r.group).slice(0, 5)
+  const others = SEO_REGIONS.filter((x) => x.slug !== r.slug && x.slug !== 'geomdan' && x.group !== r.group).slice(0, 6)
 
   const body = `
 ${pageHero('Local', `${r.name} 치과,<br><span class="font-disp text-shine">가까운 정직함.</span>`, `${esc(r.desc)} <span class="text-gold-400 font-bold">— ${r.name}에서 ${r.distance}</span>`)}
@@ -1422,6 +1425,7 @@ ${pageHero('Local', `${r.name} 치과,<br><span class="font-disp text-shine">가
   <div class="reveal-scale rounded-3xl bg-white border border-ink/8 shadow-xl shadow-ink/5 p-7 sm:p-9">
     <p class="text-[11px] font-bold tracking-[0.3em] uppercase text-gold-600">한눈에 보기</p>
     <p class="speakable-summary mt-3 text-[15px] sm:text-base text-ink/75 leading-[1.9]"><strong class="text-ink">${r.name}에서 치과를 찾으신다면</strong> — 검단퍼스트치과는 ${esc(r.full)}에서 <strong class="text-ink">${r.distance}</strong> 거리(${CLINIC.address})에 있는 <strong class="text-ink">통합치의학 전문의 1인 원장 책임진료</strong> 치과입니다. 임플란트·무삭제 라미네이트·턱관절(체외충격파) 특화 진료를 하며, 평일 09:30~18:30(화요일은 야간진료 20:30까지) · 토요일 09:30~14:00 진료, 예약은 <a href="tel:${CLINIC.phone}" class="font-extrabold text-gold-600 underline underline-offset-4">${CLINIC.phone}</a>.</p>
+    <p class="mt-3 text-[13.5px] text-ink/55"><i class="fas fa-location-dot text-gold-500 mr-1.5" aria-hidden="true"></i>병원 위치·주차·의료진 전체 안내: ${hubA()}</p>
     <div class="mt-4 flex flex-wrap gap-2">
       ${r.keywords.slice(0, 5).map((k) => `<span class="text-[11.5px] font-semibold text-ink/40 bg-ink/5 rounded-full px-3 py-1">#${k.replace(/ /g, '')}</span>`).join('')}
     </div>

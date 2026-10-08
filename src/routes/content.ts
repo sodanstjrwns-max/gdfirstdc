@@ -2,6 +2,7 @@
 import { Hono } from 'hono'
 import { layout, esc, pageHero, PHYSICIAN_ID } from '../lib/layout'
 import { CLINIC } from '../data/clinic'
+import { blogHubNote } from '../lib/hub-link'
 import { TREATMENTS, getTreatment } from '../data/treatments'
 import { isThinCase, isThinNotice, isThinList, NOINDEX_FOLLOW } from '../lib/thin-content'
 import { isClinicPublishedPost, CLINIC_GENERAL_INFO_NOTE, answerSummary, faqsFromArticleHtml, enhanceArticleImages, flatText, clipSentences, toIso, kstDate, caseAutoSummary, cleanCaseTitle, categoryAliases, treatmentSlugForCategory, procedureId } from '../lib/column-seo'
@@ -475,6 +476,7 @@ content.get('/blog/:slug', async (c) => {
   ${summary ? `<div class="answer-box not-prose mb-10 rounded-3xl bg-white border border-ink/8 border-l-4 border-l-gold-500 p-6 sm:p-7"><p class="text-[11px] font-extrabold tracking-[0.2em] uppercase text-gold-600">핵심 답변</p><p class="answer-summary mt-2 text-[15.5px] leading-[1.85] text-ink/80 font-medium">${esc(summary)}</p></div>` : ''}
   ${r.thumbnail_key ? `<img src="${imgUrl(r.thumbnail_key)}" alt="${esc(r.title)}" class="w-full rounded-3xl mb-10" decoding="async" fetchpriority="high">` : ''}
   ${enhanceArticleImages(r.content_html, r.title, !r.thumbnail_key)}
+  ${blogHubNote(String(r.slug || ''), tx?.name)}
   ${authorBox}
   ${relatedBlock}
   <footer class="mt-12 rounded-3xl bg-ink text-white p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 not-prose relative overflow-hidden" data-tilt data-tilt-max="5">
