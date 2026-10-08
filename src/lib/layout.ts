@@ -19,6 +19,8 @@ export interface PageMeta {
   article?: { published?: string; modified?: string; section?: string }
   /** 페이지 path 와 다른 canonical(예: ?page=2 목록) — 절대/상대 모두 허용 */
   canonicalPath?: string
+  /** <title> 전체를 직접 지정 (기본: '{title} | 검단퍼스트치과', 홈은 대표 키워드로 시작하는 고정 제목) */
+  fullTitle?: string
 }
 
 /** 대표원장 Physician 노드 @id — reviewedBy·author 가 모두 이 @id 를 참조한다 (정의는 clinicJsonLd().founder) */
@@ -155,7 +157,7 @@ const PATH_LABELS: Record<string, string> = {
   reserve: '예약·상담 신청',
 }
 TREATMENTS.forEach((t) => { PATH_LABELS[t.slug] = t.name })
-SEO_REGIONS.forEach((r) => { PATH_LABELS[r.slug] = `${r.name} 치과` })
+SEO_REGIONS.forEach((r) => { PATH_LABELS[r.slug] = r.slug === 'geomdan' ? '검단 치과' : `${r.name} 치과` })
 
 // BreadcrumbList 자동 생성 (마지막 세그먼트는 PATH_LABELS 없으면 페이지 title 사용)
 export function autoBreadcrumbJsonLd(path: string, pageTitle: string): object | null {
@@ -186,7 +188,7 @@ export function speakableJsonLd(path: string, extra?: Record<string, unknown>): 
 }
 
 export function layout(meta: PageMeta, body: string, opts?: { user?: { name: string } | null; admin?: boolean }): string {
-  const fullTitle = meta.path === '/' ? `${CLINIC.name} — ${CLINIC.mission}` : `${meta.title} | ${CLINIC.shortName}`
+  const fullTitle = meta.fullTitle || (meta.path === '/' ? `${CLINIC.name} — ${CLINIC.mission}` : `${meta.title} | ${CLINIC.shortName}`)
   const url = CLINIC.siteUrl + (meta.canonicalPath || meta.path)
   const extraLd = meta.jsonLd || []
   const isBc = (j: unknown) => !!j && (j as Record<string, unknown>)['@type'] === 'BreadcrumbList'
@@ -418,7 +420,7 @@ ${meta.path === '/' ? '<div id="curtain" aria-hidden="true"><span class="curtain
     <nav class="py-5 border-t border-white/10" aria-label="진료 지역 바로가기">
       <p class="text-[10px] font-bold tracking-[0.25em] uppercase text-white/25 mb-2.5">Service Areas — 검단·서구·김포·청라·계양 치과</p>
       <p class="text-[11.5px] leading-[2.1] text-white/30">
-        ${SEO_REGIONS.map((r) => `<a href="/region/${r.slug}" class="hover:text-gold-400 transition whitespace-nowrap">${r.name} 치과</a>`).join(' <span class="text-white/10">·</span> ')}
+        ${SEO_REGIONS.map((r) => `<a href="/region/${r.slug}" class="hover:text-gold-400 transition whitespace-nowrap">${r.slug === 'geomdan' ? '검단 치과' : `${r.name} 치과`}</a>`).join(' <span class="text-white/10">·</span> ')}
       </p>
     </nav>
     <div class="pt-5 border-t border-white/10 flex flex-col sm:flex-row justify-between gap-2 text-[11px] text-white/30">

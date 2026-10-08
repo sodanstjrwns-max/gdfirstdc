@@ -7,6 +7,7 @@ import { CLINIC } from './data/clinic'
 import { TREATMENTS } from './data/treatments'
 import { getReleasedEncyclopedia, encyReleaseDate, encyPath, encyTomorrowCount } from './data/encyclopedia'
 import { SEO_REGIONS } from './data/regions'
+import { GEOMDAN_HUB_PATH, GEOMDAN_HUB_UPDATED } from './routes/geomdan-hub'
 import { FAQS } from './data/faqs'
 import { getPricing, fmtPrice } from './data/pricing'
 import pages from './routes/pages'
@@ -101,6 +102,7 @@ const llmsText = () => `# ${CLINIC.name} (Geomdan First Dental Clinic)
 ${SEO_REGIONS.map((r) => `- ${r.name} (${r.distance}): ${CLINIC.siteUrl}/region/${r.slug}`).join('\n')}
 
 ## 주요 페이지
+- 검단 치과 · 검단신도시 치과 종합 안내(위치·교통·주차·진료시간·의료진·FAQ): ${CLINIC.siteUrl}${GEOMDAN_HUB_PATH}
 - 병원소개: ${CLINIC.siteUrl}/about
 - 진료과목: ${CLINIC.siteUrl}/treatments
 - 자주 묻는 질문(FAQ 200개+): ${CLINIC.siteUrl}/faq
@@ -196,7 +198,7 @@ app.get('/sitemap.xml', async (c) => {
   const encyListLastmod = releasedEncy.length ? encyReleaseDate(releasedEncy.length - 1) : ''
   const staticPaths: [string, string, string, string][] = [
     // [path, priority, changefreq, lastmod]
-    ['/', '1.0', 'weekly', '2026-08-17'],
+    ['/', '1.0', 'weekly', '2026-10-08'], // 10-08 홈 title·첫 문단 '검단 치과'·허브 링크
     ['/about', '0.9', 'monthly', '2026-08-17'],
     ['/philosophy', '0.8', 'monthly', '2026-08-17'],
     ['/treatments', '0.9', 'monthly', '2026-08-13'],
@@ -204,7 +206,7 @@ app.get('/sitemap.xml', async (c) => {
     ['/pricing', '0.9', 'monthly', '2026-08-13'],
     ['/region', '0.8', 'monthly', '2026-08-02'],
     ['/stories', '0.8', 'monthly', '2026-08-04'],
-    ['/location', '0.8', 'monthly', '2026-08-02'],
+    ['/location', '0.8', 'monthly', '2026-10-08'], // 10-08 검단 치과 허브 링크 추가
     ['/reserve', '0.9', 'monthly', '2026-08-02'],
     // 목록 lastmod = 최신 공개 항목의 수정일 (아래 DB 조회 후 채움, 실패 시 생략)
     ['/cases', '0.8', 'weekly', ''],
@@ -217,7 +219,10 @@ app.get('/sitemap.xml', async (c) => {
     ...staticPaths.map(([loc, priority, changefreq, lastmod]) => ({ loc, priority, changefreq, lastmod })),
     // 진료 페이지 lastmod = 화면 '최종 검토' 날짜(진료 데이터 마지막 커밋일, 빌드 시 고정)
     ...TREATMENTS.map((t) => ({ loc: `/treatments/${t.slug}`, priority: t.isCore ? '0.9' : '0.7', changefreq: 'monthly', lastmod: TX_REVIEWED })),
-    ...SEO_REGIONS.map((r) => ({ loc: `/region/${r.slug}`, priority: '0.7', changefreq: 'monthly', lastmod: '2026-08-02' })),
+    // /region/geomdan = 대표 키워드 허브 '검단 치과' (2026-10-08 전용 본문), 나머지 지역은 08-02
+    ...SEO_REGIONS.map((r) => (r.slug === 'geomdan'
+      ? { loc: GEOMDAN_HUB_PATH, priority: '0.9', changefreq: 'monthly', lastmod: GEOMDAN_HUB_UPDATED }
+      : { loc: `/region/${r.slug}`, priority: '0.7', changefreq: 'monthly', lastmod: '2026-08-02' })),
     // 백과사전 용어별 개별 페이지 — 실제 공개일을 lastmod로
     ...releasedEncy.map((e, i) => ({ loc: encyPath(e.term), priority: '0.6', changefreq: 'monthly', lastmod: encyReleaseDate(i) })),
   ]

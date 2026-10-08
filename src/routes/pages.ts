@@ -6,6 +6,7 @@ import { CLINIC, DOCTOR, EQUIPMENT, STORIES } from '../data/clinic'
 import { TREATMENTS, getTreatment } from '../data/treatments'
 import { FAQS } from '../data/faqs'
 import { SEO_REGIONS, REGION_GROUPS, type SeoRegion } from '../data/regions'
+import { GEOMDAN_HUB_PATH, GEOMDAN_HUB_TITLE, GEOMDAN_HUB_FULL_TITLE, GEOMDAN_HUB_DESC, geomdanHubBody, geomdanHubJsonLd, geomdanHubWebPage } from './geomdan-hub'
 import { PRICING, fmtPrice, PRICING_UPDATED, getPricing } from '../data/pricing'
 import { getExtras } from '../data/treatment_extras'
 import { interactiveSection } from '../lib/interactive'
@@ -66,7 +67,7 @@ pages.get('/', (c) => {
         </h1>
         <p class="mt-8 text-white/55 max-w-md leading-relaxed text-[15px]">
           상담한 원장이 치료하고, 치료한 원장이 끝까지 관리합니다.<br>
-          검단에서 가장 오래된 치과의 1인 대표원장 책임진료 — <strong class="text-white">하지 않아도 될 치료는, 하지 않아도 된다고 말씀드립니다.</strong>
+          검단 치과 검단퍼스트치과의 1인 대표원장 책임진료 — <strong class="text-white">하지 않아도 될 치료는, 하지 않아도 된다고 말씀드립니다.</strong>
         </p>
         <div class="relative z-[2] mt-8 flex flex-wrap gap-3">
           <a href="/reserve" class="btn-3d px-8 py-4 rounded-full bg-gold-500 text-ink font-extrabold hover:bg-gold-400 transition flex items-center gap-2">
@@ -144,6 +145,7 @@ pages.get('/', (c) => {
       <span class="inline-flex items-center gap-2 rounded-full bg-white/[0.07] border border-white/10 px-4 py-2.5 text-white/80"><i class="fas fa-location-dot text-gold-400"></i>${CLINIC.addressShort}</span>
       <span class="inline-flex items-center gap-2 rounded-full bg-white/[0.07] border border-white/10 px-4 py-2.5 text-white/80"><i class="fas fa-clock text-gold-400"></i>평일 09:30~18:30 · 화 야간 ~20:30 · 토 09:30~14:00 <span class="text-white/45">(목·일 휴진)</span></span>
       <a href="tel:${CLINIC.phone}" class="inline-flex items-center gap-2 rounded-full bg-gold-500 hover:bg-gold-400 px-4 py-2.5 font-extrabold text-ink transition"><i class="fas fa-phone"></i>${CLINIC.phone}</a>
+      <a href="/region/geomdan" class="inline-flex items-center gap-2 rounded-full bg-white/[0.07] border border-gold-400/40 px-4 py-2.5 font-bold text-gold-400 hover:bg-white/10 transition"><i class="fas fa-map-location-dot"></i>검단 치과 안내 — 오시는 길·진료시간</a>
     </div>
   </div>
 </section>
@@ -340,7 +342,7 @@ pages.get('/', (c) => {
       itemListElement: [{ '@type': 'ListItem', position: 1, name: '홈', item: `${CLINIC.siteUrl}/` }],
     },
   ]
-  return c.html(layout({ title: '홈', desc: `검단신도시 치과 — ${CLINIC.name}. 과잉진료 없는 1인 대표원장 책임진료. 임플란트·라미네이트·턱관절 치료. 통합치의학 전문의 김희수 원장. ${CLINIC.phone}`, path: '/', jsonLd: homeJsonLd }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
+  return c.html(layout({ title: '홈', fullTitle: `검단 치과 | ${CLINIC.name} — 검단신도시 임플란트·라미네이트·턱관절`, desc: `검단 치과 · 검단신도시 치과 — ${CLINIC.name}. 과잉진료 없는 1인 대표원장 책임진료. 임플란트·라미네이트·턱관절 치료. 통합치의학 전문의 김희수 원장. ${CLINIC.phone}`, path: '/', jsonLd: homeJsonLd }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
 })
 
 // ============ 병원소개 ============
@@ -954,7 +956,7 @@ ${relCases.length || relPosts.length ? `
 </nav>
 
 <script src="/static/treatment.js" defer></script>`
-  return c.html(layout({ title: `${t.name} — 인천 검단신도시 치과`, desc: t.metaDesc, path: `/treatments/${t.slug}`, jsonLd, webPage: txWebPage }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
+  return c.html(layout({ title: `${t.name} 진료 안내 — 인천 검단신도시`, desc: t.metaDesc, path: `/treatments/${t.slug}`, jsonLd, webPage: txWebPage }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
 })
 
 // ============ 치료스토리 (매거진 챕터형) ============
@@ -1149,6 +1151,13 @@ ${pageHero('Location', '검단 한복판,<br><span class="font-disp text-shine">
   </div>
 </section>
 
+<section class="max-w-6xl mx-auto px-5 pb-6">
+  <a href="/region/geomdan" class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-3xl bg-gold-500/10 border border-gold-500/30 px-7 py-6 hover:border-gold-500/60 transition">
+    <span><span class="block text-[11px] font-bold tracking-[0.25em] uppercase text-gold-600">Geomdan Dental</span><span class="block mt-1 text-lg font-extrabold text-ink">검단 치과 · 검단신도시 치과 종합 안내</span><span class="block mt-1 text-[13px] text-ink/55">진료시간·의료진·진료과목·자주 묻는 질문을 한 페이지에서 확인하세요.</span></span>
+    <span class="shrink-0 inline-flex items-center gap-2 text-sm font-bold text-ink">바로 보기 <i class="fas fa-arrow-right text-xs"></i></span>
+  </a>
+</section>
+
 <section id="clinic-entrance" class="max-w-6xl mx-auto px-5 pb-16">
   <div class="grid md:grid-cols-2 gap-4">
     <figure class="reveal-scale rounded-3xl overflow-hidden border border-ink/8 bg-white">
@@ -1169,7 +1178,7 @@ ${pageHero('Location', '검단 한복판,<br><span class="font-disp text-shine">
     </figure>
   </div>
 </section>`
-  return c.html(layout({ title: '내원안내 · 오시는길 — 검단신도시 이음5로 치과', desc: `검단퍼스트치과 오시는 길 — ${CLINIC.address}. 진료시간 월·수·금 09:30~18:30, 화요일 야간진료 09:30~20:30, 토요일 09:30~14:00, 목·일 휴진. 건물 주차장 완비. 예약 문의 ${CLINIC.phone}`, path: '/location' }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
+  return c.html(layout({ title: '내원안내 · 오시는길 — 아라역 1번 출구, 검단퍼스트프라자 3층', desc: `검단퍼스트치과 오시는 길 — ${CLINIC.address}. 진료시간 월·수·금 09:30~18:30, 화요일 야간진료 09:30~20:30, 토요일 09:30~14:00, 목·일 휴진. 건물 주차장 완비. 예약 문의 ${CLINIC.phone}`, path: '/location' }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
 })
 
 // ============ 치료비용 안내 (비급여 수가표) ============
@@ -1396,6 +1405,10 @@ ${pageHero('Service Areas', '어디에 사시든,<br><span class="font-disp text
 pages.get('/region/:slug', (c) => {
   const r = SEO_REGIONS.find((x) => x.slug === c.req.param('slug'))
   if (!r) return c.notFound()
+  // 대표 키워드 허브 "검단 치과 · 검단신도시 치과" (2026-10-08) — 전용 본문 (routes/geomdan-hub.ts)
+  if (r.slug === 'geomdan') {
+    return c.html(layout({ title: GEOMDAN_HUB_TITLE, fullTitle: GEOMDAN_HUB_FULL_TITLE, desc: GEOMDAN_HUB_DESC, path: GEOMDAN_HUB_PATH, jsonLd: geomdanHubJsonLd(), webPage: geomdanHubWebPage() }, geomdanHubBody(), { user: c.get('user'), admin: c.get('isAdmin') }))
+  }
   const core = TREATMENTS.filter((t) => t.isCore)
   const faqs = regionFaqs(r)
   const nearby = SEO_REGIONS.filter((x) => x.slug !== r.slug && x.group === r.group).slice(0, 5)
