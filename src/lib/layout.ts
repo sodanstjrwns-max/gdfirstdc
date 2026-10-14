@@ -232,8 +232,11 @@ ${meta.robots ? `<meta name="robots" content="${esc(meta.robots)}">` : meta.noin
 <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 ${meta.path === '/' ? '<link rel="preload" as="image" href="/static/images/hero_poster.webp" fetchpriority="high">' : ''}
-<link rel="icon" href="/static/images/logo.png" type="image/png">
-<link rel="apple-touch-icon" href="/static/images/logo.png">
+<link rel="icon" href="/favicon.ico?v=fav20261014" sizes="any">
+<link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png?v=fav20261014">
+<link rel="icon" type="image/png" sizes="96x96" href="/favicon-96.png?v=fav20261014">
+<link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png?v=fav20261014">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=fav20261014">
 <meta name="naver-site-verification" content="07183665a5a5368c5e318dc2a0f7637dc0759dee" />
 <script src="https://cdn.tailwindcss.com"></script>
 <script>tailwind.config={theme:{extend:{colors:{ink:{DEFAULT:'#0a1628',soft:'#0f1f38',mute:'#16294a'},navy:{50:'#f2f6fb',100:'#dfeaf5',200:'#bcd3ea',400:'#5b8ec2',600:'#1d5486',700:'#173f66',800:'#12365a',900:'#0d2843'},gold:{300:'#eef1f6',400:'#cdd5e0',500:'#b7c1cf',600:'#5c6b82'},royal:{DEFAULT:'#0a4fc2',600:'#0040a0'},cream:'#faf7f0'},fontFamily:{sans:['Pretendard','-apple-system','system-ui','sans-serif'],disp:['"Nanum Myeongjo"','Pretendard','serif']},letterSpacing:{tightest:'-0.04em'}}}}</script>
