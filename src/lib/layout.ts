@@ -7,6 +7,8 @@ export interface PageMeta {
   desc: string
   path: string
   ogImage?: string
+  /** og:image:alt (기본: 병원명 — 진료 요약) */
+  ogImageAlt?: string
   jsonLd?: object[]
   noindex?: boolean
   /** robots 메타 직접 지정 (예: 얇은 페이지 'noindex, follow'). noindex 보다 우선 */
@@ -216,7 +218,7 @@ ${meta.robots ? `<meta name="robots" content="${esc(meta.robots)}">` : meta.noin
 <meta property="og:image" content="${meta.ogImage || `${CLINIC.siteUrl}/static/images/og_default.jpg`}">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="${esc(CLINIC.name)} — 검단신도시 임플란트·라미네이트·턱관절 치과">
+<meta property="og:image:alt" content="${esc(meta.ogImageAlt || `${CLINIC.name} — 검단신도시 임플란트·라미네이트·턱관절 치과`)}">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="${esc(fullTitle)}">
 <meta name="twitter:description" content="${esc(meta.desc)}">

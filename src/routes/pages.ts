@@ -8,6 +8,8 @@ import { FAQS } from '../data/faqs'
 import { SEO_REGIONS, REGION_GROUPS, type SeoRegion } from '../data/regions'
 import { GEOMDAN_HUB_PATH, GEOMDAN_HUB_TITLE, GEOMDAN_HUB_FULL_TITLE, GEOMDAN_HUB_DESC, geomdanHubBody, geomdanHubJsonLd, geomdanHubWebPage } from './geomdan-hub'
 import { hubA } from '../lib/hub-link'
+import { GEOMDAN_CARDS, geomdanItemListJsonLd, txOgImage } from '../data/geomdan-cards'
+import { geomdanCardGrid } from './geomdan-tx'
 import { PRICING, fmtPrice, PRICING_UPDATED, getPricing } from '../data/pricing'
 import { getExtras } from '../data/treatment_extras'
 import { interactiveSection } from '../lib/interactive'
@@ -180,6 +182,9 @@ pages.get('/', (c) => {
   </div>
 </section>
 
+<!-- ===== 검단 진료별 사진 카드 6장 (ItemList 와 1:1) ===== -->
+${geomdanCardGrid({ id: 'geomdan-cards', heading: '검단 치과, 진료별로 살펴보기', sub: '검단 생활권에서 다니실 때 고르는 기준과 일정을 진료별로 정리했습니다.' })}
+
 <!-- ===== 원장 ===== -->
 <section id="doctor-intro" class="relative bg-ink text-white overflow-hidden">
   <div class="absolute top-0 right-0 w-[500px] h-[500px] rounded-full bg-navy-600/20 blur-[130px]" aria-hidden="true"></div>
@@ -342,6 +347,7 @@ pages.get('/', (c) => {
       '@type': 'BreadcrumbList',
       itemListElement: [{ '@type': 'ListItem', position: 1, name: '홈', item: `${CLINIC.siteUrl}/` }],
     },
+    geomdanItemListJsonLd(`${CLINIC.siteUrl}/#geomdan-cards`),
   ]
   return c.html(layout({ title: '홈', fullTitle: `검단 치과 | ${CLINIC.name} — 검단신도시 임플란트·라미네이트·턱관절`, desc: `검단 치과 · 검단신도시 치과 — ${CLINIC.name}. 과잉진료 없는 1인 대표원장 책임진료. 임플란트·라미네이트·턱관절 치료. 통합치의학 전문의 김희수 원장. ${CLINIC.phone}`, path: '/', jsonLd: homeJsonLd }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
 })
@@ -707,9 +713,13 @@ pages.get('/treatments/:slug', async (c) => {
     provider: { '@id': `${CLINIC.siteUrl}/#clinic` },
   })
   // 페이지 노드 = MedicalWebPage: 다루는 진료(about) + 대표원장 감수(reviewedBy) + 최종 검토일(화면 감수 줄과 같은 값)
+  // 진료별 대표 사진(og 1200×630) — og:image·MedicalWebPage.image 동일 (2026-10-14)
+  const txOg = `${CLINIC.siteUrl}${txOgImage(t.slug)}`
+  const gCard = GEOMDAN_CARDS.find((g) => g.tx === t.slug)
   const txWebPage = {
     '@type': 'MedicalWebPage',
     name: `${t.name} — ${CLINIC.shortName}`,
+    image: { '@type': 'ImageObject', url: txOg, width: 1200, height: 630 },
     about: { '@id': `${CLINIC.siteUrl}/treatments/${t.slug}#procedure` },
     reviewedBy: { '@id': PHYSICIAN_ID },
     lastReviewed: TX_REVIEWED,
@@ -951,14 +961,14 @@ ${relCases.length || relPosts.length ? `
 <!-- 지역 키워드 칩 (내부링크) -->
 <nav id="region-chips" class="max-w-6xl mx-auto px-5 pb-20" aria-label="지역별 ${t.name} 안내">
   <p class="text-[11px] font-bold tracking-[0.25em] uppercase text-ink/30 mb-3">지역별 안내 — ${t.name}</p>
-  <p class="mb-4 text-[14px] text-ink/60 leading-relaxed">${esc(t.name)} 진료 위치·주차·진료시간은 ${hubA()} 안내에서 확인하실 수 있습니다.</p>
+  <p class="mb-4 text-[14px] text-ink/60 leading-relaxed">${esc(t.name)} 진료 위치·주차·진료시간은 ${hubA()} 안내에서 확인하실 수 있습니다.${gCard ? ` 검단 생활권에서 다니실 때의 기준과 일정은 <a href="${gCard.path}" class="font-bold text-ink underline underline-offset-4 decoration-gold-500">${esc(gCard.name)}</a> 안내에 정리했습니다.` : ''}</p>
   <p class="flex flex-wrap gap-x-1.5 gap-y-2 text-[12.5px] leading-none">
     ${SEO_REGIONS.filter((r) => r.slug !== 'geomdan').slice(0, 12).map((r) => `<a href="/region/${r.slug}" class="px-3.5 py-2 rounded-full bg-white border border-ink/8 text-ink/50 hover:text-ink hover:border-ink/25 transition whitespace-nowrap">${r.name} ${t.name.replace(/ BloomNate$/, '')}</a>`).join('')}
   </p>
 </nav>
 
 <script src="/static/treatment.js" defer></script>`
-  return c.html(layout({ title: `${t.name} 진료 안내 — 인천 검단신도시`, desc: t.metaDesc, path: `/treatments/${t.slug}`, jsonLd, webPage: txWebPage }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
+  return c.html(layout({ title: `검단 ${t.name.replace(/ BloomNate$/, '')} 진료 안내 — 과정·비용·FAQ`, desc: t.metaDesc, path: `/treatments/${t.slug}`, ogImage: txOg, ogImageAlt: `검단 ${t.name.replace(/ BloomNate$/, '')} — ${CLINIC.shortName}`, jsonLd, webPage: txWebPage }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
 })
 
 // ============ 치료스토리 (매거진 챕터형) ============
@@ -1409,7 +1419,7 @@ pages.get('/region/:slug', (c) => {
   if (!r) return c.notFound()
   // 대표 키워드 허브 "검단 치과 · 검단신도시 치과" (2026-10-08) — 전용 본문 (routes/geomdan-hub.ts)
   if (r.slug === 'geomdan') {
-    return c.html(layout({ title: GEOMDAN_HUB_TITLE, fullTitle: GEOMDAN_HUB_FULL_TITLE, desc: GEOMDAN_HUB_DESC, path: GEOMDAN_HUB_PATH, jsonLd: geomdanHubJsonLd(), webPage: geomdanHubWebPage() }, geomdanHubBody(), { user: c.get('user'), admin: c.get('isAdmin') }))
+    return c.html(layout({ title: GEOMDAN_HUB_TITLE, fullTitle: GEOMDAN_HUB_FULL_TITLE, desc: GEOMDAN_HUB_DESC, path: GEOMDAN_HUB_PATH, ogImage: `${CLINIC.siteUrl}/static/images/og/geomdan-hub-1200x630.jpg`, ogImageAlt: '검단 치과 — 검단퍼스트치과 로비의 김희수 대표원장', jsonLd: [...geomdanHubJsonLd(), geomdanItemListJsonLd(`${CLINIC.siteUrl}${GEOMDAN_HUB_PATH}#geomdan-cards`)], webPage: geomdanHubWebPage() }, geomdanHubBody(geomdanCardGrid({ id: 'geomdan-cards', heading: '검단에서 많이 찾는 진료 6가지', sub: '진료별로 고르는 기준·일정·자주 묻는 질문을 따로 정리했습니다.' })), { user: c.get('user'), admin: c.get('isAdmin') }))
   }
   const core = TREATMENTS.filter((t) => t.isCore)
   const faqs = regionFaqs(r)

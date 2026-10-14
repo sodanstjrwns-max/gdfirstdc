@@ -10,7 +10,7 @@ import { SEO_REGIONS } from '../data/regions'
 import { esc, pageHero } from '../lib/layout'
 
 export const GEOMDAN_HUB_PATH = '/region/geomdan'
-export const GEOMDAN_HUB_UPDATED = '2026-10-08'
+export const GEOMDAN_HUB_UPDATED = '2026-10-14' // 10-14 검단 진료별 카드 6장 추가 (10-08 허브 신설)
 export const GEOMDAN_HUB_TITLE = '검단 치과 · 검단신도시 치과'
 export const GEOMDAN_HUB_FULL_TITLE = `검단 치과 · 검단신도시 치과 | ${CLINIC.shortName}`
 export const GEOMDAN_HUB_DESC = `검단 치과 검단퍼스트치과 — 인천 검단구 이음5로 80 검단퍼스트프라자 3층, 아라역 1번 출구 도보 5분. 화요일 야간진료 20:30까지, 토요일 14:00까지, 건물 지하주차장. 통합치의학 전문의 1인 대표원장 진료. ${CLINIC.phone}`
@@ -43,7 +43,8 @@ export const GEOMDAN_HUB_FAQS: { q: string; a: string }[] = [
   },
 ]
 
-export function geomdanHubBody(): string {
+/** cardsHtml: '검단 {진료}' 6장 사진 카드(routes/geomdan-tx.ts geomdanCardGrid) — 진료 목록 뒤, FAQ 앞에 넣는다 */
+export function geomdanHubBody(cardsHtml = ''): string {
   const hoursRows = CLINIC.hours.map((h) => `<tr class="border-b border-ink/8"><th scope="row" class="py-3 pr-4 text-left font-bold text-ink w-[42%]">${esc(h.day)}</th><td class="py-3 text-ink/60">${esc(h.time)}</td></tr>`).join('')
   const txCards = TREATMENTS.map((t) => `<a href="/treatments/${t.slug}" class="group rounded-2xl bg-white border border-ink/8 p-5 block hover:border-gold-500/40 transition"><h3 class="font-extrabold text-ink tracking-tight">${esc(t.name)}</h3><p class="mt-1 text-[13px] text-ink/50 leading-relaxed">${esc(t.tagline)}</p></a>`).join('')
   const near = ['wondang', 'ara', 'dangha', 'majeon', 'bullo', 'wanggil']
@@ -91,8 +92,11 @@ ${pageHero('Geomdan Dental', `검단 치과<br><span class="font-disp text-shine
   <h2 class="${h2}">검단퍼스트치과에서 받을 수 있는 진료</h2>
   <p class="${p}">임플란트, 무삭제·최소삭제 라미네이트(블룸네이트), 턱관절 치료를 중심으로 충치·신경치료, 잇몸치료와 스케일링, 보철·틀니, 사랑니 발치, 턱 보톡스까지 진료합니다. 진단과 치료에는 ZEISS 미세현미경, 턱관절 근육 통증에 쓰는 체외충격파(ESWT), 얼굴 전체를 3D로 담는 RAY 페이스 스캐너, 3D 구강스캐너와 3D 프린터, 균열과 초기 충치를 살피는 Q-ray 형광검사를 사용합니다. 비급여 진료비는 <a href="/pricing" class="font-bold text-gold-600 underline underline-offset-4">비용 안내</a>에 항목별로 공개되어 있으며, 실제 치료 방법과 비용은 검사 결과에 따라 달라질 수 있습니다.</p>
   <div class="mt-6 grid sm:grid-cols-2 gap-3">${txCards}</div>
+</section>
+${cardsHtml}
+<section class="max-w-4xl mx-auto px-5 pb-14">
 
-  <h2 class="${h2}" id="hub-faq">검단 주민분들이 자주 묻는 질문</h2>
+  <h2 class="${h2}${cardsHtml ? ' !mt-0' : ''}" id="hub-faq">검단 주민분들이 자주 묻는 질문</h2>
   <div class="mt-6 space-y-3">
     ${GEOMDAN_HUB_FAQS.map((f, i) => `<details id="q-${i + 1}" class="group rounded-2xl bg-white border border-ink/8 overflow-hidden">
       <summary class="flex items-center justify-between gap-4 px-6 py-5 cursor-pointer list-none">

@@ -18,6 +18,8 @@ import adminStats from './routes/admin-stats'
 import reserve from './routes/reserve'
 import hub from './routes/hub'
 import philosophy from './routes/philosophy'
+import geomdanTx from './routes/geomdan-tx'
+import { GEOMDAN_CARDS, GEOMDAN_CARD_DATE, geomdanCardImg, txOgImage } from './data/geomdan-cards'
 import { fetchYoutubeVideos } from './routes/hub'
 import { isThinCase, isThinList, THIN_TV_MIN_VIDEOS } from './lib/thin-content'
 import { kstDate, answerSummary, isClinicPublishedPost } from './lib/column-seo'
@@ -103,6 +105,7 @@ ${SEO_REGIONS.map((r) => `- ${r.name} (${r.distance}): ${CLINIC.siteUrl}/region/
 
 ## 주요 페이지
 - 검단 치과 · 검단신도시 치과 종합 안내(위치·교통·주차·진료시간·의료진·FAQ): ${CLINIC.siteUrl}${GEOMDAN_HUB_PATH}
+${GEOMDAN_CARDS.map((g) => `- ${g.name}: ${CLINIC.siteUrl}${g.path}`).join('\n')}
 - 병원소개: ${CLINIC.siteUrl}/about
 - 진료과목: ${CLINIC.siteUrl}/treatments
 - 자주 묻는 질문(FAQ 200개+): ${CLINIC.siteUrl}/faq
@@ -199,7 +202,7 @@ app.get('/sitemap.xml', async (c) => {
   const encyListLastmod = releasedEncy.length ? encyReleaseDate(releasedEncy.length - 1) : ''
   const staticPaths: [string, string, string, string][] = [
     // [path, priority, changefreq, lastmod]
-    ['/', '1.0', 'weekly', '2026-10-08'], // 10-08 홈 title·첫 문단 '검단 치과'·허브 링크
+    ['/', '1.0', 'weekly', '2026-10-14'], // 10-14 검단 진료별 사진 카드 6장 (10-08 홈 title·첫 문단 '검단 치과'·허브 링크)
     ['/about', '0.9', 'monthly', '2026-08-17'],
     ['/philosophy', '0.8', 'monthly', '2026-08-17'],
     ['/treatments', '0.9', 'monthly', '2026-08-13'],
@@ -216,13 +219,16 @@ app.get('/sitemap.xml', async (c) => {
     ['/encyclopedia', '0.8', encyTomorrowCount() > 0 ? 'daily' : 'monthly', encyListLastmod],
     ['/blog', '0.8', 'weekly', ''],
   ]
-  const urls: { loc: string; priority: string; changefreq: string; lastmod: string }[] = [
+  // img: 이미지 사이트맵(image:image) — 페이지 대표 사진 = og:image 와 같은 파일 (2026-10-14)
+  const urls: { loc: string; priority: string; changefreq: string; lastmod: string; img?: { loc: string; title: string } }[] = [
     ...staticPaths.map(([loc, priority, changefreq, lastmod]) => ({ loc, priority, changefreq, lastmod })),
     // 진료 페이지 lastmod = 화면 '최종 검토' 날짜(진료 데이터 마지막 커밋일, 빌드 시 고정)
-    ...TREATMENTS.map((t) => ({ loc: `/treatments/${t.slug}`, priority: t.isCore ? '0.9' : '0.7', changefreq: 'monthly', lastmod: TX_REVIEWED })),
+    ...TREATMENTS.map((t) => ({ loc: `/treatments/${t.slug}`, priority: t.isCore ? '0.9' : '0.7', changefreq: 'monthly', lastmod: TX_REVIEWED, img: { loc: txOgImage(t.slug), title: `검단 ${t.name.replace(/ BloomNate$/, '')} — ${CLINIC.shortName}` } })),
+    // 검단 {진료} 하위 6장 — 대표 사진 image:image (홈·허브 카드와 같은 사진)
+    ...GEOMDAN_CARDS.map((g) => ({ loc: g.path, priority: '0.8', changefreq: 'monthly', lastmod: GEOMDAN_CARD_DATE, img: { loc: geomdanCardImg(g, 'og'), title: g.alt } })),
     // /region/geomdan = 대표 키워드 허브 '검단 치과' (2026-10-08 전용 본문), 나머지 지역은 08-02
     ...SEO_REGIONS.map((r) => (r.slug === 'geomdan'
-      ? { loc: GEOMDAN_HUB_PATH, priority: '0.9', changefreq: 'monthly', lastmod: GEOMDAN_HUB_UPDATED }
+      ? { loc: GEOMDAN_HUB_PATH, priority: '0.9', changefreq: 'monthly', lastmod: GEOMDAN_HUB_UPDATED, img: { loc: '/static/images/og/geomdan-hub-1200x630.jpg', title: '검단 치과 — 검단퍼스트치과 로비의 김희수 대표원장' } }
       : { loc: `/region/${r.slug}`, priority: '0.7', changefreq: 'monthly', lastmod: '2026-08-02' })),
     // 백과사전 용어별 개별 페이지 — 실제 공개일을 lastmod로
     ...releasedEncy.map((e, i) => ({ loc: encyPath(e.term), priority: '0.6', changefreq: 'monthly', lastmod: encyReleaseDate(i) })),
@@ -250,8 +256,8 @@ app.get('/sitemap.xml', async (c) => {
     if ((await fetchYoutubeVideos()).length >= THIN_TV_MIN_VIDEOS) urls.push({ loc: '/tv', priority: '0.7', changefreq: 'weekly', lastmod: '2026-08-17' })
   } catch { /* noop */ }
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${urls.map((u) => `  <url><loc>${CLINIC.siteUrl}${u.loc}</loc>${u.lastmod ? `<lastmod>${u.lastmod}</lastmod>` : ''}<changefreq>${u.changefreq}</changefreq><priority>${u.priority}</priority></url>`).join('\n')}
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+${urls.map((u) => `  <url><loc>${CLINIC.siteUrl}${u.loc}</loc>${u.lastmod ? `<lastmod>${u.lastmod}</lastmod>` : ''}<changefreq>${u.changefreq}</changefreq><priority>${u.priority}</priority>${u.img ? `<image:image><image:loc>${CLINIC.siteUrl}${u.img.loc}</image:loc><image:title>${u.img.title.replace(/&/g, '&amp;').replace(/</g, '&lt;')}</image:title></image:image>` : ''}</url>`).join('\n')}
 </urlset>`
   return c.body(xml, 200, { 'Content-Type': 'application/xml; charset=utf-8' })
 })
@@ -304,6 +310,7 @@ app.route('/', content)
 app.route('/', reserve)
 app.route('/', hub)
 app.route('/', philosophy)
+app.route('/', geomdanTx) // /region/geomdan-* — pages 의 /region/:slug 보다 먼저
 app.route('/', admin)
 app.route('/', adminStats)
 app.route('/', pages)
