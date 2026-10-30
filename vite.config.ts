@@ -3,6 +3,11 @@ import devServer from '@hono/vite-dev-server'
 import adapter from '@hono/vite-dev-server/cloudflare'
 import { defineConfig } from 'vite'
 import { execSync } from 'node:child_process'
+import { createHash } from 'node:crypto'
+import { readFileSync } from 'node:fs'
+
+// 메인 몰입 연출 파일은 내용 해시로 ?v= 를 붙인다(고정 번호 금지 — 바뀌면 바로 새 파일)
+const assetHash = (f: string) => createHash('sha256').update(readFileSync(f)).digest('hex').slice(0, 10)
 
 // 진료 콘텐츠 최종 검토일 — 진료 본문·FAQ 데이터 파일의 실제 마지막 커밋 날짜를 빌드 시 상수로 고정한다.
 // (요청마다 오늘 날짜를 넣지 않는다. git 이력이 없는 환경에서는 아래 고정값을 쓴다.)
@@ -20,6 +25,8 @@ function lastCommitDate(files: string[], fallback: string): string {
 export default defineConfig({
   define: {
     __TX_REVIEWED__: JSON.stringify(lastCommitDate(TX_CONTENT_FILES, TX_REVIEWED_FALLBACK)),
+    __IMMERSIVE_JS_V__: JSON.stringify(assetHash('public/static/immersive.js')),
+    __IMMERSIVE_CSS_V__: JSON.stringify(assetHash('public/static/immersive.css')),
   },
   plugins: [
     build(),

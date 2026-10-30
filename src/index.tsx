@@ -31,6 +31,12 @@ const app = new Hono<AppEnv>()
 app.use('*', async (c, next) => {
   const url = new URL(c.req.url)
   const host = url.hostname
+  // 미리보기 브랜치 별칭만 예외 — 리디렉션하지 않고 검색 제외(noindex)로 보여 준다
+  if (host === 'immersive-preview.gdfirst-dental.pages.dev') {
+    await next()
+    c.header('X-Robots-Tag', 'noindex, nofollow')
+    return
+  }
   if (host === 'www.gdfirstdc.kr' || host.endsWith('.pages.dev') || host === 'gdfirst-dental.pages.dev') {
     url.hostname = 'gdfirstdc.kr'
     url.protocol = 'https:'

@@ -246,6 +246,7 @@ ${meta.path === '/' ? '<link rel="preload" as="image" href="/static/images/hero_
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&display=swap">
 <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
 <link href="/static/style.css" rel="stylesheet">
+${meta.path === '/' ? `<link href="/static/immersive.css?v=${__IMMERSIVE_CSS_V__}" rel="stylesheet">` : ''}
 ${jsonLd.map((j) => `<script type="application/ld+json">${JSON.stringify(j).replace(/</g, '\\u003c')}</script>`).join('\n')}
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-15B8GNDDN3"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-15B8GNDDN3',{anonymize_ip:true});</script>
@@ -435,6 +436,10 @@ ${meta.path === '/' ? '<div id="curtain" aria-hidden="true"><span class="curtain
   </div>
 </footer>
 <script src="/static/app.js" defer></script>
+${meta.path === '/' ? `<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js" defer></script>
+<script src="/static/immersive.js?v=${__IMMERSIVE_JS_V__}" defer></script>` : ''}
 </body>
 </html>`
 }

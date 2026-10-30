@@ -1,0 +1,16 @@
+/* 검단퍼스트치과 메인 스크롤 몰입 연출 — static/immersive.js 가 html.mx 를 붙였을 때만 작동 */
+/* 관성 스크롤(Lenis)·앵커 진입: 브라우저 부드러운 스크롤과 겹치지 않게 */
+html.mx { scroll-behavior: auto !important; }
+html.mx.lenis, html.mx.lenis body { height: auto; }
+html.mx .lenis.lenis-smooth { scroll-behavior: auto !important; }
+html.mx .lenis.lenis-stopped { overflow: hidden; }
+/* 제목 낱말 마스크 */
+html.mx .mx-w { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: .1em; margin-bottom: -.1em; }
+html.mx .mx-wi { display: inline-block; will-change: transform; }
+/* 카드 속 사진 초점 줌(개별 scale 속성 — 기존 hover 확대와 겹쳐도 깨지지 않음) */
+html.mx .mx-zoom { overflow: hidden; }
+html.mx .mx-zoom > img { scale: var(--mx-z, 1); }
+/* 띠 기울기 */
+html.mx #hero-section .marquee { will-change: transform; }
+/* 양옆에서 들어오는 카드가 가로 스크롤을 만들지 않도록 */
+html.mx #media-section, html.mx #visit-info, html.mx #equipment-section { overflow-x: clip; }
