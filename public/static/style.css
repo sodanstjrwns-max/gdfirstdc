@@ -32,6 +32,10 @@ html { scroll-behavior: smooth; }
 .hero-word { display: inline-block; overflow: hidden; vertical-align: bottom; }
 .hero-word > span { display: inline-block; transform: translateY(110%); animation: heroUp 1s cubic-bezier(.16,1,.3,1) forwards; animation-delay: var(--d, 0s); }
 @keyframes heroUp { to { transform: none; } }
+/* CLS 수정(2026-10-31): 홈 h1 '실력'(나눔명조 800) 자리를 웹폰트 실제 폭(1.8205em)으로 미리 잡는다.
+   폰트를 받기 전 대체 글꼴은 이보다 넓어서(88px에서 169px vs 160px) PC 1440에서 둘째 줄이 넘쳐 h1 이 3줄 → 폰트 도착 후 2줄로
+   줄어들며 히어로 높이가 86px 바뀌고 아래 스탯 섹션까지 움직였다(CLS 0.268). 최종 모양은 전과 같다. */
+#hero-section h1 .hero-word { width: 1.8205em; white-space: nowrap; }
 
 /* 그라데이션 텍스트 */
 .text-shine { background: linear-gradient(100deg, #eef1f6 10%, #b7c1cf 45%, #eef1f6 80%); background-size: 200% auto; -webkit-background-clip: text; background-clip: text; color: transparent; animation: shine 5s linear infinite; }

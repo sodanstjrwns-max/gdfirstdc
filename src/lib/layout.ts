@@ -245,7 +245,7 @@ ${meta.path === '/' ? '<link rel="preload" as="image" href="/static/images/hero_
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&display=swap">
 <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
-<link href="/static/style.css" rel="stylesheet">
+<link href="/static/style.css?v=${__STYLE_CSS_V__}" rel="stylesheet">
 ${meta.path === '/' ? `<link href="/static/immersive.css?v=${__IMMERSIVE_CSS_V__}" rel="stylesheet">` : ''}
 ${jsonLd.map((j) => `<script type="application/ld+json">${JSON.stringify(j).replace(/</g, '\\u003c')}</script>`).join('\n')}
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-15B8GNDDN3"></script>

@@ -27,6 +27,8 @@ export default defineConfig({
     __TX_REVIEWED__: JSON.stringify(lastCommitDate(TX_CONTENT_FILES, TX_REVIEWED_FALLBACK)),
     __IMMERSIVE_JS_V__: JSON.stringify(assetHash('public/static/immersive.js')),
     __IMMERSIVE_CSS_V__: JSON.stringify(assetHash('public/static/immersive.css')),
+    // 공용 style.css 도 내용 해시로(2026-10-31 CLS 수정 — ?v= 없이 두면 브라우저 4시간 캐시에 옛 파일이 남음)
+    __STYLE_CSS_V__: JSON.stringify(assetHash('public/static/style.css')),
   },
   plugins: [
     build(),
