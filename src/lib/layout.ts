@@ -229,7 +229,6 @@ ${meta.robots ? `<meta name="robots" content="${esc(meta.robots)}">` : meta.noin
 <meta name="geo.position" content="${CLINIC.lat};${CLINIC.lng}">
 <meta name="ICBM" content="${CLINIC.lat}, ${CLINIC.lng}">
 <meta name="author" content="${CLINIC.name} ${CLINIC.doctor} 원장">
-<link rel="preconnect" href="https://cdn.tailwindcss.com" crossorigin>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -240,13 +239,13 @@ ${meta.path === '/' ? '<link rel="preload" as="image" href="/static/images/hero_
 <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png?v=fav20261014">
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=fav20261014">
 <meta name="naver-site-verification" content="07183665a5a5368c5e318dc2a0f7637dc0759dee" />
-<script src="https://cdn.tailwindcss.com"></script>
-<script>tailwind.config={theme:{extend:{colors:{ink:{DEFAULT:'#0a1628',soft:'#0f1f38',mute:'#16294a'},navy:{50:'#f2f6fb',100:'#dfeaf5',200:'#bcd3ea',400:'#5b8ec2',600:'#1d5486',700:'#173f66',800:'#12365a',900:'#0d2843'},gold:{300:'#eef1f6',400:'#cdd5e0',500:'#b7c1cf',600:'#5c6b82'},royal:{DEFAULT:'#0a4fc2',600:'#0040a0'},cream:'#faf7f0'},fontFamily:{sans:['Pretendard','-apple-system','system-ui','sans-serif'],disp:['"Nanum Myeongjo"','Pretendard','serif']},letterSpacing:{tightest:'-0.04em'}}}}</script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&display=swap">
 <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
 <link href="/static/style.css?v=${__STYLE_CSS_V__}" rel="stylesheet">
 ${meta.path === '/' ? `<link href="/static/immersive.css?v=${__IMMERSIVE_CSS_V__}" rel="stylesheet">` : ''}
+<!-- Tailwind 빌드 CSS: CDN 이 head 끝에 넣던 것과 같은 우선순위(모든 스타일시트 뒤). 분석 스크립트보다는 앞(CSS 전 배치 계산 → CLS 방지). ?v= 는 내용 해시 -->
+<link rel="stylesheet" href="/static/tailwind.css?v=${__TAILWIND_CSS_V__}">
 ${jsonLd.map((j) => `<script type="application/ld+json">${JSON.stringify(j).replace(/</g, '\\u003c')}</script>`).join('\n')}
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-15B8GNDDN3"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-15B8GNDDN3',{anonymize_ip:true});</script>

@@ -594,7 +594,7 @@ ${pageHero('Treatments', '필요한 치료만,<br><span class="font-disp text-sh
     <a href="/treatments/${t.slug}" class="bento group relative block rounded-3xl overflow-hidden ${t.isCore ? 'bg-ink text-white' : 'bg-white border border-ink/8'} p-7 min-h-[240px] flex flex-col">
       <span class="idx-num${t.isCore ? '-light' : ''} absolute top-5 right-6 text-6xl font-extrabold select-none" aria-hidden="true">${String(i + 1).padStart(2, '0')}</span>
       ${t.isCore ? '<span class="absolute top-6 left-7 text-[10px] font-bold tracking-[0.2em] text-gold-400 uppercase">Signature</span>' : ''}
-      <span class="mt-${t.isCore ? '8' : '0'} w-12 h-12 rounded-2xl ${t.isCore ? 'bg-gold-500 text-ink' : 'bg-ink text-gold-400'} flex items-center justify-center text-lg"><i class="fas ${t.icon}"></i></span>
+      <span class="${t.isCore ? 'mt-8' : 'mt-0'} w-12 h-12 rounded-2xl ${t.isCore ? 'bg-gold-500 text-ink' : 'bg-ink text-gold-400'} flex items-center justify-center text-lg"><i class="fas ${t.icon}"></i></span>
       <h2 class="mt-5 text-xl font-extrabold tracking-tight">${t.name}</h2>
       <p class="${t.isCore ? 'text-gold-400' : 'text-gold-600'} text-[13px] font-semibold mt-0.5">${t.tagline}</p>
       <p class="mt-3 text-[13.5px] ${t.isCore ? 'text-white/50' : 'text-ink/45'} leading-relaxed line-clamp-2 flex-1">${esc(t.metaDesc)}</p>
@@ -821,7 +821,7 @@ ${ex ? `
       <p class="reveal text-gold-400 text-xs font-bold tracking-[0.3em] uppercase">Process</p>
       <h2 class="reveal mt-2 text-2xl sm:text-4xl font-extrabold tracking-tightest">${t.name}, 이렇게 진행됩니다</h2>
     </header>
-    <ol class="grid sm:grid-cols-2 lg:grid-cols-${Math.min(ex.timeline.length, 5)} gap-3" data-stagger>
+    <ol class="grid sm:grid-cols-2 ${['lg:grid-cols-1', 'lg:grid-cols-2', 'lg:grid-cols-3', 'lg:grid-cols-4', 'lg:grid-cols-5'][Math.min(ex.timeline.length, 5) - 1]} gap-3" data-stagger>
       ${ex.timeline.map((s, i) => `
       <li class="rounded-3xl bg-white/[0.05] border border-white/10 p-6 flex flex-col" data-tilt data-tilt-max="5">
         <span class="text-gold-400 font-mono text-xs font-bold">STEP ${i + 1}</span>

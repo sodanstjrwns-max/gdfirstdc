@@ -1,5 +1,14 @@
 # 검단퍼스트치과 홈페이지 (webapp)
 
+## Tailwind 빌드 CSS (2026-11-01 CDN → 빌드 전환)
+
+공용 화면의 Tailwind를 CDN 실행(`cdn.tailwindcss.com` + 인라인 `tailwind.config`)에서 빌드 CSS로 바꿨다. 사이트 색·폰트 설정은 `tailwind.config.cjs`, 입력은 `src/styles/tailwind.css`, 출력은 `public/static/tailwind.css`다(Tailwind 3.4.17 = CDN과 같은 버전).
+- `npm run build`가 `css:build`를 먼저 실행하고, `vite.config.ts`의 `__TAILWIND_CSS_V__`가 새 CSS의 내용 해시를 `?v=`로 붙인다(고정 `?v=` 금지). 새 유틸리티 클래스를 쓰면 커밋 전에 `npm run css:build`로 CSS도 함께 갱신한다.
+- 클래스 이름을 문자열 조합(`'mt-' + n`, `` `lg:grid-cols-${n}` ``)으로 만들지 않는다. 빌드는 `src/**`, `public/static/**/*.js`에 그대로 적힌 클래스만 만든다. 불가피하면 `tailwind.config.cjs`의 `safelist`에 추가한다. DB에 저장되는 본문에 새 Tailwind 클래스를 넣는 것도 같은 이유로 피한다.
+- `--minify` 금지(cssnano가 색을 hsla로 반올림해 바꿈). browserslist(`defaults`, `safari/ios_saf >= 12`)로 CDN과 같은 `-webkit-` 접두사를 유지한다.
+- CDN이 head 끝에 넣던 것과 같은 우선순위를 위해 Tailwind 스타일시트는 다른 모든 스타일시트 뒤에서 로드한다.
+- 납품 안내서(`public/static/handover-gdfirst-2026.html`)는 자체 테마라 `tailwind.handover.config.cjs` → `public/static/handover-tailwind.css`로 따로 빌드하고, `scripts/tailwind-version.mjs`가 HTML의 `?v=`를 내용 해시로 고친다.
+
 ## Project Overview
 - **Name**: 검단퍼스트치과의원 공식 홈페이지
 - **Goal**: 과잉진료 없는 1인 대표원장 책임진료 철학을 담은 지역 SEO 최적화 치과 홈페이지

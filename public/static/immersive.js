@@ -71,10 +71,26 @@
     return was;
   }
 
+  // 그라데이션 글씨(background-clip:text) 안을 낱말로 쪼개면 글자가 투명해진다(대구 2026-11-01 사고)
+  // → .text-shine/.text-lux 외의 clip:text 요소도 계산된 스타일로 찾아 통째로 한 낱말처럼 움직인다.
+  function clipTextHost(node) {
+    for (var e = node.parentElement; e; e = e.parentElement) {
+      var cs = getComputedStyle(e);
+      if (cs.webkitBackgroundClip === 'text' || cs.backgroundClip === 'text') return e;
+    }
+    return null;
+  }
+
   // 낱말 감싸기(하위 태그·br 보존). 글자 분할(data-split)·그라데이션 글자는 건드리지 않는다
   function splitWords(el) {
-    var walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT), nodes = [];
-    while (walker.nextNode()) nodes.push(walker.currentNode);
+    var walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT), nodes = [], hosts = [];
+    while (walker.nextNode()) {
+      var host = clipTextHost(walker.currentNode);
+      if (host) { if (hosts.indexOf(host) < 0) hosts.push(host); continue; }
+      nodes.push(walker.currentNode);
+    }
+    // 제목 전체가 그라데이션(또는 그 안)이면 쪼개지 않는다
+    if (hosts.some(function (h) { return h === el || h.contains(el); })) return [];
     nodes.forEach(function (node) {
       if (node.parentElement.closest('.text-shine, .text-lux, [data-split]')) return;
       var parts = node.textContent.split(/(\s+)/);
@@ -90,8 +106,9 @@
       node.parentNode.replaceChild(frag, node);
     });
     // 그라데이션 글자 덩어리는 통째로 하나의 낱말처럼 움직인다
-    $$('.text-shine, .text-lux', el).forEach(function (s) {
+    $$('.text-shine, .text-lux', el).concat(hosts).forEach(function (s) {
       if (s.parentElement.classList.contains('mx-wi')) return;
+      if (s.parentElement.closest('.text-shine, .text-lux')) return; // 그라데이션 안의 그라데이션은 바깥과 함께
       var w = document.createElement('span'); w.className = 'mx-w';
       var i = document.createElement('span'); i.className = 'mx-wi';
       s.parentNode.insertBefore(w, s); w.appendChild(i); i.appendChild(s);

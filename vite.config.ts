@@ -29,6 +29,8 @@ export default defineConfig({
     __IMMERSIVE_CSS_V__: JSON.stringify(assetHash('public/static/immersive.css')),
     // 공용 style.css 도 내용 해시로(2026-10-31 CLS 수정 — ?v= 없이 두면 브라우저 4시간 캐시에 옛 파일이 남음)
     __STYLE_CSS_V__: JSON.stringify(assetHash('public/static/style.css')),
+    // Tailwind 빌드 CSS(2026-11-01 CDN → 빌드): npm run build 가 css:build 를 먼저 실행하므로 항상 새 CSS 의 해시
+    __TAILWIND_CSS_V__: JSON.stringify(assetHash('public/static/tailwind.css')),
   },
   plugins: [
     build(),

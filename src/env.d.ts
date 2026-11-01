@@ -4,3 +4,4 @@ declare const __TX_REVIEWED__: string
 declare const __IMMERSIVE_JS_V__: string
 declare const __IMMERSIVE_CSS_V__: string
 declare const __STYLE_CSS_V__: string
+declare const __TAILWIND_CSS_V__: string
