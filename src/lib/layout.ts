@@ -55,10 +55,14 @@ const NAV = [
   ] },
 ]
 
+// 지도·채널 고정 URL — 화면(오시는길·검단 허브)에서 쓰는 네이버 플레이스 entry·카카오맵과 동일 값
+const NAVER_PLACE_URL = 'https://map.naver.com/p/entry/place/1391225343'
+const KAKAO_MAP_URL = 'https://map.kakao.com/?q=' + encodeURIComponent('검단퍼스트치과')
+
 export function clinicJsonLd(): object {
   return {
     '@context': 'https://schema.org',
-    '@type': ['Dentist', 'LocalBusiness'],
+    '@type': ['Dentist', 'MedicalClinic', 'LocalBusiness'],
     '@id': `${CLINIC.siteUrl}/#clinic`,
     name: CLINIC.name,
     alternateName: [CLINIC.shortName, CLINIC.nameEn],
@@ -79,8 +83,8 @@ export function clinicJsonLd(): object {
       addressCountry: 'KR',
     },
     geo: { '@type': 'GeoCoordinates', latitude: CLINIC.lat, longitude: CLINIC.lng },
-    hasMap: 'https://map.naver.com/p/search/' + encodeURIComponent('검단퍼스트치과'),
-    sameAs: [CLINIC.blog, CLINIC.youtube, 'https://map.naver.com/p/search/' + encodeURIComponent('검단퍼스트치과')],
+    hasMap: NAVER_PLACE_URL,
+    sameAs: [CLINIC.blog, CLINIC.youtube, NAVER_PLACE_URL, KAKAO_MAP_URL, CLINIC.naverTalk],
     openingHoursSpecification: [
       { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Monday', 'Wednesday', 'Friday'], opens: '09:30', closes: '18:30' },
       { '@type': 'OpeningHoursSpecification', dayOfWeek: 'Tuesday', opens: '09:30', closes: '20:30' },
