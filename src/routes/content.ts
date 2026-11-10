@@ -482,7 +482,7 @@ content.get('/blog/:slug', async (c) => {
   <footer class="mt-12 rounded-3xl bg-ink text-white p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 not-prose relative overflow-hidden" data-tilt data-tilt-max="5">
     <div class="absolute -bottom-14 -right-10 w-48 h-48 rounded-full bg-gold-500/15 blur-[70px]" aria-hidden="true"></div>
     <p class="relative text-lg font-extrabold tracking-tight">궁금한 점이 있으신가요?</p>
-    <a href="tel:032-563-2872" class="btn-3d relative shrink-0 px-6 py-3.5 rounded-full bg-gold-500 text-ink text-sm font-extrabold hover:bg-gold-400 transition"><i class="fas fa-phone mr-2"></i>032-563-2872</a>
+    <a href="tel:032-563-2872" data-cta="article-end" class="btn-3d relative shrink-0 px-6 py-3.5 rounded-full bg-gold-500 text-ink text-sm font-extrabold hover:bg-gold-400 transition"><i class="fas fa-phone mr-2"></i>032-563-2872</a>
   </footer>
 </article>`
   return c.html(layout({

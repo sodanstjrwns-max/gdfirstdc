@@ -469,7 +469,7 @@ ${pageHero('Dental Encyclopedia', `${esc(e.term)}`, e.reading ? `${esc(e.reading
     <p class="text-ink font-extrabold tracking-tight">${esc(e.term)}에 대해 더 궁금한 점이 있으신가요?</p>
     <p class="mt-1 text-[13px] text-ink/50">원장이 직접 상담해 드립니다. 네이버 톡톡은 진료시간 내 30분 이내 답변드립니다.</p>
     <div class="mt-4 flex flex-wrap justify-center gap-2">
-      <a href="/reserve" class="inline-flex px-6 py-3 rounded-full bg-ink text-white text-[13px] font-extrabold hover:bg-navy-800 transition">예약·상담 신청</a>
+      <a href="/reserve" data-cta="article-end" class="inline-flex px-6 py-3 rounded-full bg-ink text-white text-[13px] font-extrabold hover:bg-navy-800 transition">예약·상담 신청</a>
       <a href="/encyclopedia" class="inline-flex px-6 py-3 rounded-full bg-white border border-ink/12 text-ink text-[13px] font-extrabold hover:border-ink transition">전체 용어 보기</a>
     </div>
   </div>
