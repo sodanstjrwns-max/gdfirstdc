@@ -23,9 +23,21 @@ import { GEOMDAN_CARDS, GEOMDAN_CARD_DATE, geomdanCardImg, txOgImage } from './d
 import { fetchYoutubeVideos } from './routes/hub'
 import { isThinCase, isThinList, THIN_TV_MIN_VIDEOS } from './lib/thin-content'
 import { kstDate, answerSummary, isClinicPublishedPost } from './lib/column-seo'
+import { isGoogleSearchCrawler, isGoogleHiddenPath, GOOGLE_HIDE_HEADER } from './lib/google-hide'
 import type { AppEnv, D1Database } from './types'
 
 const app = new Hono<AppEnv>()
+
+// ===== 구글 전용 검색 제외 (2026-11-10) — 맨 바깥 미들웨어. 기준·대상·되돌리기는 lib/google-hide.ts =====
+// 구글 검색 크롤러 + 대상 경로 + 200 HTML 응답일 때만 헤더를 붙인다. 그 밖의 요청은 응답이 그대로다.
+app.use('*', async (c, next) => {
+  await next()
+  if (c.res.status !== 200) return
+  if (!isGoogleSearchCrawler(c.req.header('User-Agent'))) return
+  if (!isGoogleHiddenPath(c.req.path)) return
+  if (!(c.res.headers.get('Content-Type') || '').includes('text/html')) return
+  c.header('X-Robots-Tag', GOOGLE_HIDE_HEADER)
+})
 
 // ===== 공식 도메인 정규화 (www / *.pages.dev → gdfirstdc.kr 301) =====
 app.use('*', async (c, next) => {
