@@ -457,9 +457,9 @@ content.get('/blog/:slug', async (c) => {
   <section class="mt-12 not-prose" aria-label="관련 콘텐츠">
     ${tx ? `<a href="/treatments/${tx.slug}" class="block rounded-3xl bg-white border border-ink/8 p-6 hover:border-ink/30 transition"><span class="text-[11px] font-extrabold tracking-[0.2em] uppercase text-gold-600">관련 진료</span><span class="mt-1 block text-[17px] font-extrabold text-ink">${tx.name} 진료 안내 →</span><span class="mt-1 block text-[13px] text-ink/50">${esc(tx.tagline)}</span></a>` : ''}
     ${relCases.length ? `<h2 class="mt-8 !text-[15px] font-extrabold text-ink">${tx ? tx.name : ''} 치료사례</h2>
-    <ul class="mt-3 space-y-2 list-none p-0">${relCases.map((s) => `<li><a href="/cases/${s.id}" class="block rounded-2xl bg-white border border-ink/8 px-5 py-3.5 text-[14px] font-semibold text-ink/80 hover:border-ink/30 transition">${esc(s.title)}</a></li>`).join('')}</ul>` : ''}
+    <ul class="mt-3 space-y-2 list-none p-0 !pl-0">${relCases.map((s) => `<li class="!list-none"><a href="/cases/${s.id}" class="block rounded-2xl bg-white border border-ink/8 px-5 py-3.5 text-[14px] font-semibold text-ink/80 hover:border-ink/30 transition">${esc(s.title)}</a></li>`).join('')}</ul>` : ''}
     ${relPosts.length ? `<h2 class="mt-8 !text-[15px] font-extrabold text-ink">함께 읽으면 좋은 칼럼</h2>
-    <ul class="mt-3 space-y-2 list-none p-0">${relPosts.map((p) => `<li><a href="/blog/${esc(p.slug)}" class="block rounded-2xl bg-white border border-ink/8 px-5 py-3.5 text-[14px] font-semibold text-ink/80 hover:border-ink/30 transition">${esc(p.title)}</a></li>`).join('')}</ul>` : ''}
+    <ul class="mt-3 space-y-2 list-none p-0 !pl-0">${relPosts.map((p) => `<li class="!list-none"><a href="/blog/${esc(p.slug)}" class="block rounded-2xl bg-white border border-ink/8 px-5 py-3.5 text-[14px] font-semibold text-ink/80 hover:border-ink/30 transition">${esc(p.title)}</a></li>`).join('')}</ul>` : ''}
   </section>` : ''
 
   const body = `
@@ -479,10 +479,15 @@ content.get('/blog/:slug', async (c) => {
   ${blogHubNote(String(r.slug || ''), tx?.name)}
   ${authorBox}
   ${relatedBlock}
-  <footer class="mt-12 rounded-3xl bg-ink text-white p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 not-prose relative overflow-hidden" data-tilt data-tilt-max="5">
+  <footer class="mt-12 rounded-3xl bg-ink text-white p-7 sm:p-8 not-prose relative overflow-hidden" data-tilt data-tilt-max="5">
     <div class="absolute -bottom-14 -right-10 w-48 h-48 rounded-full bg-gold-500/15 blur-[70px]" aria-hidden="true"></div>
-    <p class="relative text-lg font-extrabold tracking-tight">궁금한 점이 있으신가요?</p>
-    <a href="tel:032-563-2872" data-cta="article-end" class="btn-3d relative shrink-0 px-6 py-3.5 rounded-full bg-gold-500 text-ink text-sm font-extrabold hover:bg-gold-400 transition"><i class="fas fa-phone mr-2"></i>032-563-2872</a>
+    <p class="relative text-lg font-extrabold tracking-tight !text-white !mb-0 !leading-snug">궁금한 점이 있으신가요?</p>
+    <p class="relative mt-1.5 text-[13px] !text-white/60 !mb-0 !leading-relaxed">원장이 직접 상담해 드립니다. 네이버 톡톡은 진료시간 내 30분 이내 답변드립니다.</p>
+    <div class="relative mt-5 flex flex-col sm:flex-row sm:flex-wrap gap-2.5">
+      <a href="/reserve" data-cta="article-end" class="btn-3d inline-flex items-center justify-center px-6 py-3.5 rounded-full bg-gold-500 text-ink text-sm font-extrabold hover:bg-gold-400 transition"><i class="fas fa-calendar-check mr-2"></i>예약·상담 신청</a>
+      <a href="${CLINIC.naverTalk}" target="_blank" rel="noopener" data-cta="article-end" class="inline-flex items-center justify-center px-6 py-3.5 rounded-full bg-white text-[#03c75a] text-sm font-extrabold hover:brightness-95 transition"><i class="fas fa-comment-dots mr-2"></i>네이버 톡톡</a>
+      <a href="tel:${CLINIC.phone}" data-cta="article-end" class="inline-flex items-center justify-center px-6 py-3.5 rounded-full border border-white/25 text-white text-sm font-bold hover:bg-white/10 transition"><i class="fas fa-phone mr-2 text-gold-400"></i>${CLINIC.phone}</a>
+    </div>
   </footer>
 </article>`
   return c.html(layout({
