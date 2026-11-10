@@ -3,13 +3,13 @@ import { getCookie } from 'hono/cookie'
 import { secureHeaders } from 'hono/secure-headers'
 import { layout, TX_REVIEWED } from './lib/layout'
 import { readSession } from './lib/auth'
-import { CLINIC } from './data/clinic'
+import { CLINIC, DOCTOR } from './data/clinic'
 import { TREATMENTS } from './data/treatments'
 import { getReleasedEncyclopedia, encyReleaseDate, encyPath, encyTomorrowCount } from './data/encyclopedia'
 import { SEO_REGIONS } from './data/regions'
 import { GEOMDAN_HUB_PATH, GEOMDAN_HUB_UPDATED } from './routes/geomdan-hub'
 import { FAQS } from './data/faqs'
-import { getPricing, fmtPrice } from './data/pricing'
+import { getPricing, fmtPrice, type PriceCategory } from './data/pricing'
 import pages from './routes/pages'
 import auth from './routes/auth'
 import content from './routes/content'
@@ -81,10 +81,42 @@ Sitemap: ${CLINIC.siteUrl}/sitemap.xml
 `)
 )
 
+// llms.txt 표준 사실 블록 (2026-11-10) — 제목·한 줄 소개 바로 아래. 값은 전부 CLINIC·DOCTOR·TREATMENTS 상수와 공개 수가(getPricing)에서만 가져온다.
+// 수가 줄은 /pricing 화면에 공개된 항목(관리자 비공개 제외)의 현재 값 그대로. 병원 정보 전체의 '최종 확인일'은 레포에 기준일이 없어 적지 않는다.
+const LLMS_PRICE_PICKS = ['덴티스임플란트', '오스템임플란트', '라미네이트', '지르코니아(구치부)', '세라믹인레이(1면)', '전문가미백1회']
+const llmsHours = (t: string) => t.replace(/[AP]M\s*/g, '').replace(/\s*~\s*/g, '~')
+function llmsFactBlock(price?: { pricing: PriceCategory[]; updated: string }): string {
+  const s = CLINIC.siteUrl
+  const fields = TREATMENTS.map((t) => (t.slug === 'bloomnate' ? '무삭제 라미네이트(블룸네이트)' : t.name)).join(', ')
+  const hours = CLINIC.hours.map((h) => `${h.day} ${llmsHours(h.time)}`).join(' / ')
+  const lines = [
+    '## 병원 정보',
+    `- 이름: ${CLINIC.name} (${CLINIC.shortName} · ${CLINIC.nameEn})`,
+    `- 진료 분야: ${fields}`,
+    `- 주소: ${CLINIC.address} / 가까운 역·출구: 인천 1호선 검단 아라역 1번 출구 도보 5분`,
+    `- 전화: ${CLINIC.phone}`,
+    `- 진료 시간: ${hours} / 점심시간 ${llmsHours(CLINIC.lunch)}`,
+    `- 의료진: ${DOCTOR.name}(${DOCTOR.title} · 보건복지부 인증 통합치의학 전문의) — 1인 대표원장 책임진료`,
+    `- 예약: ${s}/reserve (온라인 신청) / 네이버 예약 ${CLINIC.naverBooking} / 네이버 톡톡 ${CLINIC.naverTalk} / 전화 ${CLINIC.phone}`,
+    `- 진료 안내: ${s}/treatments / 비용 안내: ${s}/pricing / 의료진: ${s}/about / 지역 안내(허브): ${s}${GEOMDAN_HUB_PATH} / 자주 묻는 질문: ${s}/faq`,
+  ]
+  if (price) {
+    const items = price.pricing.filter((p) => !p.insured).flatMap((p) => p.items)
+    const picks = LLMS_PRICE_PICKS.map((n) => items.find((i) => i.name === n && i.price > 0)).filter((i): i is NonNullable<typeof i> => !!i)
+    if (picks.length >= 3) {
+      lines.push(`- 주요 비급여 진료비 (${price.updated} 기준, 전체 항목은 ${s}/pricing):`)
+      for (const it of picks) lines.push(`  - ${it.name}: ${fmtPrice(it.price)}`)
+    }
+  }
+  return lines.join('\n')
+}
+
 // llms.txt — AI 답변엔진(ChatGPT·Claude·Perplexity 등)을 위한 사이트 요약
-const llmsText = () => `# ${CLINIC.name} (Geomdan First Dental Clinic)
+const llmsText = (price?: { pricing: PriceCategory[]; updated: string }) => `# ${CLINIC.name} (Geomdan First Dental Clinic)
 
 > 인천 검단신도시에서 가장 오래된 치과. 보건복지부 인증 통합치의학 전문의 김희수 대표원장의 1인 책임진료(상담·수술·보철·사후관리 모두 원장 직접). 과잉진료 없는 정직한 진료가 원칙.
+
+${llmsFactBlock(price)}
 
 ## 기본 정보
 - 주소: ${CLINIC.address}
@@ -139,15 +171,17 @@ async function publishedPosts(db: D1Database): Promise<LlmsPost[]> {
 }
 app.get('/llms.txt', async (c) => {
   const posts = await publishedPosts(c.env.DB)
+  const price = await getPricing(c.env.DB)
   // 글마다 작성 주체 표기 — 원장 작성 근거 없는 글(lib/column-seo.ts isClinicPublishedPost)은 병원 발행
   const col = posts.length ? `\n## 건강칼럼 (${posts.length}편 · 별도 표기 없는 글은 김희수 대표원장 작성)\n- 목록: ${CLINIC.siteUrl}/blog\n${posts.map((p) => `- ${p.title}: ${CLINIC.siteUrl}/blog/${p.slug}${isClinicPublishedPost(p) ? ` (${CLINIC.shortName} 발행 일반 건강정보)` : ''}`).join('\n')}\n` : ''
-  return c.text(llmsText() + col + `\n## 상세판\n- 진료별 요약·FAQ·수가·칼럼 요약 전문: ${CLINIC.siteUrl}/llms-full.txt\n`)
+  return c.text(llmsText(price) + col + `\n## 상세판\n- 진료별 요약·FAQ·수가·칼럼 요약 전문: ${CLINIC.siteUrl}/llms-full.txt\n`)
 })
 
 // llms-full.txt — llms.txt + 진료별 요약(화면 본문·FAQ와 같은 데이터) + 공개 비급여 수가 전문. 사이트에 공개된 내용만.
 app.get('/llms-full.txt', async (c) => {
   const flat = (t: string) => String(t || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim()
-  const out: string[] = [llmsText(), '---', '']
+  const price = await getPricing(c.env.DB)
+  const out: string[] = [llmsText(price), '---', '']
   out.push('## 진료별 요약')
   out.push(`각 진료 페이지 본문과 같은 내용입니다. 감수: ${CLINIC.doctor} 대표원장(보건복지부 인증 통합치의학 전문의) · 최종 검토 ${TX_REVIEWED}. 비용·기간은 개인 상태에 따라 달라지며 정밀진단 후 안내합니다.`)
   out.push('')
@@ -169,7 +203,7 @@ app.get('/llms-full.txt', async (c) => {
     }
     out.push('')
   }
-  const { pricing, updated } = await getPricing(c.env.DB)
+  const { pricing, updated } = price
   out.push(`## 진료비용 (비급여 항목은 의료법 제45조 고지 · ${updated} 기준, ${CLINIC.siteUrl}/pricing 과 동일)`)
   for (const cat of pricing) {
     out.push(`### ${cat.label}${cat.insured ? " (건강보험 적용)" : ""}`)

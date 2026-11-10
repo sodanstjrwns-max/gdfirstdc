@@ -134,16 +134,13 @@ export function geomdanHubWebPage(): Record<string, unknown> {
     name: GEOMDAN_HUB_FULL_TITLE,
     description: GEOMDAN_HUB_ANSWER,
     inLanguage: 'ko-KR',
-    about: {
-      '@type': 'Dentist',
-      '@id': `${CLINIC.siteUrl}/#clinic`,
-      name: CLINIC.name,
-      areaServed: [
-        { '@type': 'Place', name: geomdan?.full || '인천 검단신도시' },
-        { '@type': 'AdministrativeArea', name: '인천광역시 검단구' },
-        { '@type': 'GeoCircle', geoMidpoint: { '@type': 'GeoCoordinates', latitude: CLINIC.lat, longitude: CLINIC.lng }, geoRadius: 5000 },
-      ],
-    },
+    // 병원 노드는 layout 의 #clinic 을 참조만 한다(같은 @id 를 여기서 다시 정의하지 않는다, 2026-11-10). 지역 범위는 이 페이지가 다루는 범위로 옮김.
+    about: { '@id': `${CLINIC.siteUrl}/#clinic` },
+    spatialCoverage: [
+      { '@type': 'Place', name: geomdan?.full || '인천 검단신도시' },
+      { '@type': 'AdministrativeArea', name: '인천광역시 검단구' },
+      { '@type': 'Place', geo: { '@type': 'GeoCircle', geoMidpoint: { '@type': 'GeoCoordinates', latitude: CLINIC.lat, longitude: CLINIC.lng }, geoRadius: 5000 } },
+    ],
     mainEntity: { '@id': `${CLINIC.siteUrl}${GEOMDAN_HUB_PATH}#faq` },
     breadcrumb: { '@id': `${CLINIC.siteUrl}${GEOMDAN_HUB_PATH}#breadcrumb` },
     // reviewedBy/lastReviewed 없음 — 2026-10-08 작성 허브, 원장 검토 기록 없음

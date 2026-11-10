@@ -81,17 +81,12 @@ const WHY = [
 ]
 
 philosophy.get('/philosophy', (c) => {
-  const jsonLd = [
-    {
-      '@context': 'https://schema.org',
-      '@type': 'WebPage',
-      '@id': 'https://gdfirstdc.kr/philosophy',
-      name: '검단퍼스트치과 진료철학',
-      description:
-        '불필요한 진료를 권하지 않는 정직한 진단, 대학병원급 15단계 멸균, 대표원장이 처음부터 끝까지 책임지는 사후관리 — 검단퍼스트치과의 진료철학입니다.',
-      speakable: { '@type': 'SpeakableSpecification', cssSelector: ['.speakable-summary', 'h1'] },
-    },
-  ]
+  // 페이지 노드(@id = https://gdfirstdc.kr/philosophy)는 layout 이 한 번만 정의한다 — 예전엔 같은 @id 를 여기서 한 번 더 정의했다 (2026-11-10 병합)
+  const webPage = {
+    name: '검단퍼스트치과 진료철학',
+    description:
+      '불필요한 진료를 권하지 않는 정직한 진단, 대학병원급 15단계 멸균, 대표원장이 처음부터 끝까지 책임지는 사후관리 — 검단퍼스트치과의 진료철학입니다.',
+  }
 
   const body = `
 ${pageHero('Philosophy', '진료철학,<br><span class="font-disp text-shine">진심이 담긴 치료.</span>', '검단 주민분들이 믿고 맡기실 수 있는 평생 주치의가 되겠습니다.')}
@@ -170,7 +165,7 @@ ${pageHero('Philosophy', '진료철학,<br><span class="font-disp text-shine">�
         title: '진료철학 — 진심이 담긴 치료',
         desc: '불필요한 진료를 권하지 않는 정직한 진단, 대학병원급 15단계 멸균, 대표원장이 처음부터 끝까지 책임지는 사후관리. 우리 직원들이 가족을 모셔오는 치과, 검단퍼스트치과의 진료철학입니다.',
         path: '/philosophy',
-        jsonLd,
+        webPage,
       },
       body,
       { user: c.get('user'), admin: c.get('isAdmin') }

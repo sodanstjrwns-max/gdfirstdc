@@ -567,6 +567,9 @@ ${pageHero('About Us', '광고 대신,<br><span class="font-disp text-shine">진
     '@id': `${CLINIC.siteUrl}/about#doctor`,
     name: DOCTOR.name,
     jobTitle: '대표원장 · 보건복지부 인증 통합치의학 전문의',
+    url: `${CLINIC.siteUrl}/about`,
+    // 사이트 공통 대표원장 노드(#physician, medicalSpecialty 는 그쪽에 있음)와 같은 인물
+    sameAs: [PHYSICIAN_ID],
     worksFor: { '@id': `${CLINIC.siteUrl}/#clinic` },
     image: `${CLINIC.siteUrl}/static/images/doctor_lobby.webp`,
     alumniOf: [
@@ -578,7 +581,8 @@ ${pageHero('About Us', '광고 대신,<br><span class="font-disp text-shine">진
       { '@type': 'EducationalOccupationalCredential', name: 'Harvard School of Dental Medicine Implant Dentistry CE' },
       { '@type': 'EducationalOccupationalCredential', name: 'NYU Non-prep Veneer(무삭제 라미네이트) 고급과정' },
     ],
-    memberOf: DOCTOR.memberships.slice(0, 7).map((m) => ({ '@type': 'Organization', name: m })),
+    // 화면 '학회 활동'의 학회 7곳 — Organization.name 은 학회 이름만(뒤의 '정회원'·'회원' 등급 표기는 뺌)
+    memberOf: DOCTOR.memberships.slice(0, 7).map((m) => ({ '@type': 'Organization', name: m.replace(/\s*(정회원|회원)(\s*\(.*\))?$/, '') })),
     knowsAbout: ['임플란트', '무삭제 라미네이트', '턱관절 치료', '체외충격파', '미세현미경 신경치료', '심미보철'],
   }
   return c.html(layout({ title: '병원소개 — 통합치의학 전문의 1인 책임진료', desc: `검단퍼스트치과 소개 — 통합치의학 전문의 김희수 대표원장, 1인 책임진료, ZEISS 미세현미경·체외충격파·페이스스캐너 등 첨단장비.`, path: '/about', jsonLd: [doctorLd] }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
@@ -706,7 +710,7 @@ pages.get('/treatments/:slug', async (c) => {
     name: t.name,
     alternateName: t.nameEn,
     description: t.metaDesc,
-    procedureType: 'https://schema.org/NoninvasiveProcedure',
+    // procedureType 은 넣지 않는다 — 전 진료에 NoninvasiveProcedure 로 고정돼 있었으나 임플란트·발치 같은 수술에는 사실과 다르다 (2026-11-10)
     bodyLocation: ex?.bodyLocation,
     howPerformed: ex ? ex.timeline.map((s, i) => `${i + 1}. ${s.title}: ${s.desc}`).join(' ') : undefined,
     followup: '정기검진을 통한 유지관리',
@@ -1267,6 +1271,7 @@ ${pageHero('Pricing', '비용까지,<br><span class="font-disp text-shine">투�
         { '@type': 'ListItem', position: 2, name: '치료비용 안내', item: `${CLINIC.siteUrl}/pricing` },
       ],
     },
+    /* FAQPage 는 화면에 질문·답이 없어 뺐다 (2026-11-10, 화면에 없는 질문을 스키마에만 두지 않는다). 화면에 FAQ 섹션을 만들면 같은 문구로 되살린다.
     {
       '@context': 'https://schema.org',
       '@type': 'FAQPage',
@@ -1277,6 +1282,7 @@ ${pageHero('Pricing', '비용까지,<br><span class="font-disp text-shine">투�
         { '@type': 'Question', name: '치아미백 비용은 얼마인가요?', acceptedAnswer: { '@type': 'Answer', text: '전문가미백 1회 14만원, 2회 27만원, 3회 38만원이며 전문가(3회)+자가(4회) 패키지는 63만원입니다.' } },
       ],
     },
+    */
     {
       '@context': 'https://schema.org',
       '@type': 'OfferCatalog',
@@ -1293,7 +1299,13 @@ ${pageHero('Pricing', '비용까지,<br><span class="font-disp text-shine">투�
       ),
     },
   ]
-  return c.html(layout({ title: `치료비용 안내 — 임플란트 90만원부터, 비급여 수가 전체 공개`, desc: `검단퍼스트치과 비급여 진료비용 안내 — 임플란트 90만원~, 라미네이트 55만원, 지르코니아 크라운 50만원, 세라믹인레이 30만원~, 전문가미백 14만원~. 의료법에 따라 ${totalItems}개 전 항목 투명 공개. 검단신도시·김포·청라 치과 비용 비교.`, path: '/pricing', jsonLd }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
+  // 페이지 노드: 화면의 '(기준: YYYY-MM)' 고지 기준월을 dateModified·lastReviewed 로 (관리자 저장값, 형식이 맞을 때만)
+  const pricingWebPage: Record<string, unknown> = {
+    name: `치료비용 안내 — ${CLINIC.shortName}`,
+    about: { '@id': `${CLINIC.siteUrl}/#clinic` },
+    ...(/^\d{4}-\d{2}(-\d{2})?$/.test(PUPD) ? { dateModified: PUPD, lastReviewed: PUPD } : {}),
+  }
+  return c.html(layout({ title: `검단 치과 치료비용 안내 — 임플란트 90만원부터, 비급여 수가 전체 공개`, desc: `검단퍼스트치과 비급여 진료비용 안내 — 임플란트 90만원~, 라미네이트 55만원, 지르코니아 크라운 50만원, 세라믹인레이 30만원~, 전문가미백 14만원~. 의료법에 따라 ${totalItems}개 전 항목 투명 공개. 검단신도시·김포·청라 치과 비용 비교.`, path: '/pricing', jsonLd, webPage: pricingWebPage }, body, { user: c.get('user'), admin: c.get('isAdmin') }))
 })
 
 // ============ 통합 FAQ 페이지 (AEO 핵심) ============
